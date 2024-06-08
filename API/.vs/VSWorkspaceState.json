@@ -1,0 +1,11 @@
+{
+  "ExpandedNodes": [
+    "",
+    "\\WebApplication3",
+    "\\WebApplication3\\Controllers",
+    "\\WebApplication3\\Service",
+    "\\WebApplication3\\Service\\AccountService"
+  ],
+  "SelectedNode": "\\WebApplication3\\Service\\AccountService\\IAccountService.cs",
+  "PreviewInSolutionExplorer": false
+}
