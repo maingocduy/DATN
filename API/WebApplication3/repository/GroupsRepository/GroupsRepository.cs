@@ -10,11 +10,11 @@ namespace WebApplication3.repository.GroupsRepository
 {
     public interface IGroupsRepository
     {
-        Task<List<GroupsDTOs>> GetAllGroups();
+        Task<List<Group>> GetAllGroups();
         Task AddGroups(GroupsDTOs Group);
         Task DeleteGroups(string name);
         Task<Group> GetGroup(int id);
-        Task<GroupsDTOs> GetGroup(string name);
+        Task<Group> GetGroup(string name);
     }
     public class GroupsRepository : IGroupsRepository
     {
@@ -43,11 +43,11 @@ namespace WebApplication3.repository.GroupsRepository
             await connection.ExecuteAsync(sql, new { name });
         }
 
-        public async Task<List<GroupsDTOs>> GetAllGroups()
+        public async Task<List<Group>> GetAllGroups()
         {
             using var connection = _context.CreateConnection();
             var sql = "SELECT * FROM `Groups`";
-            var sponsor = await connection.QueryAsync<GroupsDTOs>(sql);
+            var sponsor = await connection.QueryAsync<Group>(sql);
             return sponsor.ToList();
         }
 
@@ -61,7 +61,7 @@ namespace WebApplication3.repository.GroupsRepository
         """;
             return await connection.QuerySingleOrDefaultAsync<Group>(sql, new { id });
         }
-        public async Task<GroupsDTOs> GetGroup(string name)
+        public async Task<Group> GetGroup(string name)
         {
 
             using var connection = _context.CreateConnection();
@@ -69,7 +69,7 @@ namespace WebApplication3.repository.GroupsRepository
             SELECT * FROM `Groups` 
             WHERE group_name = @name
         """;
-            return await connection.QuerySingleOrDefaultAsync<GroupsDTOs>(sql, new { name });
+            return await connection.QuerySingleOrDefaultAsync<Group>(sql, new { name });
         }
     }
 }

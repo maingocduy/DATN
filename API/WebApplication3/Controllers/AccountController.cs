@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Auth;
+using WebApplication3.DTOs.Otp;
 using WebApplication3.Entities;
 using WebApplication3.Service.AccountService;
 
@@ -55,30 +56,46 @@ namespace WebApplication3.Controllers
             return Ok("Logout");
         }
         [HttpPost("forgot")]
-        public async Task<IActionResult> ForgotPass(string email)
+        public async Task<IActionResult> ForgotPass([FromBody]  ForgetPassDTO forgetPass)
         {
-            try { await accountRepository.ForgotPassword(email);
-                return Ok("Gửi thành công");            
+            try { 
+                await accountRepository.ForgotPassword(forgetPass.email);
+                return Ok(new { Message = "Gửi thành công." });            
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException ex)
             {
-                return Ok(ex.Message);
+                return NotFound(ex.Message);
             }
         }
         [HttpPost("enter_otp")]
-        public async Task<IActionResult> EnterOtp(string otp)
+        public async Task<IActionResult> EnterOtp([FromBody]  otpRequest request)
         {
             try
             {
-                await accountRepository.EnterOtp(otp);
+                await accountRepository.EnterOtp(request.Otp);
                 return Ok("Thành công");
             }
             catch (Exception ex)
             {
                 return Ok(ex.Message);
             }
-      
-
+        }
+        [HttpPost("changeForgetPass")]
+        public async Task<IActionResult> ChangeForgetPass(EnterPassRequest request)
+        {
+            try
+            {
+                await accountRepository.changeForgetPass(request.Email, request.Password, request.Otp);
+                return Ok(new { Message = "Password changed successfully." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
     }
 }

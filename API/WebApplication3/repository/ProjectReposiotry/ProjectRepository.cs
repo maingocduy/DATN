@@ -17,7 +17,7 @@ namespace WebApplication3.repository.ProjectReposiotry
     {
         Task AddProject(ProjectDTO project);
         Task DeleteProject(string name);
-        Task<ProjectDTO> GetProject(string name);
+        Task<ProjectDTO> GetProject(string name, int? groupId = null);
         Task UpdateProject(ProjectDTO project);
         Task<PagedResult<ProjectDTO>> GetAllProject(int pageNumber = 1);
         Task<ProjectDTO> GetProjectID(string name);
@@ -103,7 +103,7 @@ LIMIT @pageSize OFFSET @offset;
 ";
 
             // Thực hiện truy vấn
-            var projectsQuery = await connection.QueryAsync<ProjectDTO, MemberDTO, GroupsDTOs, SponsorDTO, ImageDtos, ProjectDTO>(
+            var projectsQuery = await connection.QueryAsync<ProjectDTO, MemberDTO, Group, SponsorDTO, ImageDtos, ProjectDTO>(
                 dtoSql,
                 (project, member, group, sponsor, image) =>
                 {
@@ -162,31 +162,37 @@ LIMIT @pageSize OFFSET @offset;
         }
 
 
-        public async Task<ProjectDTO> GetProject(string name)
+        public async Task<ProjectDTO> GetProject(string name, int? groupId = null)
         {
             using var connection = _context.CreateConnection();
 
-            // Câu lệnh SQL để lấy dự án theo tên
+            // Câu lệnh SQL để lấy dự án theo tên và lọc theo Group_id nếu có
             var dtoSql = @"
-        SELECT 
-            p.*,
-            m.* ,
-            g.* ,
-            s.* ,
-            i.* 
-        FROM 
-            Projects AS p
-            LEFT JOIN MemberProjects AS mp ON p.Project_id = mp.Project_id
-LEFT JOIN Members AS m ON mp.Member_id = m.Member_id
-LEFT JOIN `Groups` AS g ON m.Group_id = g.Group_id
-LEFT JOIN ProjectSponsor AS ps ON p.Project_id = ps.Project_id
-LEFT JOIN sponsor AS s ON ps.Sponsor_id = s.Sponsor_id
-LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id
-        WHERE 
-            p.Name = @ProjectName"; // @ProjectName là tham số truyền vào
+SELECT 
+    p.*,
+    m.* ,
+    g.* ,
+    s.* ,
+    i.* 
+FROM 
+    Projects AS p
+    LEFT JOIN MemberProjects AS mp ON p.Project_id = mp.Project_id
+    LEFT JOIN Members AS m ON mp.Member_id = m.Member_id
+    LEFT JOIN `Groups` AS g ON m.Group_id = g.Group_id
+    LEFT JOIN ProjectSponsor AS ps ON p.Project_id = ps.Project_id
+    LEFT JOIN sponsor AS s ON ps.Sponsor_id = s.Sponsor_id
+    LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id
+WHERE 
+    p.Name = @ProjectName";
+
+            // Nếu có GroupId, thêm điều kiện lọc cho Members
+            if (groupId.HasValue)
+            {
+                dtoSql += " AND m.Member_id IN (SELECT Member_id FROM Members WHERE Group_id = @GroupId)";
+            }
 
             // Thực hiện truy vấn
-            var projectQuery = await connection.QueryAsync<ProjectDTO, MemberDTO, GroupsDTOs, SponsorDTO, ImageDtos, ProjectDTO>(
+            var projectQuery = await connection.QueryAsync<ProjectDTO, MemberDTO, Group, SponsorDTO, ImageDtos, ProjectDTO>(
                 dtoSql,
                 (project, member, group, sponsor, image) =>
                 {
@@ -212,18 +218,16 @@ LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id
 
                     return project;
                 },
-                new { ProjectName = name }, // Đối tượng ẩn danh với tên dự án
+                new { ProjectName = name, GroupId = groupId }, // Đối tượng ẩn danh với tên dự án và GroupId nếu có
                 splitOn: "Member_id,Group_id,Sponsor_id,image_id");
 
             // Lấy dự án đầu tiên hoặc trả về null nếu không có kết quả
             var project = projectQuery.FirstOrDefault();
 
-            // Nếu có dự án được trả về, cập nhật danh sách thành viên, nhóm, nhà tài trợ và ảnh
-            if (project != null)
+            // Nếu không có thành viên được trả về, gán danh sách thành viên là rỗng
+            if (project != null && project.Member.Count == 0)
             {
-                project.Member = projectQuery.Select(p => p.Member.FirstOrDefault()).ToList();
-                project.Sponsor = projectQuery.Select(p => p.Sponsor.FirstOrDefault()).ToList();
-                project.images = projectQuery.Select(p => p.images.FirstOrDefault()).ToList();
+                project.Member = new List<MemberDTO>();
             }
 
             return project;

@@ -8,7 +8,7 @@ namespace WebApplication3.DTOs.Project
 {
     public class ProjectDTO
     {
-        [JsonIgnore]
+       
         public int Project_id { get; set; }
         public string Name { get; set; }
         public decimal Budget { get; set; }

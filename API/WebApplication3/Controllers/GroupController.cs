@@ -18,7 +18,7 @@ namespace WebApplication3.Controllers
             this.IGroupsService = IGroupsService;
         }
         [HttpGet]
-        public async Task<ActionResult<List<GroupsDTOs>>> GetAllGroups()
+        public async Task<ActionResult<List<Group>>> GetAllGroups()
         {
             var spon = await IGroupsService.GetAllGroups();
             return Ok(spon);

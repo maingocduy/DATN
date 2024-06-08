@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Member;
 using WebApplication3.DTOs.Project;
 
@@ -14,6 +15,6 @@ namespace WebApplication3.DTOs.Blog
 
         public ProjectDTO? project { get; set; }
 
-        public MemberDTO? Member { get; set; }
+        public AccountDTO? account { get; set; }
     }
 }

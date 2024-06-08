@@ -14,5 +14,7 @@ namespace WebApplication3.DTOs.Member
         public string Phone { get; set; }
         [Required(ErrorMessage = "Group_id is required")]
         public int Group_id { get; set; }
+
+        public string nameProject { get; set; }
     }
 }

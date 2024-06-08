@@ -17,7 +17,7 @@ namespace WebApplication3.Service.ProjectService
         Task<PagedResult<ProjectDTO>> GetAllProject(int pageNumber);
         Task<ProjectDTO> GetProject(int id);
         Task AddProject(CreateProjectRequest createProjectRequest);
-        Task<ProjectDTO> GetProjectsByName(string name);
+        Task<ProjectDTO> GetProjectsByName(string name, int? groupId = null);
 
         Task UpdateProject(string name, UpdateProjectRequest project);
         Task DeleteProject(string name);
@@ -82,12 +82,10 @@ namespace WebApplication3.Service.ProjectService
 
         }
 
-        public async Task<ProjectDTO> GetProjectsByName(string name)
+        public async Task<ProjectDTO> GetProjectsByName(string name,int? groupId =null)
         {
-            var project = await IProjectRepository.GetProject(name);
+            var project = await IProjectRepository.GetProject(name,groupId);
 
-            if (project == null)
-                throw new KeyNotFoundException("Project not found");
 
             return project;
         }

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Member;
+using WebApplication3.DTOs.Otp;
 using WebApplication3.DTOs.Project;
 using WebApplication3.Entities;
 using WebApplication3.repository.AccountRepository;
@@ -22,15 +23,15 @@ namespace WebApplication3.Controllers
             this.IMemberService = IMemberService;
         }
         [HttpPost]
-        public async Task<IActionResult> Create(string name,CreateRequestMemberDTO mem)
+        public async Task<IActionResult> Create(CreateRequestMemberDTO mem)
         {
-            await IMemberService.AddMember(name,mem);
+            await IMemberService.AddMember(mem.nameProject,mem);
             return Ok(new { message = "User created" });
         }
-        [HttpGet]
-        public async Task<ActionResult<List<Member>>> GetAllMember()
+        [HttpPost("get_all_member")]
+        public async Task<ActionResult<List<MemberDTO>>> GetAllMember(GetlAllMemberRequest request)
         {
-            var mem = await IMemberService.GetAllMember();
+            var mem = await IMemberService.GetAllMember(request.ProjectId,request.groupName);
             return Ok(mem);
         }
         [HttpGet("name")]
@@ -72,5 +73,19 @@ namespace WebApplication3.Controllers
                 return StatusCode(500, $"Error :{ex.Message}");
             };
         }
+        [HttpPost("enter_otp")]
+        public async Task<IActionResult> EnterOtp([FromBody] otpRequest request)
+        {
+            try
+            {
+                await IMemberService.EnterOtp(request.Otp);
+                return Ok("Thành công");
+            }
+            catch (Exception ex)
+            {
+                return Ok(ex.Message);
+            }
+        }
+       
     }
 }

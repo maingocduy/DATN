@@ -10,7 +10,7 @@ namespace WebApplication3.Service.GroupsService
 {
     public interface IGroupsService
     {
-        Task<List<GroupsDTOs>> GetAllGroups();
+        Task<List<Group>> GetAllGroups();
         Task AddGroup(GroupsDTOs Group);
         Task DeleteGroup(string name);
         Task<Group> GetGroup(int id);
@@ -36,7 +36,7 @@ namespace WebApplication3.Service.GroupsService
             await IGroupsRepository.DeleteGroups(name);
         }
 
-        public async Task<List<GroupsDTOs>> GetAllGroups()
+        public async Task<List<Group>> GetAllGroups()
         {
             return await IGroupsRepository.GetAllGroups();
         }

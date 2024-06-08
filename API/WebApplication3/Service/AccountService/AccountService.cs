@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using Newtonsoft.Json.Linq;
 using System.Data;
 using System.IdentityModel.Tokens.Jwt;
@@ -22,7 +23,8 @@ using WebApplication3.Helper.Data;
 using WebApplication3.repository.AccountRepository;
 using WebApplication3.repository.MemberRepository;
 using static WebApplication3.DTOs.Auth.ServiceResponses;
-
+using MailKit.Net.Smtp;
+using MimeKit;
 
 namespace WebApplication3.Service.AccountService
 {
@@ -36,10 +38,12 @@ namespace WebApplication3.Service.AccountService
         Task UpdatePasswordAcc(string username, UpdatePasswordRequestDTO acc);
         Task DeleteAccount(string username);
 
-        Task<Task> ForgotPassword(string email);
+        Task ForgotPassword(string email);
 
         Task EnterOtp(string otp);
         Task SendEmailAsync(string email, string subject, string messager);
+
+        Task changeForgetPass(string email, string newPass, string otp);
 
     }
     public class AccountService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,IAccountRepository _AccountRepository, IMapper _mapper) : IAccountService
@@ -56,17 +60,27 @@ namespace WebApplication3.Service.AccountService
             }
         }
 
-        public Task SendEmailAsync(string email, string subject, string messager)
+        public async Task SendEmailAsync(string email, string subject, string message)
         {
             var mail = "2051063514@e.tlu.edu.vn";
             var pw = "Mangcut11";
 
-            var client = new SmtpClient("smtp-mail.outlook.com", 587)
+            var mimeMessage = new MimeMessage();
+            mimeMessage.From.Add(new MailboxAddress("Your Name", mail)); // Chú ý thay thế "Your Name" bằng tên hiển thị mong muốn
+            mimeMessage.To.Add(new MailboxAddress("Recipient", email)); // Chú ý thay thế "Recipient" bằng tên hiển thị mong muốn
+            mimeMessage.Subject = subject;
+            mimeMessage.Body = new TextPart("plain")
             {
-                EnableSsl = true,
-                Credentials = new NetworkCredential(mail,pw)
+                Text = message
             };
-            return client.SendMailAsync(new MailMessage(from: mail, to: email, subject, messager));
+
+            using (var client = new MailKit.Net.Smtp.SmtpClient())
+            {
+                await client.ConnectAsync("smtp-mail.outlook.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(mail, pw);
+                await client.SendAsync(mimeMessage);
+                await client.DisconnectAsync(true);
+            }
         }
 
         public async Task<AccountDTO> GetAccountsAsync(int id)
@@ -109,12 +123,18 @@ namespace WebApplication3.Service.AccountService
             await _AccountRepository.UpdatePasswordAcc(user);
         }
 
-        public async Task<Task> ForgotPassword(string email)
+        public async Task ForgotPassword(string email)
         {
-            var otp = GenerateOTP();
-              saveOtp(otp,email);
-            return SendEmailAsync(email, "lấy lại mật khẩu", "Để lấy lại mật khẩu vui lòng dùng OTP này: "+ otp);
+            var acc = await _AccountRepository.GetAccountByEmail(email);
+            if (acc == null)
+            {
+                throw new KeyNotFoundException("Email không tồn tại");
+            }
 
+            var otp = GenerateOTP();
+             _AccountRepository.SaveOtp(otp, email);
+
+              SendEmailAsync(email, "Lấy lại mật khẩu", $"Để lấy lại mật khẩu vui lòng dùng OTP này: {otp}");
         }
         public async Task EnterOtp(string otp)
         {
@@ -127,41 +147,57 @@ namespace WebApplication3.Service.AccountService
             else if (OTP.expires_at < vnTime) { 
                 throw new Exception("OTP đã hết hạn"); 
             }
-            else
+            else if (OTP.IsVerified == true)
             {
-                OTP.IsVerified = true;
-                await _AccountRepository.UpdateOtp(OTP);
-
+                throw new Exception("OTP đã được xác nhận");
             }
 
         }
         private static string GenerateOTP()
         {
-            var otp = "";
-            using (var rng = new System.Security.Cryptography.RNGCryptoServiceProvider())
+            using (var rng = System.Security.Cryptography.RandomNumberGenerator.Create())
             {
-                var randomNumber = new byte[6];
-                rng.GetBytes(randomNumber);
-                otp = string.Concat(randomNumber.Select(b => b % 10));
+                var bytes = new byte[4]; // Tạo mảng byte đủ để lấy số ngẫu nhiên
+                rng.GetBytes(bytes);
+                var num = BitConverter.ToUInt32(bytes, 0);
+                return (num % 1000000).ToString("D6"); // Đảm bảo mã OTP là 6 chữ số
             }
-
-            // Đảm bảo mã OTP luôn có đúng 6 ký tự
-            if (otp.Length < 6)
-            {
-                otp = otp.PadRight(6, '0');
-            }
-            else if (otp.Length > 6)
-            {
-                otp = otp.Substring(0, 6);
-            }
-
-            return otp;
         }
         private async Task saveOtp(string otp,string email)
         {
             await _AccountRepository.SaveOtp(otp, email);
         }
-
+        public async Task changeForgetPass(string email,string newPass, string otp)
+        {
+            var vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"); // Mã này tương ứng với GMT+7
+            var vnTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTimeZone);
+            var OTP = await _AccountRepository.GetOtp(otp);
+            if (OTP == null)
+            {
+                throw new KeyNotFoundException("Otp bị sai, mời nhập lại");
+            }
+            else if (OTP.expires_at < vnTime)
+            {
+                throw new Exception("OTP đã hết hạn");
+            }
+            else if (OTP.IsVerified == true)
+            {
+                throw new Exception("OTP đã được xác nhận");
+            }    
+            else
+            {
+             
+                var getUser = await userManager.FindByEmailAsync(email);
+                if(getUser == null)
+                {
+                    throw new KeyNotFoundException("Email này không tồn tại");
+                }
+                userManager.ChangePasswordAsync(getUser, getUser.PasswordHash, newPass);
+                OTP.IsVerified = true;
+                _AccountRepository.UpdateOtp(OTP);
+                _AccountRepository.UpdatePasswordAccByEmail(email, newPass);
+            }
+        }
     }
 }
    

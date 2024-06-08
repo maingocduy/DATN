@@ -6,6 +6,7 @@ using WebApplication3.DTOs.Groups;
 using WebApplication3.DTOs.Member;
 using WebApplication3.DTOs.Project;
 using WebApplication3.DTOs.Sponsor;
+using WebApplication3.Entities;
 using WebApplication3.Helper.Data;
 
 namespace WebApplication3.repository.BlogRepository
@@ -32,14 +33,14 @@ namespace WebApplication3.repository.BlogRepository
         {
             using var connection = _context.CreateConnection();
             var sql = @"
-        INSERT INTO Blog (Member_id, Title, Content, CreatedAt)
-        VALUES (@member_id, @title, @content, @createdAt)";
+        INSERT INTO Blog (Account_id, Title, Content, CreatedAt)
+        VALUES (@acc_id, @title, @content, @createdAt)";
 
             await connection.ExecuteAsync(sql, new
             {
                 title = blog.Title,
                 content = blog.Content,
-                member_id = id,
+                acc_id = id,
                 createdAt = DateTime.Now
             });
         }
@@ -54,20 +55,19 @@ namespace WebApplication3.repository.BlogRepository
         {
             using var connection = _context.CreateConnection();
             var sql = """
-        SELECT b.*, m.*, g.*
+        SELECT b.*, a.*
+        FROM account 
         FROM Blog AS b
-        LEFT JOIN Members AS m ON b.Member_id = m.Member_id
-        LEFT JOIN `Groups` AS g ON m.Group_id = g.Group_id;
+        LEFT JOIN account AS a ON b.Account_id = a.Account_id;
         """;
-            var blog = await connection.QueryAsync<BlogDTO, MemberDTO, GroupsDTOs,BlogDTO>(
+            var blog = await connection.QueryAsync<BlogDTO, AccountDTO, GroupsDTOs,BlogDTO>(
         sql,
-        (blog, member, group) =>
+        (blog, account, group) =>
         {
-            blog.Member = member;
-            member.groups = group;
+            blog.account = account;
             return blog; 
         },
-        splitOn: "Member_id,Group_id"
+        splitOn: "Account_id"
     );
             return blog.ToList();
         }
@@ -77,22 +77,20 @@ namespace WebApplication3.repository.BlogRepository
 
             using var connection = _context.CreateConnection();
             var sql = """
-        SELECT b.*, m.*, g.*,p.*
+        SELECT b.*,a.*
         FROM Blog AS b
-        LEFT JOIN Members AS m ON b.Member_id = m.Member_id
-        LEFT JOIN `Groups` AS g ON m.Group_id = g.Group_id
-        LEFT JOIN Projects AS p ON p.Project_id = b.Project_id where Blog_id = @id;
+        LEFT JOIN account AS a ON b.Account_id = a.Account_id
+        WHERE Blog_id = @id;
         """;
-            var blog = await connection.QueryAsync<BlogDTO, MemberDTO, GroupsDTOs, ProjectDTO, BlogDTO>(
+            var blog = await connection.QueryAsync<BlogDTO,AccountDTO, BlogDTO>(
         sql,
-        (blog, member, group, project) =>
+        (blog, account) =>
         {
-            blog.Member = member;
-            member.groups = group;
-            blog.project = project;
+            blog.account = account;
+           
             return blog;
         },new { id },
-        splitOn: "Member_id,Group_id,Project_id"
+        splitOn: "Account_id"
     );
             return blog.FirstOrDefault();
         }
@@ -102,22 +100,20 @@ namespace WebApplication3.repository.BlogRepository
         {
             using var connection = _context.CreateConnection();
             var sql = """
-        SELECT b.*, m.*, g.*,p.*
+        SELECT b.*, a.*
         FROM Blog AS b
-        LEFT JOIN Members AS m ON b.Member_id = m.Member_id
-        LEFT JOIN `Groups` AS g ON m.Group_id = g.Group_id
-        LEFT JOIN Projects AS p ON p.Project_id = b.Project_id where Title = @title;
+         LEFT JOIN account AS a ON b.Account_id = a.Account_id
+        WHERE Blog_id = @id;
         """;
-            var blog = await connection.QueryAsync<BlogDTO, MemberDTO, GroupsDTOs, ProjectDTO, BlogDTO>(
+            var blog = await connection.QueryAsync<BlogDTO, AccountDTO, BlogDTO>(
         sql,
-        (blog, member, group, project) =>
+        (blog, account) =>
         {
-            blog.Member = member;
-            member.groups = group;
-            blog.project = project;
+            blog.account = account;
+
             return blog;
         }, new { title },
-        splitOn: "Member_id,Group_id,Project_id"
+        splitOn: "Account_id"
     );
             return blog.FirstOrDefault();
         }

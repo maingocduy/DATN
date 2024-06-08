@@ -28,10 +28,10 @@ namespace WebApplication3.Controllers
             var result = await IProjectService.GetAllProject(pageNumber);
             return Ok(new { projects = result.Projects, totalPages = result.TotalPages });
         }
-        [HttpGet("{name}")]
-        public async Task<ActionResult<Project>> GetProject(string name)
+        [HttpPost("get_project")]
+        public async Task<ActionResult<Project>> GetProject([FromBody]GetProjectRequest request)
         {
-            var pro = await IProjectService.GetProjectsByName(name);
+            var pro = await IProjectService.GetProjectsByName(request.ProjectName,request.GroupId);
             return Ok(pro);
         }
         [HttpDelete("{name}")]

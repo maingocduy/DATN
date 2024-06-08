@@ -58,6 +58,22 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.AccountController",
+    "Method": "ChangeForgetPass",
+    "RelativePath": "api/Account/changeForgetPass",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Account.EnterPassRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.AccountController",
     "Method": "EnterOtp",
     "RelativePath": "api/Account/enter_otp",
     "HttpMethod": "POST",
@@ -65,9 +81,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "otp",
-        "Type": "System.String",
-        "IsRequired": false
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Otp.otpRequest",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -81,9 +97,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "email",
-        "Type": "System.String",
-        "IsRequired": false
+        "Name": "forgetPass",
+        "Type": "WebApplication3.DTOs.Account.ForgetPassDTO",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -390,7 +406,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[WebApplication3.DTOs.Groups.GroupsDTOs, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.List\u00601[[WebApplication3.Entities.Group, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -467,37 +483,12 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
         "Name": "mem",
         "Type": "WebApplication3.DTOs.Member.CreateRequestMemberDTO",
         "IsRequired": true
       }
     ],
     "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.MemberController",
-    "Method": "GetAllMember",
-    "RelativePath": "api/Member",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[WebApplication3.Entities.Member, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
   },
   {
     "ContainingType": "WebApplication3.Controllers.MemberController",
@@ -530,6 +521,48 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.MemberController",
+    "Method": "EnterOtp",
+    "RelativePath": "api/Member/enter_otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Otp.otpRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.MemberController",
+    "Method": "GetAllMember",
+    "RelativePath": "api/Member/get_all_member",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Member.GetlAllMemberRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[WebApplication3.DTOs.Member.MemberDTO, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "WebApplication3.Controllers.MemberController",
@@ -664,15 +697,31 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.ProjectController",
-    "Method": "GetProject",
+    "Method": "Delete",
     "RelativePath": "api/Project/{name}",
-    "HttpMethod": "GET",
+    "HttpMethod": "DELETE",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
         "Name": "name",
         "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.ProjectController",
+    "Method": "GetProject",
+    "RelativePath": "api/Project/get_project",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Project.GetProjectRequest",
         "IsRequired": true
       }
     ],
@@ -687,22 +736,6 @@
         "StatusCode": 200
       }
     ]
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.ProjectController",
-    "Method": "Delete",
-    "RelativePath": "api/Project/{name}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "name",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
   },
   {
     "ContainingType": "WebApplication3.Controllers.SponsorController",

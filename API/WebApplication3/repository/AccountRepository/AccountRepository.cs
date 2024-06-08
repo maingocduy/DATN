@@ -8,6 +8,7 @@ using WebApplication3.DTOs.Member;
 using WebApplication3.Helper.Data;
 using WebApplication3.DTOs.Otp;
 using Org.BouncyCastle.Crypto;
+using CloudinaryDotNet;
 
 namespace WebApplication3.repository.AccountRepository
 {
@@ -22,8 +23,10 @@ namespace WebApplication3.repository.AccountRepository
         Task<OtpDTO> GetOtp(string otp);
 
         Task UpdateOtp(OtpDTO otp);
-
+        Task<Account> GetAccountByEmail(string email);
         Task SaveOtp(string otp, string emailAccount);
+
+        Task UpdatePasswordAccByEmail(string email, string newPassword);
     }
     public class AccountRepository : IAccountRepository
     {
@@ -62,7 +65,7 @@ namespace WebApplication3.repository.AccountRepository
                     JOIN `Groups` AS g ON m.Group_id = g.Group_id 
             WHERE Account_id = @id
         """;
-            var acc = await connection.QueryAsync<AccountDTO, MemberDTO, GroupsDTOs, AccountDTO>(
+            var acc = await connection.QueryAsync<AccountDTO, MemberDTO, Group, AccountDTO>(
         sql,
         (account, member, group) =>
         {
@@ -86,7 +89,7 @@ namespace WebApplication3.repository.AccountRepository
                     JOIN `Groups` AS g ON m.Group_id = g.Group_id 
             WHERE Username = @username
         """;
-            var acc= await connection.QueryAsync<AccountDTO, MemberDTO, GroupsDTOs, AccountDTO>(
+            var acc= await connection.QueryAsync<AccountDTO, MemberDTO, Group, AccountDTO>(
        sql,
        (account, member, group) =>
        {
@@ -112,7 +115,7 @@ SELECT a.*, m.*,g.*
 			JOIN Members AS m ON a.Member_id = m.Member_id
             JOIN `Groups` AS g ON m.Group_id = g.Group_id ;";
 
-            var users = await connection.QueryAsync<AccountDTO, MemberDTO,GroupsDTOs, AccountDTO>(dtoSql,
+            var users = await connection.QueryAsync<AccountDTO, MemberDTO, Group, AccountDTO>(dtoSql,
                 (account, member,group) =>
                 {
                     account.Member = member;
@@ -160,7 +163,7 @@ SELECT a.*, m.*,g.*
             {
                 otp = otp,
                 created_at = vnTime,
-                expires_at = vnTime.AddMinutes(3),
+                expires_at = vnTime.AddMinutes(5),
                 email = emailAccount
             });
         }
@@ -200,6 +203,58 @@ SELECT a.*, m.*,g.*
                 IsVerified = otp.IsVerified,
                 OtpCode = otp.otp_code
             });
+        }
+        public async Task UpdatePasswordAccByEmail(string email, string newPassword)
+        {
+            using var connection = _context.CreateConnection();
+
+            // Query to get the username based on email from the member table
+            var sqlGetUsername = """
+    SELECT a.Username 
+    FROM Account a
+    JOIN Members m ON a.Member_id = m.Member_id
+    WHERE m.email = @Email
+    """;
+
+            // Fetch the username
+            var username = await connection.QuerySingleOrDefaultAsync<string>(sqlGetUsername, new { Email = email });
+
+            if (username == null)
+            {
+                throw new Exception("No account found for the provided email.");
+            }
+
+            // Query to update the password based on username
+            var sqlUpdatePassword = """
+    UPDATE Account 
+    SET Password = @Password
+    WHERE Username = @Username
+    """;
+
+            // Execute the update password query
+            await connection.ExecuteAsync(sqlUpdatePassword, new { Password = newPassword, Username = username });
+        }
+        public async Task<Account> GetAccountByEmail(string email)
+        {
+            using var connection = _context.CreateConnection();
+
+            // Query to get the account based on email from the member table
+            var sqlGetAccount = """
+    SELECT a.*
+    FROM Account a
+    JOIN Members m ON a.Member_id = m.Member_id
+    WHERE m.email = @Email
+    """;
+
+            // Fetch the account
+            var account = await connection.QuerySingleOrDefaultAsync<Account>(sqlGetAccount, new { Email = email });
+
+            if (account == null)
+            {
+                throw new KeyNotFoundException("Email không tồn tại trong hệ thống");
+            }
+
+            return account;
         }
     }
 }
