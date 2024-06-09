@@ -186,13 +186,15 @@ namespace WebApplication3.Service.AccountService
             }    
             else
             {
-             
-                var getUser = await userManager.FindByEmailAsync(email);
-                if(getUser == null)
+            
+                var getUserIdentity = await userManager.FindByEmailAsync(email);
+ 
+                if (getUserIdentity == null)
                 {
                     throw new KeyNotFoundException("Email này không tồn tại");
                 }
-                userManager.ChangePasswordAsync(getUser, getUser.PasswordHash, newPass);
+                var getUserDb = await _AccountRepository.GetAccountsByUserName(getUserIdentity.UserName);
+                await userManager.ChangePasswordAsync(getUserIdentity, getUserDb.Password, newPass);
                 OTP.IsVerified = true;
                 _AccountRepository.UpdateOtp(OTP);
                 _AccountRepository.UpdatePasswordAccByEmail(email, newPass);

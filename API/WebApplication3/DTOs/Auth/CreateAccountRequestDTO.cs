@@ -22,6 +22,6 @@ namespace WebApplication3.DTOs.Auth
         [DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
         [Required(ErrorMessage = "GroupId is required")]
-        public int Group_Id { get; set; }
+        public string group_name { get; set; }
     }
 }

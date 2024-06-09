@@ -8,9 +8,9 @@
           <a
             href="#"
             :class="{
-              'inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500':
+              'inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active  dark:text-blue-500':
                 currentPage === 'profile',
-              'inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300':
+              'inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50  dark:hover:text-gray-300':
                 currentPage !== 'profile'
             }"
             @click="changePage('profile')"
@@ -21,9 +21,9 @@
           <a
             href="#"
             :class="{
-              'inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300':
+              'inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50  dark:hover:text-gray-300':
                 currentPage !== 'Member',
-              'inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500':
+              'inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:text-blue-500':
                 currentPage === 'Member'
             }"
             @click="changePage('Member')"
@@ -34,32 +34,13 @@
           <a
             href="#"
             :class="{
-              'inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300':
+              'inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50  dark:hover:text-gray-300':
                 currentPage !== 'Sponsor',
-              'inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500':
+              'inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active  dark:text-blue-500':
                 currentPage === 'Sponsor'
             }"
             @click="changePage('Sponsor')"
             >Sponsor</a
-          >
-        </li>
-        <li class="me-2">
-          <a
-            href="#"
-            :class="{
-              'inline-block p-4 rounded-t-lg hover:text-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 dark:hover:text-gray-300':
-                currentPage !== 'contacts',
-              'inline-block p-4 text-blue-600 bg-gray-100 rounded-t-lg active dark:bg-gray-800 dark:text-blue-500':
-                currentPage === 'contacts'
-            }"
-            @click="changePage('contacts')"
-            >Contacts</a
-          >
-        </li>
-        <li>
-          <a
-            class="inline-block p-4 text-gray-400 rounded-t-lg cursor-not-allowed dark:text-gray-500"
-            >Disabled</a
           >
         </li>
       </ul>

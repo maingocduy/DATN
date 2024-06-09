@@ -38,12 +38,16 @@ namespace WebApplication3.Service.AuthService
 
             var getUser = await userManager.FindByNameAsync(login.Username);
             if (getUser is null)
-                return new LoginResponse(false, null!, null!, "User not found");
+                return new LoginResponse(false, null!, null!, "Không tìm thấy tài khoản");
 
             bool checkUserPasswords = await userManager.CheckPasswordAsync(getUser, login.Password);
             if (!checkUserPasswords)
-                return new LoginResponse(false, null!, null!, "Invalid email/password");
-
+                return new LoginResponse(false, null!, null!, "Sai mật khẩu");
+            bool checkConfirmEmail = await userManager.IsEmailConfirmedAsync(getUser);
+            if (!checkConfirmEmail)
+            {
+                return new LoginResponse(false, null!, null!, "Email chưa được xác thực");
+            }
             var getUserRole = await userManager.GetRolesAsync(getUser);
             var userSession = new UserSession(getUser.Id, getUser.UserName, getUserRole.First());
 
@@ -61,7 +65,7 @@ namespace WebApplication3.Service.AuthService
                 HttpOnly = true,
                 Expires = DateTime.UtcNow.AddMinutes(30) 
             });
-            return new LoginResponse(true, tokens!, rtoken!, "Login completed");
+            return new LoginResponse(true, tokens!, rtoken!, "Đăng nhập thành công");
         }
         public async Task<GeneralResponse> RegisterNewAccount(CreateAccountRequestDTO registerDTO)
         {
@@ -75,7 +79,7 @@ namespace WebApplication3.Service.AuthService
                   await AddAcount(registerDTO, memberId,member.email);
             var userByUsername = await userManager.FindByNameAsync(registerDTO.username);
             string code = await userManager.GenerateEmailConfirmationTokenAsync(userByUsername);
-            string confirmationLink = $"https://https://localhost:7188/api/Auth/ConfirmEmail?userId={userByUsername.Id}&code={Uri.EscapeDataString(code)}";
+            string confirmationLink = $"http://localhost:5173/ResponseRegister?userId={userByUsername.Id}&code={Uri.EscapeDataString(code)}&user={userByUsername.UserName}";
             await accountService.SendEmailAsync(userByUsername.Email, "Xác nhận email của bạn",
         $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href='{confirmationLink}'>link</a>");
             return new GeneralResponse(true, "Tài khoản đã được tạo thành công. Vui lòng kiểm tra email để xác nhận tài khoản của bạn.");

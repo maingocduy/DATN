@@ -1,71 +1,74 @@
 <template>
-  <div class="container mx-auto mt-8">
-    <form @submit.prevent="submitForm" class="max-w-md mx-auto">
-      <!-- Các trường nhập dữ liệu -->
-      <div class="mb-4">
-        <label for="fullName" class="block text-gray-700 text-sm font-bold mb-2"
-          >Tên khách hàng</label
-        >
-        <input
-          v-model="fullName"
-          type="text"
-          id="fullName"
-          name="fullName"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-      <div class="mb-4">
-        <label for="email" class="block text-gray-700 text-sm font-bold mb-2">Email</label>
-        <input
-          v-model="email"
-          type="email"
-          id="email"
-          name="email"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-      <div class="mb-4">
-        <label for="address" class="block text-gray-700 text-sm font-bold mb-2">Địa chỉ</label>
-        <input
-          v-model="address"
-          type="text"
-          id="address"
-          name="address"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-      <div class="mb-4">
-        <label for="amount" class="block text-gray-700 text-sm font-bold mb-2">Số tiền</label>
-        <input
-          v-model="amount"
-          type="text"
-          id="amount"
-          name="amount"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-      <div class="mb-4">
-        <label for="orderInfo" class="block text-gray-700 text-sm font-bold mb-2"
-          >Nội dung thanh toán</label
-        >
-        <textarea
-          v-model="orderInfo"
-          id="orderInfo"
-          name="orderInfo"
-          rows="3"
-          class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        ></textarea>
-      </div>
-      <!-- Nút submit -->
-      <div class="flex items-center justify-between">
+  <div
+    class="bg-gradient-to-r from-blue-500 to-green-500 min-h-screen flex items-center justify-center py-12 px-6"
+  >
+    <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-8">
+      <h2 class="text-center text-3xl font-extrabold text-gray-900 mb-6">Đặt hàng</h2>
+      <form @submit.prevent="submitForm">
+        <div class="mb-5">
+          <label for="fullName" class="block mb-2 text-sm font-medium text-gray-900"
+            >Tên khách hàng *</label
+          >
+          <input
+            type="text"
+            v-model="fullName"
+            id="fullName"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Nhập tên khách hàng"
+          />
+        </div>
+        <div class="mb-5">
+          <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email *</label>
+          <input
+            type="email"
+            v-model="email"
+            id="email"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Nhập email"
+          />
+        </div>
+        <div class="mb-5">
+          <label for="address" class="block mb-2 text-sm font-medium text-gray-900"
+            >Địa chỉ *</label
+          >
+          <input
+            type="text"
+            v-model="address"
+            id="address"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Nhập địa chỉ"
+          />
+        </div>
+        <div class="mb-5">
+          <label for="amount" class="block mb-2 text-sm font-medium text-gray-900">Số tiền *</label>
+          <input
+            type="text"
+            v-model="amount"
+            id="amount"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Nhập số tiền"
+          />
+        </div>
+        <div class="mb-5">
+          <label for="orderInfo" class="block mb-2 text-sm font-medium text-gray-900"
+            >Nội dung thanh toán</label
+          >
+          <textarea
+            v-model="orderInfo"
+            id="orderInfo"
+            rows="3"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            placeholder="Nhập nội dung thanh toán"
+          ></textarea>
+        </div>
         <button
           type="submit"
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          class="text-white bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center"
         >
-          Thanh toán (Checkout)
+          Thanh toán
         </button>
-      </div>
-    </form>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -76,40 +79,73 @@ export default {
   data() {
     return {
       fullName: '',
-      email: '', // Thêm trường email vào data
-      address: '', // Thêm trường address vào data
+      email: '',
+      address: '',
       amount: '',
       orderInfo: ''
     }
   },
   methods: {
     async submitForm() {
-      // Log dữ liệu đã nhập vào các trường
       console.log('Tên khách hàng:', this.fullName)
-      console.log('Email:', this.email) // Log email
-      console.log('Địa chỉ:', this.address) // Log địa chỉ
+      console.log('Email:', this.email)
+      console.log('Địa chỉ:', this.address)
       console.log('Số tiền:', this.amount)
       console.log('Nội dung thanh toán:', this.orderInfo)
-      // Tiếp tục gửi dữ liệu form đến server
+
       try {
         localStorage.setItem('email', this.email)
         localStorage.setItem('address', this.address)
         const response = await axios.post(
           `https://localhost:7188/api/Momo/${this.$route.params.name}`,
           {
-            // Thêm địa chỉ vào dữ liệu gửi đi
             fullName: this.fullName,
             orderInfo: this.orderInfo,
             amount: this.amount
           }
         )
-        // Xử lý phản hồi từ server
         window.location.href = response.data.payUrl
       } catch (error) {
         console.error('Error submitting payment:', error)
-        // Xử lý lỗi khi gửi dữ liệu đến server
       }
     }
   }
 }
 </script>
+
+<style scoped>
+/* CSS tùy chỉnh cho các thành phần */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s;
+}
+.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
+  opacity: 0;
+}
+
+.fixed.inset-0.flex.items-center.justify-center.z-50.bg-black.bg-opacity-50 {
+  backdrop-filter: blur(5px);
+}
+
+.bg-white.p-6.rounded-lg.shadow-lg.w-96.relative {
+  animation: scaleUp 0.3s ease-in-out;
+}
+
+@keyframes scaleUp {
+  0% {
+    transform: scale(0.8);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.absolute.top-2.right-2.bg-transparent.text-gray-500.hover\:text-gray-700.text-xl {
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.bg-red-500.text-white.px-4.py-2.rounded.hover\:bg-red-600.w-full {
+  transition: background-color 0.3s ease;
+}
+</style>

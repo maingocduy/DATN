@@ -7,17 +7,17 @@ export default {
   methods: {
     async loadTinyMCE() {
       const script = document.createElement('script')
-      script.src = '../../public/tinymce/js/tinymce/tinymce.min.js' // Đảm bảo đường dẫn chính xác
+      script.src = '../../public/tinymce/js/tinymce/tinymce.min.js' // Ensure the path is correct
       script.onload = () => {
         console.log('TinyMCE script loaded')
         tinymce.init({
           selector: 'textarea#editor',
+          api_key: '9b2t0qnpq9lmj5ikt6n1a1br7o98vqwkzam8nzdmwxemt2g7', // Add your API key here
           license_key: 'gpl',
           height: 900,
-
           toolbar_sticky: true,
           plugins:
-            'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist casechange export formatpainter pageembed permanentpen powerpaste advtable advcode editimage advtemplate mentions tableofcontents footnotes typography inlinecss markdown ',
+            'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
           toolbar:
             'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image table | addcomment showcomments | a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
           images_upload_url: 'https://localhost:7188/api/Cloud/uploadTinySingle'
@@ -37,3 +37,14 @@ export default {
     <textarea id="editor" ref="editor"></textarea>
   </div>
 </template>
+
+<style scoped>
+@media (min-width: 1024px) {
+  #sample {
+    display: flex;
+    flex-direction: column;
+    place-items: center;
+    width: 100%;
+  }
+}
+</style>

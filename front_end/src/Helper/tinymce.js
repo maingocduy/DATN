@@ -9,10 +9,12 @@ export default {
         license_key: 'gpl',
         Min_height: 1000,
         plugins:
-          'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount checklist casechange export formatpainter pageembed permanentpen powerpaste advtable advcode editimage advtemplate mentions tableofcontents footnotes typography inlinecss markdown ',
+          'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount powerpaste  mentions  footnotes typography inlinecss markdown ',
         toolbar:
-          'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image table | addcomment showcomments | a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-        images_upload_url: 'https://localhost:7188/api/Cloud/uploadTinySingle'
+          'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image table | addcomment showcomments | a11ycheck typography | align lineheight |  numlist bullist indent outdent | emoticons charmap | removeformat',
+        images_upload_url: 'https://localhost:7188/api/Cloud/uploadTinySingle',
+        branding: false, // Removes "Powered by TinyMCE"
+        stateless: true
       })
     }
     script.onerror = () => {

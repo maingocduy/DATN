@@ -54,6 +54,19 @@ const router = createRouter({
       path: '/newProject', // Thêm route cho trang chi tiết dự án và đặt parameter cho id của dự án
       name: 'newProject',
       component: () => import('../views/newProjectView.vue')
+    },
+    {
+      path: '/register', // Thêm route cho trang chi tiết dự án và đặt parameter cho id của dự án
+      name: 'register',
+      component: () => import('../views/RegisterView.vue')
+    },
+    {
+      path: '/ResponseRegister',
+      name: 'ResponseRegister',
+      // route level code-splitting
+      // this generates a separate chunk (About.[hash].js) for this route
+      // which is lazy-loaded when the route is visited.
+      component: () => import('../views/ResponseRegisterView.vue')
     }
   ]
 })

@@ -49,10 +49,10 @@ namespace WebApplication3.Controllers
             var response = await authService.GenerateJwtTokenFromRefreshToken();
             return Ok(response);
         }
-        [HttpGet("ConfirmEmail")]
-        public async Task<IActionResult> ConfirmEmail(string userId, string code)
+        [HttpPost("ConfirmEmail")]
+        public async Task<IActionResult> ConfirmEmail(confirmEmailRequest request)
         {
-            var result = await authService.ConfirmEmailAsync(userId, code);
+            var result = await authService.ConfirmEmailAsync(request.userID, request.code);
             return Ok(result.Message);
         }
     }

@@ -13,7 +13,7 @@ namespace WebApplication3.DTOs.Member
         [DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
         [Required(ErrorMessage = "Group_id is required")]
-        public int Group_id { get; set; }
+        public string Group_name { get; set; }
 
         public string nameProject { get; set; }
     }

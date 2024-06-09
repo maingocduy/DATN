@@ -150,19 +150,14 @@
     "ContainingType": "WebApplication3.Controllers.AuthController",
     "Method": "ConfirmEmail",
     "RelativePath": "api/Auth/ConfirmEmail",
-    "HttpMethod": "GET",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "userId",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "code",
-        "Type": "System.String",
-        "IsRequired": false
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Auth.confirmEmailRequest",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []

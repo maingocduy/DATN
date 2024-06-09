@@ -41,7 +41,7 @@ namespace WebApplication3.repository.MemberRepository
 
             var sqlAddMember = @"
 INSERT INTO Members (name, email, phone, Group_id)
-VALUES (@Name, @Email, @Phone, @Group_id);
+VALUES (@Name, @Email, @Phone, (SELECT * FROM `groups` WHERE group_name = @group_name));
 SELECT LAST_INSERT_ID();";
 
             // Thực hiện thêm thành viên và lấy member_id của thành viên mới thêm vào
@@ -50,7 +50,7 @@ SELECT LAST_INSERT_ID();";
                 Name = memberDTO.name,
                 Email = memberDTO.email,
                 Phone = memberDTO.phone,
-                Group_id = memberDTO.groups.Groups_id
+                group_name = memberDTO.groups.group_name
             });
             // Thêm vào bảng MemberProjects
             var sqlAddToProject = @"INSERT INTO MemberProjects (Member_id, Project_id) VALUES (@member_id, @project_id);";
@@ -85,7 +85,7 @@ SELECT LAST_INSERT_ID();";
             {
                 var sql = @"
             INSERT INTO Members (name, email, phone, Group_id)
-            VALUES (@Name, @Email, @Phone, @Group_id);
+            VALUES (@Name, @Email, @Phone, (SELECT Group_id from `groups` where group_name = @group_name));
             SELECT LAST_INSERT_ID();";
 
                  return await connection.ExecuteScalarAsync<int>(sql, new
@@ -93,7 +93,7 @@ SELECT LAST_INSERT_ID();";
                     Name = memberDTO.name,
                     Email = memberDTO.email,
                     Phone = memberDTO.phone,
-                    Group_id = memberDTO.groups.Groups_id
+                    group_name = memberDTO.groups.group_name
                 });
             }
         }
