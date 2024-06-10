@@ -1,4 +1,3 @@
-// src/components/Login.vue
 <template>
   <div
     class="bg-gradient-to-r min-h-screen from-blue-500 to-green-500 flex flex-col justify-center py-12 px-6"
@@ -74,10 +73,11 @@
           placeholder="Nhập mã OTP gồm 6 số"
           class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4"
         />
-        <button v-if="otpSent && !otpVerified" @click="verifyOTP" class="btn-submit">
-          Xác nhận
+        <button v-if="otpSent && !otpVerified" @click="verifyOTPAsync" class="btn-submit">
+          Xác thực OTP
         </button>
         <div v-if="otpVerified">
+          <h2 class="text-xl font-bold mb-4">Đặt lại mật khẩu</h2>
           <input
             type="password"
             v-model="newPassword"
@@ -90,12 +90,12 @@
             placeholder="Xác nhận mật khẩu mới"
             class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4"
           />
-          <button @click="resetPassword" class="btn-submit">Đặt lại mật khẩu</button>
+          <button @click="resetPasswordAsync" class="btn-submit">Đặt lại mật khẩu</button>
         </div>
-        <button @click="closeForgotPasswordPopup" class="btn-cancel">Hủy</button>
-        <p v-if="forgotPasswordMessage" class="mt-4 text-center text-red-600">
-          {{ forgotPasswordMessage }}
-        </p>
+        <button @click="closeForgotPasswordPopup" class="mt-4 text-red-500 hover:underline">
+          Đóng
+        </button>
+        <p>{{ forgotPasswordMessage }}</p>
       </div>
     </div>
   </div>
@@ -124,7 +124,8 @@ export default {
       otpVerified: (state) => state.auth.otpVerified,
       newPassword: (state) => state.auth.newPassword,
       confirmNewPassword: (state) => state.auth.confirmNewPassword,
-      showSuccessNotification: (state) => state.auth.showSuccessNotification
+      showSuccessNotification: (state) => state.auth.showSuccessNotification,
+      response: (state) => state.auth.response // Lấy response từ Vuex state
     })
   },
   methods: {
@@ -138,19 +139,39 @@ export default {
       'closeForgotPasswordPopup'
     ]),
     async loginAsync() {
-      await this.login({
-        username: this.username,
-        password: this.password
-      })
-      if (this.$store.getters['isAuthenticated']) {
-        this.$router.push('/blog')
+      try {
+        await this.login({
+          username: this.username,
+          password: this.password
+        })
+        if (this.response.flag) {
+          this.$notify({
+            type: 'success',
+            title: 'Thông báo',
+            text: 'Đăng nhập thành công!'
+          })
+          this.$router.push('/blog')
+        } else {
+          this.$notify({
+            type: 'error',
+            title: 'Thông báo',
+            text: 'Mật khẩu hoặc tên đăng nhập bị sai!'
+          })
+        }
+      } catch (error) {
+        console.error('Login failed:', error)
+        this.$notify({
+          type: 'error',
+          title: 'Thông báo',
+          text: 'Đã xảy ra lỗi khi đăng nhập!'
+        })
       }
     },
     openForgotPassword() {
       this.openForgotPasswordPopup()
     },
     async sendForgotPasswordAsync() {
-      const response = await this.sendForgotPassword({
+      await this.sendForgotPassword({
         email: this.forgotPasswordEmail
       })
     }
@@ -160,45 +181,30 @@ export default {
 
 <style scoped>
 .input-field {
-  width: 100%;
-  padding: 0.75rem;
   border: 1px solid #d1d5db;
-  border-radius: 0.375rem;
-  transition:
-    border-color 0.15s ease-in-out,
-    box-shadow 0.15s ease-in-out;
-  outline: none;
+  padding: 8px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 4px;
+  transition: border-color 0.3s;
 }
 
 .input-field:focus {
-  border-color: #4f46e5;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+  outline: none;
+  border-color: #3b82f6;
 }
 
 .btn-submit {
-  background-color: #4f46e5;
-  color: #fff;
-  font-weight: bold;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.375rem;
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
 .btn-submit:hover {
-  background-color: #4338ca;
-}
-
-.btn-cancel {
-  background-color: #d1d5db;
-  color: #1f2937;
-  font-weight: bold;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.375rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-.btn-cancel:hover {
-  background-color: #9ca3af;
+  background-color: #2563eb;
 }
 </style>

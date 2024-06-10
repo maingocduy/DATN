@@ -1,10 +1,13 @@
-// src/store/modules/auth.js
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
 const authModule = {
   state: () => ({
+    response: [],
+    notify: null,
     token: Cookies.get('token') || '',
+    username: Cookies.get('username') || '',
+    role: Cookies.get('role') || '',
     loading: false,
     forgotPasswordEmail: '',
     forgotPasswordMessage: '',
@@ -17,12 +20,19 @@ const authModule = {
     showForgotPasswordPopup: false
   }),
   mutations: {
+    SET_RESPONSE(state, payload) {
+      state.response = payload
+    },
     SET_LOADING(state, payload) {
       state.loading = payload
     },
     SET_TOKEN(state, token) {
       state.token = token
       Cookies.set('token', token)
+    },
+    SET_REFRESH_TOKEN(state, rtoken) {
+      state.rtoken = rtoken
+      Cookies.set('rtoken', rtoken)
     },
     SET_FORGOT_PASSWORD_EMAIL(state, email) {
       state.forgotPasswordEmail = email
@@ -32,6 +42,14 @@ const authModule = {
     },
     SET_OTP_SENT(state, status) {
       state.otpSent = status
+    },
+    SET_ROLE(state, role) {
+      state.role = role
+      Cookies.set('role', role)
+    },
+    SET_USERNAME(state, username) {
+      state.username = username
+      Cookies.set('username', username)
     },
     SET_OTP_VERIFIED(state, status) {
       state.otpVerified = status
@@ -50,6 +68,11 @@ const authModule = {
       state.otpVerified = false
       state.newPassword = ''
       state.confirmNewPassword = ''
+      // Reset username and role if needed
+      state.username = ''
+      state.role = ''
+      Cookies.remove('username')
+      Cookies.remove('role')
     }
   },
   actions: {
@@ -60,14 +83,22 @@ const authModule = {
           username,
           password
         })
-        const token = response.data.token
-        commit('SET_TOKEN', token)
+        commit('SET_RESPONSE', response.data)
+        if (response.data.flag) {
+          const token = response.data.token
+          const rtoken = response.data.rToken
+          commit('SET_REFRESH_TOKEN', rtoken)
+          commit('SET_TOKEN', token)
+          commit('SET_USERNAME', response.data.name)
+          commit('SET_ROLE', response.data.role)
+        }
       } catch (error) {
         console.error('Login failed:', error)
       } finally {
         commit('SET_LOADING', false)
       }
     },
+
     async sendForgotPassword({ commit, state }) {
       try {
         const response = await axios.post(
@@ -134,7 +165,7 @@ const authModule = {
     }
   },
   getters: {
-    isAuthenticated: (state) => !!state.token
+    response: (state) => state.response
   }
 }
 

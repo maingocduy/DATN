@@ -7,6 +7,7 @@ import AppFooter from './Layouts/Footer.vue'
   <AppHeader />
   <RouterView />
   <AppFooter />
+  <notifications width="500" duration:5000 pauseOnHover="false" />
 </template>
 
 <style>

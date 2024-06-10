@@ -34,19 +34,19 @@ namespace WebApplication3.Service.AuthService
         public async Task<LoginResponse> login(LoginDTO login)
         {
             if (login == null)
-                return new LoginResponse(false, null!, null!, "Login container is empty");
+                return new LoginResponse(false, null!, null!, "Login container is empty",null,null);
 
             var getUser = await userManager.FindByNameAsync(login.Username);
             if (getUser is null)
-                return new LoginResponse(false, null!, null!, "Không tìm thấy tài khoản");
+                return new LoginResponse(false, null!, null!, "Không tìm thấy tài khoản", null, null);
 
             bool checkUserPasswords = await userManager.CheckPasswordAsync(getUser, login.Password);
             if (!checkUserPasswords)
-                return new LoginResponse(false, null!, null!, "Sai mật khẩu");
+                return new LoginResponse(false, null!, null!, "Sai mật khẩu", null, null);
             bool checkConfirmEmail = await userManager.IsEmailConfirmedAsync(getUser);
             if (!checkConfirmEmail)
             {
-                return new LoginResponse(false, null!, null!, "Email chưa được xác thực");
+                return new LoginResponse(false, null!, null!, "Email chưa được xác thực", null, null);
             }
             var getUserRole = await userManager.GetRolesAsync(getUser);
             var userSession = new UserSession(getUser.Id, getUser.UserName, getUserRole.First());
@@ -54,18 +54,8 @@ namespace WebApplication3.Service.AuthService
             // Generate JWT token
             var tokens = TokenUtils.GenerateJwtToken(userSession,_config);
             var rtoken = TokenUtils.GenerateRefreshToken(userSession, _config);
-            httpContextAccessor.HttpContext.Response.Cookies.Append("refreshToken", rtoken, new CookieOptions
-            {
-                HttpOnly = true,
-                Secure = true,
-                Expires = DateTime.UtcNow.AddDays(7) // Thời gian hết hạn của Refresh Token
-            });
-            httpContextAccessor.HttpContext.Response.Cookies.Append("JWT", tokens, new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTime.UtcNow.AddMinutes(30) 
-            });
-            return new LoginResponse(true, tokens!, rtoken!, "Đăng nhập thành công");
+            
+            return new LoginResponse(true, tokens!, rtoken!, "Đăng nhập thành công",userSession.Username,userSession.Role);
         }
         public async Task<GeneralResponse> RegisterNewAccount(CreateAccountRequestDTO registerDTO)
         {

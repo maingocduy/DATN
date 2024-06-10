@@ -3,7 +3,6 @@
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
       <a href="#" class="flex items-center space-x-3">
         <img src="../../public/Images/logo.jpg" class="h-20" alt="Flowbite Logo" />
-        <!-- Increased avatar size -->
       </a>
       <div class="hidden sm:flex items-center space-x-6">
         <ul class="flex flex-row font-medium space-x-8">
@@ -20,8 +19,13 @@
         <li><a href="/project" class="text-gray-800 hover:text-blue-500">Dự án</a></li>
       </ul>
       <div class="flex items-center space-x-6">
-        <a href="/register" class="text-sm text-gray-800 hover:text-blue-500">Đăng ký</a>
-        <a href="/login" class="text-sm text-gray-800 hover:text-blue-500">Đăng nhập</a>
+        <template v-if="isAuthenticated">
+          <span class="text-sm text-gray-800">Xin chào, {{ username }} </span>
+        </template>
+        <template v-else>
+          <a href="/register" class="text-sm text-gray-800 hover:text-blue-500">Đăng ký</a>
+          <a href="/login" class="text-sm text-gray-800 hover:text-blue-500">Đăng nhập</a>
+        </template>
       </div>
       <div class="sm:hidden">
         <button class="flex items-center px-3 py-2 rounded text-gray-500 hover:text-gray-900">
@@ -45,7 +49,29 @@
   </nav>
 </template>
 
-<script setup></script>
+<script>
+import { computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
+
+export default {
+  setup() {
+    const store = useStore()
+    onMounted(() => {
+      store.dispatch('initializeAuth')
+    })
+
+    const username = computed(() => store.getters['username'])
+    const role = computed(() => store.getters['role'])
+    const isAuthenticated = computed(() => store.getters['isAuthenticated'])
+
+    return {
+      username,
+      role,
+      isAuthenticated
+    }
+  }
+}
+</script>
 
 <style scoped>
 .container {
