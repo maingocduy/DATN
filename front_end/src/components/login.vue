@@ -1,3 +1,4 @@
+// src/components/Login.vue
 <template>
   <div
     class="bg-gradient-to-r min-h-screen from-blue-500 to-green-500 flex flex-col justify-center py-12 px-6"
@@ -13,7 +14,7 @@
     <div class="mt-8 sm:mx-auto">
       <div class="bg-white py-8 px-6 shadow sm:rounded-lg sm:px-10">
         <h2 class="text-center text-3xl font-extrabold text-gray-900 mb-6">Đăng nhập</h2>
-        <form @submit.prevent="login" class="max-w-sm mx-auto">
+        <form @submit.prevent="loginAsync" class="max-w-sm mx-auto">
           <div class="mb-5">
             <label for="Username" class="block mb-2 text-sm font-medium text-gray-900"
               >Tên người dùng</label
@@ -57,7 +58,7 @@
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     >
       <div class="bg-white p-8 rounded-lg shadow-lg">
-        <h2 class="text-xl font-bold mb-4">Quên mật khẩu</h2>
+        <h2 class="text-xl font-bold mb-4">Nhập Email</h2>
         <input
           v-if="!otpSent"
           type="email"
@@ -65,7 +66,7 @@
           placeholder="Nhập email của bạn"
           class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4"
         />
-        <button v-if="!otpSent" @click="sendForgotPassword" class="btn-submit">Gửi OTP</button>
+        <button v-if="!otpSent" @click="sendForgotPasswordAsync" class="btn-submit">Gửi OTP</button>
         <input
           v-if="otpSent && !otpVerified"
           type="text"
@@ -101,110 +102,57 @@
 </template>
 
 <script>
-import axios from 'axios'
-import Cookies from 'js-cookie'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   data() {
     return {
       username: '',
       password: '',
-      loading: false,
-      showForgotPasswordPopup: false,
       forgotPasswordEmail: '',
-      forgotPasswordMessage: '',
-      otp: '',
-      otpSent: false,
-      otpVerified: false,
-      newPassword: '',
-      confirmNewPassword: '',
-      showSuccessNotification: false
+      otp: ''
     }
   },
+  computed: {
+    ...mapState({
+      loading: (state) => state.auth.loading,
+      showForgotPasswordPopup: (state) => state.auth.showForgotPasswordPopup,
+      forgotPasswordEmail: (state) => state.auth.forgotPasswordEmail,
+      forgotPasswordMessage: (state) => state.auth.forgotPasswordMessage,
+      otp: (state) => state.auth.otp,
+      otpSent: (state) => state.auth.otpSent,
+      otpVerified: (state) => state.auth.otpVerified,
+      newPassword: (state) => state.auth.newPassword,
+      confirmNewPassword: (state) => state.auth.confirmNewPassword,
+      showSuccessNotification: (state) => state.auth.showSuccessNotification
+    })
+  },
   methods: {
-    async login() {
-      this.loading = true
-      try {
-        const response = await axios.post('https://localhost:7188/api/Auth/login', {
-          username: this.username,
-          password: this.password
-        })
-        const token = response.data.token
-        Cookies.set('token', token)
+    ...mapActions([
+      'login',
+      'sendForgotPassword',
+      'verifyOTP',
+      'resetPassword',
+      'displaySuccessNotification',
+      'openForgotPasswordPopup',
+      'closeForgotPasswordPopup'
+    ]),
+    async loginAsync() {
+      await this.login({
+        username: this.username,
+        password: this.password
+      })
+      if (this.$store.getters['isAuthenticated']) {
         this.$router.push('/blog')
-      } catch (error) {
-        console.error('Login failed:', error)
-      } finally {
-        this.loading = false
       }
     },
-    openForgotPasswordPopup() {
-      this.showForgotPasswordPopup = true
+    openForgotPassword() {
+      this.openForgotPasswordPopup()
     },
-    closeForgotPasswordPopup() {
-      this.showForgotPasswordPopup = false
-      this.forgotPasswordMessage = ''
-      this.otp = ''
-      this.otpSent = false
-      this.otpVerified = false
-      this.newPassword = ''
-      this.confirmNewPassword = ''
-    },
-    async sendForgotPassword() {
-      try {
-        const response = await axios.post(
-          'https://localhost:7188/api/account/forgot',
-          JSON.stringify({ email: this.forgotPasswordEmail }),
-          {
-            headers: {
-              'Content-Type': 'application/json'
-            }
-          }
-        )
-        this.forgotPasswordMessage = 'Gửi thành công'
-        this.otpSent = true
-      } catch (error) {
-        console.error('Forgot password failed:', error)
-        this.forgotPasswordMessage = error.response.data.title || 'Đã xảy ra lỗi'
-      }
-    },
-    async verifyOTP() {
-      try {
-        const response = await axios.post('https://localhost:7188/api/account/enter_otp', {
-          otp: this.otp
-        })
-        console.log(response.data)
-        this.otpVerified = true
-      } catch (error) {
-        console.error('Xác thực OTP thất bại:', error)
-        this.forgotPasswordMessage = error.response.data.title || 'Đã xảy ra lỗi'
-      }
-    },
-    async resetPassword() {
-      if (this.newPassword !== this.confirmNewPassword) {
-        this.forgotPasswordMessage = 'Mật khẩu không khớp'
-        return
-      }
-      try {
-        const response = await axios.post('https://localhost:7188/api/account/changeForgetPass', {
-          email: this.forgotPasswordEmail,
-          otp: this.otp,
-          Password: this.newPassword
-        })
-        console.log(response.data)
-        this.forgotPasswordMessage = 'Đặt lại mật khẩu thành công'
-        this.displaySuccessNotification()
-        this.closeForgotPasswordPopup()
-      } catch (error) {
-        console.error('Đặt lại mật khẩu thất bại:', error)
-        this.forgotPasswordMessage = error.response.data.title || 'Đã xảy ra lỗi'
-      }
-    },
-    displaySuccessNotification() {
-      this.showSuccessNotification = true
-      setTimeout(() => {
-        this.showSuccessNotification = false
-      }, 3000)
+    async sendForgotPasswordAsync() {
+      const response = await this.sendForgotPassword({
+        email: this.forgotPasswordEmail
+      })
     }
   }
 }

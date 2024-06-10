@@ -141,9 +141,8 @@ SELECT a.*, m.*,g.*
         {
             using var connection = _context.CreateConnection();
             var sql = @"
-            SELECT a.Member_id
+            SELECT a.Account_id
             FROM Account AS a
-            JOIN Members AS m ON m.Member_id= a.Member_id
             WHERE Username = @name";
 
             var memberId = await connection.QueryFirstOrDefaultAsync<int>(sql, new { name });

@@ -33,17 +33,17 @@ namespace WebApplication3.repository.BlogRepository
         {
             using var connection = _context.CreateConnection();
             var sql = @"
-        INSERT INTO Blog (Account_id, Title, Content, CreatedAt)
-        VALUES (@acc_id, @title, @content, @createdAt)";
+    INSERT INTO Blog (Account_id, Title, Content)
+    VALUES (@acc_id, @title, @content)";
 
             await connection.ExecuteAsync(sql, new
             {
                 title = blog.Title,
                 content = blog.Content,
-                acc_id = id,
-                createdAt = DateTime.Now
+                acc_id = id
             });
         }
+
 
 
         public Task DeleteBlog(BlogDTO blog)
@@ -60,9 +60,9 @@ namespace WebApplication3.repository.BlogRepository
         FROM Blog AS b
         LEFT JOIN account AS a ON b.Account_id = a.Account_id;
         """;
-            var blog = await connection.QueryAsync<BlogDTO, AccountDTO, GroupsDTOs,BlogDTO>(
+            var blog = await connection.QueryAsync<BlogDTO, AccountDTO,BlogDTO>(
         sql,
-        (blog, account, group) =>
+        (blog, account) =>
         {
             blog.account = account;
             return blog; 

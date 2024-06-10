@@ -13,8 +13,6 @@ namespace WebApplication3.DTOs.Blog
         public string? Content { get; set; }
         public string? CreatedAt { get; set; }
 
-        public ProjectDTO? project { get; set; }
-
         public AccountDTO? account { get; set; }
     }
 }
