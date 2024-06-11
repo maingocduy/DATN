@@ -1,10 +1,14 @@
 <template>
   <nav class="bg-white shadow-lg">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-      <a href="#" class="flex items-center space-x-3">
-        <img src="../../public/Images/logo.jpg" class="h-20" alt="Flowbite Logo" />
+      <a href="#" class="flex items-center">
+        <img
+          src="../../public/Images/logo.jpg"
+          class="h-16 w-16 object-cover rounded-full"
+          alt="Logo"
+        />
       </a>
-      <div class="hidden sm:flex items-center space-x-6">
+      <div class="flex-1 hidden sm:flex justify-center">
         <ul class="flex flex-row font-medium space-x-8">
           <li><a href="/" class="text-gray-800 hover:text-blue-500">Trang chủ</a></li>
           <li><a href="/blog" class="text-gray-800 hover:text-blue-500">Blog</a></li>
@@ -12,19 +16,26 @@
           <li><a href="/project" class="text-gray-800 hover:text-blue-500">Dự án</a></li>
         </ul>
       </div>
-      <ul class="flex flex-row font-medium space-x-8 sm:hidden">
-        <li><a href="/" class="text-gray-800 hover:text-blue-500">Trang chủ</a></li>
-        <li><a href="/blog" class="text-gray-800 hover:text-blue-500">Blog</a></li>
-        <li><a href="#" class="text-gray-800 hover:text-blue-500">Danh sách bác sĩ</a></li>
-        <li><a href="/project" class="text-gray-800 hover:text-blue-500">Dự án</a></li>
-      </ul>
-      <div class="flex items-center space-x-6">
+      <div class="hidden sm:flex items-center space-x-6">
         <template v-if="isAuthenticated">
-          <span class="text-sm text-gray-800">Xin chào, {{ username }} </span>
+          <div class="relative" @click="showDropdown = !showDropdown">
+            <span class="text-base text-gray-800 cursor-pointer">Xin chào, {{ username }}</span>
+            <div
+              v-if="showDropdown"
+              class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg"
+            >
+              <a href="/profile" class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                >Thông tin cá nhân</a
+              >
+              <a href="#" @click="logout" class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                >Đăng xuất</a
+              >
+            </div>
+          </div>
         </template>
         <template v-else>
-          <a href="/register" class="text-sm text-gray-800 hover:text-blue-500">Đăng ký</a>
-          <a href="/login" class="text-sm text-gray-800 hover:text-blue-500">Đăng nhập</a>
+          <a href="/register" class="text-base text-gray-800 hover:text-blue-500">Đăng ký</a>
+          <a href="/login" class="text-base text-gray-800 hover:text-blue-500">Đăng nhập</a>
         </template>
       </div>
       <div class="sm:hidden">
@@ -46,28 +57,53 @@
         </button>
       </div>
     </div>
+    <div class="sm:hidden px-4 pb-3">
+      <ul class="flex flex-col space-y-4">
+        <li><a href="/" class="text-gray-800 hover:text-blue-500">Trang chủ</a></li>
+        <li><a href="/blog" class="text-gray-800 hover:text-blue-500">Blog</a></li>
+        <li><a href="#" class="text-gray-800 hover:text-blue-500">Danh sách bác sĩ</a></li>
+        <li><a href="/project" class="text-gray-800 hover:text-blue-500">Dự án</a></li>
+        <li v-if="isAuthenticated">
+          <span class="text-base text-gray-800">Xin chào, {{ username }}</span>
+        </li>
+        <li v-else>
+          <a href="/register" class="text-base text-gray-800 hover:text-blue-500">Đăng ký</a>
+          <a href="/login" class="text-base text-gray-800 hover:text-blue-500">Đăng nhập</a>
+        </li>
+      </ul>
+    </div>
   </nav>
 </template>
 
 <script>
-import { computed, onMounted } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
-
+import { notify } from '@kyvg/vue3-notification'
 export default {
   setup() {
     const store = useStore()
+    const showDropdown = ref(false)
     onMounted(() => {
       store.dispatch('initializeAuth')
     })
 
     const username = computed(() => store.getters['username'])
-    const role = computed(() => store.getters['role'])
     const isAuthenticated = computed(() => store.getters['isAuthenticated'])
+
+    const logout = () => {
+      notify({
+        type: 'success',
+        title: 'Thông báo',
+        text: 'Đã hiển thị thông báo thành công!'
+      })
+      store.dispatch('logout')
+    }
 
     return {
       username,
-      role,
-      isAuthenticated
+      isAuthenticated,
+      showDropdown,
+      logout
     }
   }
 }
@@ -76,29 +112,38 @@ export default {
 <style scoped>
 .container {
   max-width: 1280px;
-  margin: auto; /* Center the container */
+  margin: auto;
+}
+
+nav {
+  border-bottom: 1px solid #e5e7eb; /* Gray-200 */
+}
+
+a {
+  transition: color 0.3s;
+}
+
+a:hover {
+  color: #1d4ed8; /* Blue-700 */
+}
+
+button {
+  transition: color 0.3s;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .container {
-    padding: 0 20px;
-  }
   .hidden {
-    display: none; /* Hide the elements initially */
+    display: none;
   }
   .sm\:hidden {
-    display: block; /* Show the elements for small screens */
+    display: block;
   }
   .sm\:flex {
-    display: none; /* Hide the elements for small screens */
-  }
-  .flex {
-    flex-wrap: wrap; /* Allow items to wrap on small screens */
-    justify-content: center; /* Center items on small screens */
+    display: none;
   }
   .space-x-6 {
-    justify-content: space-around; /* Adjust spacing between items on small screens */
+    justify-content: space-around;
   }
 }
 </style>
