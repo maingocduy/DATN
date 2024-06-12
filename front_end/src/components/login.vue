@@ -2,29 +2,19 @@
   <div
     class="bg-gradient-to-r min-h-screen from-blue-500 to-green-500 flex flex-col justify-center py-12 px-6"
   >
-    <!-- Success Notification -->
-    <div
-      v-if="showSuccessNotification"
-      class="fixed top-0 inset-x-0 p-4 bg-green-500 text-white text-center z-50"
-    >
-      Đặt lại mật khẩu thành công!
-    </div>
-
     <div class="mt-8 sm:mx-auto">
       <div class="bg-white py-8 px-6 shadow sm:rounded-lg sm:px-10">
         <h2 class="text-center text-3xl font-extrabold text-gray-900 mb-6">Đăng nhập</h2>
         <form @submit.prevent="loginAsync" class="max-w-sm mx-auto">
           <div class="mb-5">
             <label for="Username" class="block mb-2 text-sm font-medium text-gray-900"
-              >Tên người dùng</label
+              >Tên đăng nhập</label
             >
             <input
               type="text"
               v-model="username"
               id="Username"
               class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder="name@flowbite.com"
-              required
             />
           </div>
           <div class="mb-5">
@@ -36,7 +26,6 @@
               v-model="password"
               id="password"
               class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              required
             />
           </div>
           <button type="submit" class="btn-submit">Đăng nhập</button>
@@ -61,7 +50,7 @@
         <input
           v-if="!otpSent"
           type="email"
-          v-model="forgotPasswordEmail"
+          v-model="emailInput"
           placeholder="Nhập email của bạn"
           class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4"
         />
@@ -69,7 +58,7 @@
         <input
           v-if="otpSent && !otpVerified"
           type="text"
-          v-model="otp"
+          v-model="otps"
           placeholder="Nhập mã OTP gồm 6 số"
           class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4"
         />
@@ -80,22 +69,19 @@
           <h2 class="text-xl font-bold mb-4">Đặt lại mật khẩu</h2>
           <input
             type="password"
-            v-model="newPassword"
+            v-model="newPass"
             placeholder="Nhập mật khẩu mới"
             class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4"
           />
           <input
             type="password"
-            v-model="confirmNewPassword"
+            v-model="confirmPass"
             placeholder="Xác nhận mật khẩu mới"
             class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4"
           />
           <button @click="resetPasswordAsync" class="btn-submit">Đặt lại mật khẩu</button>
         </div>
-        <button @click="closeForgotPasswordPopup" class="mt-4 text-red-500 hover:underline">
-          Đóng
-        </button>
-        <p>{{ forgotPasswordMessage }}</p>
+        <button @click="closeForgotPassword" class="mt-4 text-red-500 hover:underline">Đóng</button>
       </div>
     </div>
   </div>
@@ -109,8 +95,10 @@ export default {
     return {
       username: '',
       password: '',
-      forgotPasswordEmail: '',
-      otp: ''
+      emailInput: '',
+      otps: '',
+      newPass: '',
+      confirmPass: ''
     }
   },
   computed: {
@@ -128,6 +116,11 @@ export default {
       response: (state) => state.auth.response // Lấy response từ Vuex state
     })
   },
+  watch: {
+    emailInput(newEmail) {
+      this.updateForgotPasswordEmail(newEmail)
+    }
+  },
   methods: {
     ...mapActions([
       'login',
@@ -136,7 +129,8 @@ export default {
       'resetPassword',
       'displaySuccessNotification',
       'openForgotPasswordPopup',
-      'closeForgotPasswordPopup'
+      'closeForgotPasswordPopup',
+      'updateForgotPasswordEmail'
     ]),
     async loginAsync() {
       try {
@@ -144,36 +138,105 @@ export default {
           username: this.username,
           password: this.password
         })
+        console.log(this.response.flag)
         if (this.response.flag) {
           this.$notify({
             type: 'success',
             title: 'Thông báo',
-            text: 'Đăng nhập thành công!'
+            text: this.response.message
           })
           this.$router.push('/blog')
         } else {
           this.$notify({
             type: 'error',
             title: 'Thông báo',
-            text: 'Mật khẩu hoặc tên đăng nhập bị sai!'
+            text: this.response.message || 'Lỗi hệ thống'
           })
         }
       } catch (error) {
-        console.error('Login failed:', error)
         this.$notify({
           type: 'error',
           title: 'Thông báo',
-          text: 'Đã xảy ra lỗi khi đăng nhập!'
+          text: 'Lỗi hệ thống '
         })
       }
     },
     openForgotPassword() {
       this.openForgotPasswordPopup()
     },
+    closeForgotPassword() {
+      this.closeForgotPasswordPopup()
+    },
     async sendForgotPasswordAsync() {
-      await this.sendForgotPassword({
-        email: this.forgotPasswordEmail
-      })
+      try {
+        console.log(this.forgotPasswordEmail)
+        await this.sendForgotPassword({
+          email: this.forgotPasswordEmail
+        })
+        this.$notify({
+          type: 'success',
+          title: 'Thông báo',
+          text: 'Đã gửi mã OTP!'
+        })
+      } catch (error) {
+        const message = error.response?.data.message || 'Đã xảy ra lỗi khi gửi email!'
+        this.$notify({
+          type: 'error',
+          title: 'Thông báo',
+          text: message
+        })
+      }
+    },
+    async verifyOTPAsync() {
+      try {
+        console.log(this.otps)
+        await this.verifyOTP({
+          otp: this.otps
+        })
+        this.$notify({
+          type: 'success',
+          title: 'Thông báo',
+          text: 'Xác thực thành công!'
+        })
+      } catch (error) {
+        const message = error.response?.message
+        this.$notify({
+          type: 'error',
+          title: 'Thông báo',
+          text: message
+        })
+      }
+    },
+    async resetPasswordAsync() {
+      try {
+        console.log(this.otps)
+        await this.resetPassword({
+          email: this.emailInput,
+          otp: this.otps,
+          newPass: this.newPass,
+          confirmPass: this.confirmPass
+        })
+        if (this.forgotPasswordMessage != 'Đặt lại mật khẩu thành công') {
+          this.$notify({
+            type: 'error',
+            title: 'Thông báo',
+            text: this.forgotPasswordMessage
+          })
+        } else {
+          this.$notify({
+            type: 'success',
+            title: 'Thông báo',
+            text: this.forgotPasswordMessage
+          })
+        }
+      } catch (error) {
+        const message = error.response?.message
+        this.$notify({
+          type: 'error',
+          title: 'Thông báo',
+          text: message
+        })
+      }
     }
   }
 }

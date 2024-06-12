@@ -193,8 +193,12 @@ namespace WebApplication3.Service.AccountService
                 {
                     throw new KeyNotFoundException("Email này không tồn tại");
                 }
+                if(string.IsNullOrEmpty(newPass))
+                {
+                    throw new Exception("Nhập thiếu mật khẩu");
+                }
                 var getUserDb = await _AccountRepository.GetAccountsByUserName(getUserIdentity.UserName);
-                await userManager.ChangePasswordAsync(getUserIdentity, getUserDb.Password, newPass);
+                var a =await userManager.ChangePasswordAsync(getUserIdentity, getUserDb.Password, newPass);
                 OTP.IsVerified = true;
                 _AccountRepository.UpdateOtp(OTP);
                 _AccountRepository.UpdatePasswordAccByEmail(email, newPass);

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
+import { Exception } from 'sass'
 
 const authModule = {
   state: () => ({
@@ -40,8 +41,20 @@ const authModule = {
     SET_FORGOT_PASSWORD_MESSAGE(state, message) {
       state.forgotPasswordMessage = message
     },
+    SET_OTP(state, otp) {
+      state.otp = otp
+    },
     SET_OTP_SENT(state, status) {
       state.otpSent = status
+    },
+    SET_OTP_VERIFIED(state, status) {
+      state.otpVerified = status
+    },
+    SET_NEW_PASSWORD(state, password) {
+      state.newPassword = password
+    },
+    SET_CONFIRM_NEW_PASSWORD(state, password) {
+      state.confirmNewPassword = password
     },
     SET_ROLE(state, role) {
       state.role = role
@@ -50,9 +63,6 @@ const authModule = {
     SET_USERNAME(state, username) {
       state.username = username
       Cookies.set('username', username)
-    },
-    SET_OTP_VERIFIED(state, status) {
-      state.otpVerified = status
     },
     SET_SHOW_SUCCESS_NOTIFICATION(state, status) {
       state.showSuccessNotification = status
@@ -68,7 +78,6 @@ const authModule = {
       state.otpVerified = false
       state.newPassword = ''
       state.confirmNewPassword = ''
-      // Reset username and role if needed
       state.username = ''
       state.role = ''
       Cookies.remove('username')
@@ -99,8 +108,9 @@ const authModule = {
       }
     },
 
-    async sendForgotPassword({ commit, state }) {
+    async sendForgotPassword({ commit, state }, { email }) {
       try {
+        commit('SET_FORGOT_PASSWORD_EMAIL', email)
         const response = await axios.post(
           'https://localhost:7188/api/account/forgot',
           JSON.stringify({ email: state.forgotPasswordEmail }),
@@ -110,26 +120,29 @@ const authModule = {
             }
           }
         )
-        commit('SET_FORGOT_PASSWORD_MESSAGE', 'Gửi thành công')
+        commit('SET_FORGOT_PASSWORD_MESSAGE', response)
         commit('SET_OTP_SENT', true)
       } catch (error) {
-        console.error('Forgot password failed:', error)
-        commit('SET_FORGOT_PASSWORD_MESSAGE', error.response.data.title || 'Đã xảy ra lỗi')
+        const message = error.response?.data?.Message || 'Đã xảy ra lỗi'
+        commit('SET_FORGOT_PASSWORD_MESSAGE', message)
+        throw error
       }
     },
-    async verifyOTP({ commit, state }) {
+    async verifyOTP({ commit, state }, { otp }) {
       try {
+        commit('SET_OTP', otp)
         const response = await axios.post('https://localhost:7188/api/account/enter_otp', {
           otp: state.otp
         })
-        console.log(response.data)
+        console.log(response.data.message) // Sửa thành response.data.message
         commit('SET_OTP_VERIFIED', true)
       } catch (error) {
         console.error('Xác thực OTP thất bại:', error)
-        commit('SET_FORGOT_PASSWORD_MESSAGE', error.response.data.title || 'Đã xảy ra lỗi')
       }
     },
-    async resetPassword({ commit, state }) {
+    async resetPassword({ commit, state }, { newPass, confirmPass }) {
+      commit('SET_NEW_PASSWORD', newPass)
+      commit('SET_CONFIRM_NEW_PASSWORD', confirmPass)
       if (state.newPassword !== state.confirmNewPassword) {
         commit('SET_FORGOT_PASSWORD_MESSAGE', 'Mật khẩu không khớp')
         return
@@ -147,7 +160,7 @@ const authModule = {
         commit('SET_SHOW_FORGOT_PASSWORD_POPUP', false)
       } catch (error) {
         console.error('Đặt lại mật khẩu thất bại:', error)
-        commit('SET_FORGOT_PASSWORD_MESSAGE', error.response.data.title || 'Đã xảy ra lỗi')
+        commit('SET_FORGOT_PASSWORD_MESSAGE', error.response.data.message || 'Đã xảy ra lỗi')
       }
     },
     displaySuccessNotification({ commit }) {
@@ -162,6 +175,9 @@ const authModule = {
     closeForgotPasswordPopup({ commit }) {
       commit('RESET_STATE')
       commit('SET_SHOW_FORGOT_PASSWORD_POPUP', false)
+    },
+    updateForgotPasswordEmail({ commit }, email) {
+      commit('SET_FORGOT_PASSWORD_EMAIL', email)
     }
   },
   getters: {

@@ -34,7 +34,7 @@ namespace WebApplication3.Service.AuthService
         public async Task<LoginResponse> login(LoginDTO login)
         {
             if (login == null)
-                return new LoginResponse(false, null!, null!, "Login container is empty",null,null);
+                return new LoginResponse(false, null!, null!, "Nhập thiếu thông tin đăng nhập",null,null);
 
             var getUser = await userManager.FindByNameAsync(login.Username);
             if (getUser is null)

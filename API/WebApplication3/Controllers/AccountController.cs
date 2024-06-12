@@ -58,13 +58,18 @@ namespace WebApplication3.Controllers
         [HttpPost("forgot")]
         public async Task<IActionResult> ForgotPass([FromBody]  ForgetPassDTO forgetPass)
         {
-            try { 
+            try
+            {
                 await accountRepository.ForgotPassword(forgetPass.email);
-                return Ok(new { Message = "Gửi thành công." });            
+                return Ok(new { Message = "Gửi thành công." });
             }
             catch (KeyNotFoundException ex)
             {
-                return NotFound(ex.Message);
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Đã xảy ra lỗi. Vui lòng thử lại sau." });
             }
         }
         [HttpPost("enter_otp")]
@@ -75,9 +80,13 @@ namespace WebApplication3.Controllers
                 await accountRepository.EnterOtp(request.Otp);
                 return Ok("Thành công");
             }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
             catch (Exception ex)
             {
-                return Ok(ex.Message);
+                return StatusCode(500, new { Message =ex.Message });
             }
         }
         [HttpPost("changeForgetPass")]
