@@ -72,7 +72,6 @@ const authModule = {
     },
     RESET_STATE(state) {
       state.forgotPasswordEmail = ''
-      state.forgotPasswordMessage = ''
       state.otp = ''
       state.otpSent = false
       state.otpVerified = false
@@ -120,10 +119,11 @@ const authModule = {
             }
           }
         )
-        commit('SET_FORGOT_PASSWORD_MESSAGE', response)
+        console.log(response.data.message)
+        commit('SET_FORGOT_PASSWORD_MESSAGE', response.data.message)
         commit('SET_OTP_SENT', true)
       } catch (error) {
-        const message = error.response?.data?.Message || 'Đã xảy ra lỗi'
+        const message = error.response?.data?.message || 'Đã xảy ra lỗi'
         commit('SET_FORGOT_PASSWORD_MESSAGE', message)
         throw error
       }
@@ -134,10 +134,13 @@ const authModule = {
         const response = await axios.post('https://localhost:7188/api/account/enter_otp', {
           otp: state.otp
         })
-        console.log(response.data.message) // Sửa thành response.data.message
+        console.log(response.data.message)
+        commit('SET_FORGOT_PASSWORD_MESSAGE', response.data.message)
         commit('SET_OTP_VERIFIED', true)
       } catch (error) {
-        console.error('Xác thực OTP thất bại:', error)
+        const message = error.response?.data?.message || 'Đã xảy ra lỗi'
+        commit('SET_FORGOT_PASSWORD_MESSAGE', message)
+        throw error
       }
     },
     async resetPassword({ commit, state }, { newPass, confirmPass }) {
@@ -153,14 +156,15 @@ const authModule = {
           otp: state.otp,
           Password: state.newPassword
         })
-        console.log(response.data)
-        commit('SET_FORGOT_PASSWORD_MESSAGE', 'Đặt lại mật khẩu thành công')
+        console.log(response.data.message)
+        commit('SET_FORGOT_PASSWORD_MESSAGE', response.data.message)
         commit('SET_SHOW_SUCCESS_NOTIFICATION', true)
         commit('RESET_STATE')
         commit('SET_SHOW_FORGOT_PASSWORD_POPUP', false)
       } catch (error) {
-        console.error('Đặt lại mật khẩu thất bại:', error)
-        commit('SET_FORGOT_PASSWORD_MESSAGE', error.response.data.message || 'Đã xảy ra lỗi')
+        const message = error.response?.data?.message || 'Đã xảy ra lỗi'
+        commit('SET_FORGOT_PASSWORD_MESSAGE', message)
+        throw error
       }
     },
     displaySuccessNotification({ commit }) {

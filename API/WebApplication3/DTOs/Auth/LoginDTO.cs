@@ -4,10 +4,9 @@ namespace WebApplication3.DTOs.Auth
 {
     public class LoginDTO
     {
-        [Required(ErrorMessage = "Username Required")]
-        public string Username { get; set; }
-        [Required(ErrorMessage = "Password Required")]
+
+        public string? Username { get; set; }
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string? Password { get; set; }
     }
 }

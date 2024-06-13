@@ -83,6 +83,8 @@ export default {
   setup() {
     const store = useStore()
     const showDropdown = ref(false)
+    const countdown = ref(0)
+
     onMounted(() => {
       store.dispatch('initializeAuth')
     })
@@ -90,20 +92,32 @@ export default {
     const username = computed(() => store.getters['username'])
     const isAuthenticated = computed(() => store.getters['isAuthenticated'])
 
-    const logout = () => {
-      notify({
+    const logout = async () => {
+      await notify({
         type: 'success',
         title: 'Thông báo',
-        text: 'Đã hiển thị thông báo thành công!'
+        text: 'Đăng xuất thành công!'
       })
-      store.dispatch('logout')
+
+      // Đặt bộ đếm ngược
+      countdown.value = 2
+      const interval = setInterval(() => {
+        if (countdown.value > 0) {
+          countdown.value--
+        } else {
+          clearInterval(interval)
+          location.reload()
+        }
+      }, 1000)
+      await store.dispatch('logout')
     }
 
     return {
       username,
       isAuthenticated,
       showDropdown,
-      logout
+      logout,
+      countdown
     }
   }
 }

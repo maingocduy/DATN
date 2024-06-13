@@ -95,7 +95,7 @@ namespace WebApplication3.Controllers
             try
             {
                 await accountRepository.changeForgetPass(request.Email, request.Password, request.Otp);
-                return Ok(new { Message = "Password changed successfully." });
+                return Ok(new { Message = "Đặt lại mật khẩu thành công" });
             }
             catch (KeyNotFoundException ex)
             {

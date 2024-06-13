@@ -22,13 +22,13 @@
           <h3 class="text-lg font-bold mb-4 text-red-500">Lỗi</h3>
           <p class="text-gray-700 mb-4">{{ registrationMessage }}</p>
           <button
-            @click="showErrorModal = false"
+            @click="closeErrorModal"
             class="absolute top-2 right-2 bg-transparent text-gray-500 hover:text-gray-700 text-xl"
           >
             &times;
           </button>
           <button
-            @click="showErrorModal = false"
+            @click="closeErrorModal"
             class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 w-full"
           >
             Đóng
@@ -39,7 +39,7 @@
 
     <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-8">
       <h2 class="text-center text-3xl font-extrabold text-gray-900 mb-6">Tạo Tài Khoản Mới</h2>
-      <form @submit.prevent="register">
+      <form @submit.prevent="handleRegistration">
         <div class="mb-5">
           <label for="username" class="block mb-2 text-sm font-medium text-gray-900"
             >Tên người dùng *</label
@@ -105,7 +105,8 @@
             v-model="phone"
             id="phone"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Nhập số điện thoại"
+            placeholder="Nhập
+          số điện thoại"
           />
         </div>
         <div class="mb-5">
@@ -133,9 +134,8 @@
     </div>
   </div>
 </template>
-
 <script>
-import axios from 'axios'
+import { mapState, mapMutations, mapActions } from 'vuex'
 
 export default {
   data() {
@@ -146,99 +146,72 @@ export default {
       name: '',
       email: '',
       phone: '',
-      groupName: '',
-      groups: [],
-      registrationMessage: '',
-      showSuccessNotification: false,
-      showErrorModal: false
+      groupName: ''
+    }
+  },
+  computed: {
+    ...mapState({
+      username: (state) => state.register.username,
+      password: (state) => state.register.password,
+      confirmPassword: (state) => state.register.confirmPassword,
+      name: (state) => state.register.name,
+      email: (state) => state.register.email,
+      phone: (state) => state.register.phone,
+      group_name: (state) => state.register.groupName,
+      groups: (state) => state.register.groups,
+      registrationMessage: (state) => state.register.registrationMessage,
+      showSuccessNotification: (state) => state.register.showSuccessNotification,
+      showErrorModal: (state) => state.register.showErrorModal,
+      response: (state) => state.register.response
+    })
+  },
+  methods: {
+    ...mapMutations([
+      'SET_REGISTRATION_MESSAGE',
+      'SET_SHOW_SUCCESS_NOTIFICATION',
+      'SET_SHOW_ERROR_MODAL'
+    ]),
+    ...mapActions(['fetchGroups', 'register']),
+    closeErrorModal() {
+      this.SET_SHOW_ERROR_MODAL(false)
+    },
+    async handleRegistration() {
+      try {
+        await this.register({
+          username: this.username,
+          password: this.password,
+          confirmPassword: this.confirmPassword,
+          email: this.email,
+          phone: this.phone,
+          group_name: this.groupName,
+          name: this.name
+        })
+        if (this.response.flag) {
+          this.$notify({
+            type: 'success',
+            title: 'Thông báo',
+            text: this.response.message
+          })
+          this.$router.push('/blog')
+        } else {
+          this.$notify({
+            type: 'error',
+            title: 'Thông báo',
+            text: this.response.message
+          })
+        }
+      } catch (error) {
+        console.error('Error registering:', error)
+        // Handle error display here if needed
+      }
     }
   },
   created() {
     this.fetchGroups()
-  },
-  methods: {
-    async fetchGroups() {
-      try {
-        const response = await axios.get('https://localhost:7188/api/Group')
-        this.groups = response.data
-      } catch (error) {
-        console.error('Không thể lấy danh sách nhóm:', error)
-      }
-    },
-    async register() {
-      console.log(this.username)
-      console.log(this.password)
-      console.log(this.confirmPassword)
-      console.log(this.email)
-      console.log(this.phone)
-      console.log(this.groupName)
-      if (
-        !this.username ||
-        !this.password ||
-        !this.confirmPassword ||
-        !this.email ||
-        !this.phone ||
-        !this.groupName
-      ) {
-        this.registrationMessage = 'Vui lòng điền đầy đủ thông tin các trường bắt buộc'
-        this.showErrorModal = true
-        return
-      }
-
-      if (!this.isValidEmail(this.email)) {
-        this.registrationMessage = 'Định dạng email không hợp lệ'
-        this.showErrorModal = true
-        return
-      }
-
-      if (!this.isValidPhone(this.phone)) {
-        this.registrationMessage = 'Định dạng số điện thoại không hợp lệ'
-        this.showErrorModal = true
-        return
-      }
-
-      if (this.password !== this.confirmPassword) {
-        this.registrationMessage = 'Mật khẩu không khớp'
-        this.password = ''
-        this.confirmPassword = ''
-        this.showErrorModal = true
-        return
-      }
-
-      try {
-        const response = await axios.post('https://localhost:7188/api/Auth/Register', {
-          username: this.username,
-          password: this.password,
-          confirmPassword: this.confirmPassword,
-          name: this.name,
-          email: this.email,
-          phone: this.phone,
-          group_Name: this.groupName
-        })
-
-        this.registrationMessage = ''
-        this.showSuccessNotification = true
-        setTimeout(() => {
-          this.showSuccessNotification = false
-        }, 3000)
-      } catch (error) {
-        console.error('Đăng ký thất bại:', error)
-        this.registrationMessage = error.response.data.title || 'Đăng ký thất bại'
-        this.showErrorModal = true
-      }
-    },
-    isValidEmail(email) {
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
-      return emailPattern.test(email)
-    },
-    isValidPhone(phone) {
-      const phonePattern = /^[0-9]{10,11}$/
-      return phonePattern.test(phone)
-    }
+    console.log(this.groups)
   }
 }
 </script>
-
 <style scoped>
 /* CSS tùy chỉnh cho các thành phần */
 .fade-enter-active,

@@ -1,41 +1,35 @@
 <template>
   <div
-    class="bg-gradient-to-r min-h-screen from-blue-500 to-green-500 flex flex-col justify-center py-12 px-6"
+    class="bg-gradient-to-r from-blue-500 to-green-500 min-h-screen flex items-center justify-center"
   >
-    <div class="mt-8 sm:mx-auto">
-      <div class="bg-white py-8 px-6 shadow sm:rounded-lg sm:px-10">
-        <h2 class="text-center text-3xl font-extrabold text-gray-900 mb-6">Đăng nhập</h2>
-        <form @submit.prevent="loginAsync" class="max-w-sm mx-auto">
-          <div class="mb-5">
-            <label for="Username" class="block mb-2 text-sm font-medium text-gray-900"
+    <div
+      class="flex flex-row bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300"
+    >
+      <div class="flex-1 p-8 md:p-16">
+        <h2 class="text-3xl font-extrabold text-gray-900 mb-6 text-center">Đăng nhập</h2>
+        <form @submit.prevent="loginAsync" class="space-y-6">
+          <div>
+            <label for="Username" class="block text-sm font-medium text-gray-700"
               >Tên đăng nhập</label
             >
-            <input
-              type="text"
-              v-model="username"
-              id="Username"
-              class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
+            <input type="text" v-model="username" id="Username" class="input-field mt-1" />
           </div>
-          <div class="mb-5">
-            <label for="password" class="block mb-2 text-sm font-medium text-gray-900"
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-700"
               >Mật khẩu của bạn</label
             >
-            <input
-              type="password"
-              v-model="password"
-              id="password"
-              class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            />
+            <input type="password" v-model="password" id="password" class="input-field mt-1" />
           </div>
-          <button type="submit" class="btn-submit">Đăng nhập</button>
-          <button
-            type="button"
-            @click="openForgotPasswordPopup"
-            class="text-blue-500 hover:underline mt-2 block"
-          >
-            Quên mật khẩu?
-          </button>
+          <div class="items-center justify-between">
+            <button type="submit" class="btn-submit">Đăng nhập</button>
+            <button
+              type="button"
+              @click="openForgotPasswordPopup"
+              class="text-sm w-full mt-3 text-blue-600 hover:underline"
+            >
+              Quên mật khẩu?
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -45,43 +39,48 @@
       v-if="showForgotPasswordPopup"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     >
-      <div class="bg-white p-8 rounded-lg shadow-lg">
-        <h2 class="text-xl font-bold mb-4">Nhập Email</h2>
-        <input
-          v-if="!otpSent"
-          type="email"
-          v-model="emailInput"
-          placeholder="Nhập email của bạn"
-          class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4"
-        />
-        <button v-if="!otpSent" @click="sendForgotPasswordAsync" class="btn-submit">Gửi OTP</button>
-        <input
-          v-if="otpSent && !otpVerified"
-          type="text"
-          v-model="otps"
-          placeholder="Nhập mã OTP gồm 6 số"
-          class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4"
-        />
-        <button v-if="otpSent && !otpVerified" @click="verifyOTPAsync" class="btn-submit">
-          Xác thực OTP
-        </button>
-        <div v-if="otpVerified">
-          <h2 class="text-xl font-bold mb-4">Đặt lại mật khẩu</h2>
+      <div class="bg-white w-full max-w-md p-8 rounded-lg shadow-lg">
+        <h2 class="text-xl font-bold mb-4 text-center" v-if="!otpSent">Nhập Email</h2>
+        <h2 class="text-xl font-bold mb-4 text-center" v-else-if="!otpVerified">Nhập OTP</h2>
+        <h2 class="text-xl font-bold mb-4 text-center" v-else>Đặt lại mật khẩu</h2>
+
+        <div v-if="!otpSent">
+          <input
+            type="email"
+            v-model="emailInput"
+            placeholder="Nhập email của bạn"
+            class="input-field mb-4"
+          />
+          <button @click="sendForgotPasswordAsync" class="btn-submit w-full">Gửi OTP</button>
+        </div>
+
+        <div v-else-if="otpSent && !otpVerified">
+          <input
+            type="text"
+            v-model="otps"
+            placeholder="Nhập mã OTP gồm 6 số"
+            class="input-field mb-4"
+          />
+          <button @click="verifyOTPAsync" class="btn-submit w-full">Xác thực OTP</button>
+        </div>
+
+        <div v-else>
           <input
             type="password"
             v-model="newPass"
             placeholder="Nhập mật khẩu mới"
-            class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4"
+            class="input-field mb-4"
           />
           <input
             type="password"
             v-model="confirmPass"
             placeholder="Xác nhận mật khẩu mới"
-            class="input-field bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 mb-4"
+            class="input-field mb-4"
           />
-          <button @click="resetPasswordAsync" class="btn-submit">Đặt lại mật khẩu</button>
+          <button @click="resetPasswordAsync" class="btn-submit w-full">Đặt lại mật khẩu</button>
         </div>
-        <button @click="closeForgotPassword" class="mt-4 text-red-500 hover:underline">Đóng</button>
+
+        <button @click="closeForgotPassword" class="btn-close mt-4 w-full">Đóng</button>
       </div>
     </div>
   </div>
@@ -166,6 +165,10 @@ export default {
     },
     closeForgotPassword() {
       this.closeForgotPasswordPopup()
+      this.emailInput = ''
+      this.otps = ''
+      this.newPass = ''
+      this.confirmPass = ''
     },
     async sendForgotPasswordAsync() {
       try {
@@ -176,10 +179,11 @@ export default {
         this.$notify({
           type: 'success',
           title: 'Thông báo',
-          text: 'Đã gửi mã OTP!'
+          text: this.forgotPasswordMessage
         })
       } catch (error) {
         const message = error.response?.data.message || 'Đã xảy ra lỗi khi gửi email!'
+        console.log(message)
         this.$notify({
           type: 'error',
           title: 'Thông báo',
@@ -199,7 +203,8 @@ export default {
           text: 'Xác thực thành công!'
         })
       } catch (error) {
-        const message = error.response?.message
+        const message = error.response?.data.message
+        console.log(message)
         this.$notify({
           type: 'error',
           title: 'Thông báo',
@@ -216,21 +221,23 @@ export default {
           newPass: this.newPass,
           confirmPass: this.confirmPass
         })
-        if (this.forgotPasswordMessage != 'Đặt lại mật khẩu thành công') {
-          this.$notify({
-            type: 'error',
-            title: 'Thông báo',
-            text: this.forgotPasswordMessage
-          })
-        } else {
+        console.log(this.forgotPasswordMessage)
+        if (this.forgotPasswordMessage == 'Đặt lại mật khẩu thành công') {
           this.$notify({
             type: 'success',
             title: 'Thông báo',
             text: this.forgotPasswordMessage
           })
+        } else {
+          this.$notify({
+            type: 'error',
+            title: 'Thông báo',
+            text: this.forgotPasswordMessage
+          })
         }
+        this.forgotPasswordMessage = ''
       } catch (error) {
-        const message = error.response?.message
+        const message = error.response?.data.message
         this.$notify({
           type: 'error',
           title: 'Thông báo',
@@ -245,16 +252,19 @@ export default {
 <style scoped>
 .input-field {
   border: 1px solid #d1d5db;
-  padding: 8px;
+  padding: 10px;
   width: 100%;
   box-sizing: border-box;
   border-radius: 4px;
-  transition: border-color 0.3s;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 
 .input-field:focus {
   outline: none;
   border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 
 .btn-submit {
@@ -264,10 +274,36 @@ export default {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition:
+    background-color 0.3s,
+    transform 0.3s;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
 }
 
 .btn-submit:hover {
   background-color: #2563eb;
+  transform: translateY(-2px);
+}
+
+.btn-close {
+  background-color: #ec2121;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    transform 0.3s;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
+
+.btn-close:hover {
+  background-color: rgb(240 82 82);
+  transform: translateY(-2px);
 }
 </style>
