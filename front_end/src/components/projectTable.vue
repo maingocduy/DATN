@@ -42,7 +42,7 @@
               </a>
               <div class="p-6">
                 <a :href="'/project/' + project.name">
-                  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+                  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
                     {{ project.name }}
                   </h5>
                 </a>
