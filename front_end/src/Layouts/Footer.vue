@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-white dark:bg-gray-800">
+  <footer class="bg-white bottom-0 dark:bg-gray-800">
     <!-- Thêm class flex-shrink-0 để footer không bị co lại khi nội dung ít -->
     <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
       <div class="md:flex md:justify-between">

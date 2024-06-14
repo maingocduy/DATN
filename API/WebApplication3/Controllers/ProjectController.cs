@@ -1,12 +1,15 @@
 ﻿using K4os.Compression.LZ4.Internal;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
+using WebApplication3.DTOs.Blog;
 using WebApplication3.DTOs.Project;
 using WebApplication3.DTOs.Sponsor;
 using WebApplication3.Entities;
 using WebApplication3.repository.AccountRepository;
 using WebApplication3.Service.AccountService;
+using WebApplication3.Service.BlogService;
 using WebApplication3.Service.MemberService;
 using WebApplication3.Service.ProjectService;
 using WebApplication3.Service.SponsorService;
@@ -22,16 +25,22 @@ namespace WebApplication3.Controllers
         {
             this.IProjectService = IProjectService;
         }
-        [HttpGet]
+        [HttpGet("get_all_project"), Authorize]
         public async Task<IActionResult> GetAllProject([FromQuery] int pageNumber = 1)
         {
             var result = await IProjectService.GetAllProject(pageNumber);
-            return Ok(new { projects = result.Projects, totalPages = result.TotalPages });
+            return Ok(new { projects = result.Data, totalPages = result.TotalPages });
+        }
+        [HttpGet("get_all_project_aprove")]
+        public async Task<IActionResult> GetAllProjectAprove([FromQuery] int pageNumber = 1)
+        {
+            var result = await IProjectService.GetAllProjectAprove(pageNumber);
+            return Ok(new { projects = result.Data, totalPages = result.TotalPages });
         }
         [HttpPost("get_project")]
         public async Task<ActionResult<Project>> GetProject([FromBody]GetProjectRequest request)
         {
-            var pro = await IProjectService.GetProjectsByName(request.ProjectName,request.GroupId);
+            var pro = await IProjectService.GetProjectsByName(request.ProjectName);
             return Ok(pro);
         }
         [HttpDelete("{name}")]
@@ -65,6 +74,23 @@ namespace WebApplication3.Controllers
             {
                 return StatusCode(500, $"Error updating project: {ex.Message}");
             };
+        }
+        [HttpPost("update_status"), Authorize]
+        public async Task<IActionResult> UpdateStatus(updateStatusRequest request)
+        {
+            try
+            {
+                await IProjectService.UpdateStatus(request);
+                return Ok(new { Message = "Duyệt thành công" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
 
     }

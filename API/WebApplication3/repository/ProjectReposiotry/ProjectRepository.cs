@@ -17,10 +17,13 @@ namespace WebApplication3.repository.ProjectReposiotry
     {
         Task AddProject(ProjectDTO project);
         Task DeleteProject(string name);
-        Task<ProjectDTO> GetProject(string name, int? groupId = null);
+        Task<ProjectDTO> GetProject(string name);
         Task UpdateProject(ProjectDTO project);
         Task<PagedResult<ProjectDTO>> GetAllProject(int pageNumber = 1);
         Task<ProjectDTO> GetProjectID(string name);
+        Task UpdateStatus(sbyte status, int id);
+
+        Task<PagedResult<ProjectDTO>> GetAllProjectAprove(int pageNumber = 1);
     }
     public class ProjectRepository : IProjectRepository
     {
@@ -156,13 +159,91 @@ LIMIT @pageSize OFFSET @offset;
 
             return new PagedResult<ProjectDTO>
             {
-                Projects = projects,
+                Data = projects,
+                TotalPages = totalPages
+            };
+        }
+        public async Task<PagedResult<ProjectDTO>> GetAllProjectAprove(int pageNumber = 1)
+        {
+            using var connection = _context.CreateConnection();
+            int pageSize = 6;
+            // Tính toán offset
+            var offset = (pageNumber - 1) * pageSize;
+
+            // Câu lệnh SQL mới
+            var dtoSql = @"
+SELECT p.*, m.*, g.*, s.*, i.*
+FROM Projects AS p
+LEFT JOIN MemberProjects AS mp ON p.Project_id = mp.Project_id
+LEFT JOIN Members AS m ON mp.Member_id = m.Member_id
+LEFT JOIN `Groups` AS g ON m.Group_id = g.Group_id
+LEFT JOIN ProjectSponsor AS ps ON p.Project_id = ps.Project_id
+LEFT JOIN sponsor AS s ON ps.Sponsor_id = s.Sponsor_id
+LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id WHERE p.status =1
+LIMIT @pageSize OFFSET @offset;
+";
+
+            // Thực hiện truy vấn
+            var projectsQuery = await connection.QueryAsync<ProjectDTO, MemberDTO, Group, SponsorDTO, ImageDtos, ProjectDTO>(
+                dtoSql,
+                (project, member, group, sponsor, image) =>
+                {
+                    project.Member ??= new List<MemberDTO>();
+                    project.Sponsor ??= new List<SponsorDTO>();
+                    project.images ??= new List<ImageDtos>();
+
+                    if (member != null)
+                    {
+                        project.Member.Add(member);
+                        member.groups = group;
+                    }
+                    if (sponsor != null)
+                    {
+                        project.Sponsor.Add(sponsor);
+                    }
+                    if (image != null)
+                    {
+                        project.images.Add(image);
+                    }
+                    return project;
+                },
+                new { pageSize, offset },
+                splitOn: "Member_id,Group_id,Sponsor_id,image_id");
+
+            var projects = projectsQuery.GroupBy(p => p.Project_id).Select(group =>
+            {
+                var groupedProject = group.First();
+
+                if (groupedProject.Member != null && groupedProject.Member.Any())
+                {
+                    groupedProject.Member = group.Select(p => p.Member.FirstOrDefault()).ToList();
+                }
+                if (groupedProject.Sponsor != null && groupedProject.Sponsor.Any())
+                {
+                    groupedProject.Sponsor = group.Select(p => p.Sponsor.FirstOrDefault()).ToList();
+                }
+                if (groupedProject.images != null && groupedProject.images.Any())
+                {
+                    groupedProject.images = group.Select(p => p.images.FirstOrDefault()).ToList();
+                }
+                return groupedProject;
+            }).ToList();
+
+            // Lấy tổng số dự án
+            var countSql = "SELECT COUNT(*) FROM Projects";
+            var totalCount = await connection.ExecuteScalarAsync<int>(countSql);
+
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return new PagedResult<ProjectDTO>
+            {
+                Data = projects,
                 TotalPages = totalPages
             };
         }
 
 
-        public async Task<ProjectDTO> GetProject(string name, int? groupId = null)
+        public async Task<ProjectDTO> GetProject(string name)
         {
             using var connection = _context.CreateConnection();
 
@@ -186,11 +267,6 @@ WHERE
     p.Name = @ProjectName";
 
             // Nếu có GroupId, thêm điều kiện lọc cho Members
-            if (groupId.HasValue)
-            {
-                dtoSql += " AND m.Member_id IN (SELECT Member_id FROM Members WHERE Group_id = @GroupId)";
-            }
-
             // Thực hiện truy vấn
             var projectQuery = await connection.QueryAsync<ProjectDTO, MemberDTO, Group, SponsorDTO, ImageDtos, ProjectDTO>(
                 dtoSql,
@@ -218,7 +294,7 @@ WHERE
 
                     return project;
                 },
-                new { ProjectName = name, GroupId = groupId }, // Đối tượng ẩn danh với tên dự án và GroupId nếu có
+                new { ProjectName = name}, // Đối tượng ẩn danh với tên dự án và GroupId nếu có
                 splitOn: "Member_id,Group_id,Sponsor_id,image_id");
 
             // Lấy dự án đầu tiên hoặc trả về null nếu không có kết quả
@@ -262,6 +338,17 @@ WHERE
             // Thực hiện cập nhật
             await connection.ExecuteAsync(sql, project);
 
+        }
+
+        public async Task UpdateStatus(sbyte status, int id)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = "UPDATE Projects SET status = @status Where Project_id = @id";
+            await connection.ExecuteAsync(sql, new
+            {
+                status = status,
+                id = id
+            });
         }
     }
 }

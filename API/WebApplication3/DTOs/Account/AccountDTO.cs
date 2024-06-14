@@ -8,8 +8,7 @@ namespace WebApplication3.DTOs.Account
     public class AccountDTO
     {
         public string Username { get; set; }
-        
-        
+        [JsonIgnore]        
         public string Password { get; set; }
 
         public MemberDTO Member { get; set; } = new MemberDTO();

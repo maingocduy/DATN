@@ -8,6 +8,7 @@ using WebApplication3.DTOs.Project;
 using WebApplication3.DTOs.Sponsor;
 using WebApplication3.Entities;
 using WebApplication3.Helper.Data;
+using static System.Net.WebRequestMethods;
 
 namespace WebApplication3.repository.BlogRepository
 {
@@ -18,7 +19,8 @@ namespace WebApplication3.repository.BlogRepository
         Task<BlogDTO> GetBlogsByTitle(string title);
         Task UpdateBlog(BlogDTO blog);
         Task DeleteBlog(BlogDTO blog);
-
+        Task<List<BlogDTO>> GetAllBlogsTrue();
+        Task UpdateStatus(bool Approved, int id);
         Task AddBlog(int id, BlogDTO blog);
     }
     public class BlogRepository : IBlogRepository
@@ -50,16 +52,23 @@ namespace WebApplication3.repository.BlogRepository
         {
             throw new NotImplementedException();
         }
-
+        public async Task UpdateStatus(bool Approved, int id)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = "UPDATE Blog SET Approved = @Approved Where Blog_id = @id";
+            await connection.ExecuteAsync(sql, new
+            {
+                Approved = Approved,
+                id = id
+            });
+        }
         public async Task<List<BlogDTO>> GetAllBlogs()
         {
             using var connection = _context.CreateConnection();
-            var sql = """
-        SELECT b.*, a.*
-        FROM account 
-        FROM Blog AS b
-        LEFT JOIN account AS a ON b.Account_id = a.Account_id;
-        """;
+            var sql = @"
+    SELECT b.*, a.*
+    FROM Blog AS b
+    LEFT JOIN account AS a ON b.Account_id = a.Account_id";
             var blog = await connection.QueryAsync<BlogDTO, AccountDTO,BlogDTO>(
         sql,
         (blog, account) =>
@@ -72,6 +81,25 @@ namespace WebApplication3.repository.BlogRepository
             return blog.ToList();
         }
 
+        public async Task<List<BlogDTO>> GetAllBlogsTrue()
+        {
+            using var connection = _context.CreateConnection();
+            var sql = @"
+    SELECT b.*, a.*
+    FROM Blog AS b
+    LEFT JOIN account AS a ON b.Account_id = a.Account_id
+    WHERE Approved = true";
+            var blog = await connection.QueryAsync<BlogDTO, AccountDTO, BlogDTO>(
+        sql,
+        (blog, account) =>
+        {
+            blog.account = account;
+            return blog;
+        },
+        splitOn: "Account_id"
+    );
+            return blog.ToList();
+        }
         public async Task<BlogDTO> GetBlog(int id)
         {
 

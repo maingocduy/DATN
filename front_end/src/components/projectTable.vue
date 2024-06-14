@@ -136,7 +136,7 @@ export default {
       this.loading = true
       try {
         const response = await axios.get(
-          `https://localhost:7188/api/Project?pageNumber=${this.pageNumber}`
+          `https://localhost:7188/api/Project/get_all_project_aprove?pageNumber=${this.pageNumber}`
         )
         this.projects = response.data.projects.map((project) => {
           return {

@@ -19,10 +19,16 @@ namespace WebApplication3.Controllers
         {
             this.IBlogService = IBlogService;
         }
-        [HttpGet]
+        [HttpGet("all_blog"), Authorize]
         public async Task<ActionResult<List<blog>>> GetAllBlog()
         {
             var blog = await IBlogService.GetAllBlog();
+            return Ok(blog);
+        }
+        [HttpGet("all_blog_approve")]
+        public async Task<ActionResult<List<blog>>> GetAllBlogApprove()
+        {
+            var blog = await IBlogService.GetAllBlogTrue();
             return Ok(blog);
         }
         [HttpPost, Authorize]
@@ -38,6 +44,24 @@ namespace WebApplication3.Controllers
             {
                 return StatusCode(500, $"Error Created project: {ex.Message}");
             };
+        }
+
+        [HttpPost("update_status"), Authorize]
+        public async Task<IActionResult> UpdateStatus(updateApprovedRequest request)
+        {
+            try
+            {
+                await IBlogService.UpdateStatus(request);
+                return Ok(new { Message = "Duyệt thành công" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
         }
     }
 }

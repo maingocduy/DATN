@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.OpenApi.Writers;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Auth;
 using WebApplication3.DTOs.Blog;
@@ -44,7 +45,8 @@ namespace WebApplication3.Helper
           .ForMember(dest => dest.email, opt => opt.MapFrom(src => src.Email))
               .ForMember(dest => dest.phone, opt => opt.MapFrom(src => src.Phone))
           .ForMember(dest => dest.groups, opt => opt.MapFrom(src => new Group { group_name = src.group_name }));
-            CreateMap<blog, BlogDTO>();
+            CreateMap<blog, BlogDTO>()
+                .ForMember(dest => dest.Blog_id, opt => opt.MapFrom(src => src.Blog_id));
             CreateMap<CreateRequestBLogDTO, BlogDTO>();
 
         }

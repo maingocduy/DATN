@@ -42,7 +42,7 @@
     "js-cookie": "^3.0.5",
     "jwt-decode": "^4.0.0",
     "primeicons": "^7.0.0",
-    "primevue": "^3.52.0",
+    "primevue": "^4.0.0-rc.1",
     "remixicon": "^4.2.0",
     "vue": "^3.4.21",
     "vue-router": "^4.3.0",

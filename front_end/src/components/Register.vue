@@ -48,7 +48,7 @@
             type="text"
             v-model="username"
             id="username"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            class="input-field"
             placeholder="Nhập tên người dùng"
           />
         </div>
@@ -60,7 +60,7 @@
             type="password"
             v-model="password"
             id="password"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            class="input-field"
             placeholder="Nhập mật khẩu"
           />
         </div>
@@ -72,7 +72,7 @@
             type="password"
             v-model="confirmPassword"
             id="confirmPassword"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            class="input-field"
             placeholder="Xác nhận mật khẩu"
           />
         </div>
@@ -82,7 +82,7 @@
             type="text"
             v-model="name"
             id="name"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            class="input-field"
             placeholder="Nhập họ và tên"
           />
         </div>
@@ -92,7 +92,7 @@
             type="text"
             v-model="email"
             id="email"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            class="input-field"
             placeholder="Nhập email"
           />
         </div>
@@ -104,9 +104,8 @@
             type="tel"
             v-model="phone"
             id="phone"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-            placeholder="Nhập
-          số điện thoại"
+            class="input-field"
+            placeholder="Nhập số điện thoại"
           />
         </div>
         <div class="mb-5">
@@ -116,26 +115,28 @@
           <select
             v-model="groupName"
             id="groupName"
-            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+            class="custom-select bg-gray-50 border text-sm font-medium border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
           >
-            <option disabled value="">Vui lòng chọn nghề nghiệp của bạn</option>
-            <option v-for="group in groups" :key="group.id" :value="group.group_name">
+            <option class="text-lg font-medium text-gray-900" disabled value="">
+              Vui lòng chọn nghề nghiệp của bạn
+            </option>
+            <option
+              class="text-lg font-medium text-gray-900"
+              v-for="group in groups"
+              :key="group.id"
+              :value="group.group_name"
+            >
               {{ group.group_name }}
             </option>
           </select>
         </div>
-        <button
-          type="submit"
-          class="text-white bg-gradient-to-r from-blue-600 to-blue-800 hover:from-blue-700 hover:to-blue-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full px-5 py-2.5 text-center"
-        >
-          Đăng ký
-        </button>
+        <button type="submit" class="btn-submit">Đăng ký</button>
       </form>
     </div>
   </div>
 </template>
 <script>
-import { mapState, mapMutations, mapActions } from 'vuex'
+import { mapState, mapActions, mapMutations } from 'vuex'
 
 export default {
   data() {
@@ -151,13 +152,6 @@ export default {
   },
   computed: {
     ...mapState({
-      username: (state) => state.register.username,
-      password: (state) => state.register.password,
-      confirmPassword: (state) => state.register.confirmPassword,
-      name: (state) => state.register.name,
-      email: (state) => state.register.email,
-      phone: (state) => state.register.phone,
-      group_name: (state) => state.register.groupName,
       groups: (state) => state.register.groups,
       registrationMessage: (state) => state.register.registrationMessage,
       showSuccessNotification: (state) => state.register.showSuccessNotification,
@@ -166,12 +160,8 @@ export default {
     })
   },
   methods: {
-    ...mapMutations([
-      'SET_REGISTRATION_MESSAGE',
-      'SET_SHOW_SUCCESS_NOTIFICATION',
-      'SET_SHOW_ERROR_MODAL'
-    ]),
     ...mapActions(['fetchGroups', 'register']),
+    ...mapMutations(['SET_SHOW_ERROR_MODAL']),
     closeErrorModal() {
       this.SET_SHOW_ERROR_MODAL(false)
     },
@@ -192,7 +182,7 @@ export default {
             title: 'Thông báo',
             text: this.response.message
           })
-          this.$router.push('/blog')
+          this.$router.push('/login')
         } else {
           this.$notify({
             type: 'error',
@@ -208,43 +198,68 @@ export default {
   },
   created() {
     this.fetchGroups()
-    console.log(this.groups)
   }
 }
 </script>
+
 <style scoped>
-/* CSS tùy chỉnh cho các thành phần */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter, .fade-leave-to /* .fade-leave-active in <2.1.8 */ {
-  opacity: 0;
-}
-
-.fixed.inset-0.flex.items-center.justify-center.z-50.bg-black.bg-opacity-50 {
-  backdrop-filter: blur(5px);
+.input-field {
+  border: 1px solid #d1d5db;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 4px;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
 }
 
-.bg-white.p-6.rounded-lg.shadow-lg.w-96.relative {
-  animation: scaleUp 0.3s ease-in-out;
+.input-field:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
 }
 
-@keyframes scaleUp {
-  0% {
-    transform: scale(0.8);
-  }
-  100% {
-    transform: scale(1);
-  }
+.custom-select {
+  border: 1px solid #d1d5db;
+  padding: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 4px;
+  transition:
+    border-color 0.3s,
+    box-shadow 0.3s;
+  font-size: 1rem; /* Increase font size */
 }
 
-.absolute.top-2.right-2.bg-transparent.text-gray-500.hover\:text-gray-700.text-xl {
+.custom-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+.custom-select option {
+  padding: 10px;
+  font-size: 1rem; /* Increase font size */
+}
+
+.btn-submit {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
   cursor: pointer;
-  font-weight: bold;
+  transition:
+    background-color 0.3s,
+    transform 0.3s;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
 }
 
-.bg-red-500.text-white.px-4.py-2.rounded.hover\:bg-red-600.w-full {
-  transition: background-color 0.3s ease;
+.btn-submit:hover {
+  background-color: #2563eb;
+  transform: translateY(-2px);
 }
 </style>

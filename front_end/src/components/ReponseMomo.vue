@@ -1,20 +1,28 @@
 <template>
-  <div class="container mx-auto mt-8">
-    <div class="max-w-md mx-auto">
-      <h1 class="text-3xl font-bold mb-4">{{ Alert }}</h1>
+  <div class="container mx-auto mt-12 px-4">
+    <div class="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
+      <h1 class="text-3xl font-bold mb-6 text-center text-gray-800">{{ Alert }}</h1>
       <div v-if="loading" class="text-center">
         <p>Loading...</p>
       </div>
       <div v-else>
-        <div v-if="error" class="text-red-500 mb-4">
+        <div v-if="error" class="text-red-500 mb-6 text-center">
           <p>{{ error }}</p>
         </div>
         <div v-else>
-          <div v-if="responseData" class="mb-4">
-            <p class="font-bold">Tên người thanh toán: {{ responseData.extraData }}</p>
-            <p class="font-bold">Nội dung thanh toán: {{ responseData.orderInfo }}</p>
-            <p class="font-bold">Số tiền thanh toán: {{ responseData.amount }}</p>
-            <p class="font-bold">Mã đơn hàng: {{ responseData.orderId }}</p>
+          <div v-if="responseData" class="space-y-4">
+            <p class="font-semibold text-lg text-gray-700">
+              Tên người thanh toán: <span class="font-normal">{{ responseData.extraData }}</span>
+            </p>
+            <p class="font-semibold text-lg text-gray-700">
+              Nội dung thanh toán: <span class="font-normal">{{ responseData.orderInfo }}</span>
+            </p>
+            <p class="font-semibold text-lg text-gray-700">
+              Số tiền thanh toán: <span class="font-normal">{{ responseData.amount }}</span>
+            </p>
+            <p class="font-semibold text-lg text-gray-700">
+              Mã đơn hàng: <span class="font-normal">{{ responseData.orderId }}</span>
+            </p>
             <!-- Thêm các thông tin khác cần hiển thị từ responseData -->
           </div>
         </div>
@@ -22,10 +30,9 @@
     </div>
   </div>
 </template>
-
 <script>
 import axios from 'axios'
-import Toasted from 'vue-toasted' // Import Toasted
+import Toasted from 'vue-toasted'
 
 export default {
   data() {
@@ -37,12 +44,11 @@ export default {
     }
   },
   mounted() {
-    this.getData() // Khởi tạo Toasted
+    this.getData()
   },
   methods: {
     async getData() {
       try {
-        // Lấy thông tin từ query params
         const {
           partnerCode,
           accessKey,
@@ -62,7 +68,6 @@ export default {
           storeId
         } = this.$route.query
 
-        // Lưu thông tin vào biến responseData
         this.responseData = {
           partnerCode,
           accessKey,
@@ -85,9 +90,15 @@ export default {
         console.log(this.responseData)
 
         if (this.responseData.localMessage === 'Dữ liệu sai định dạng') {
-          this.Alert = 'Đã hủy thanh toán'
+          this.$notify({
+            type: 'error',
+            title: 'Thông báo',
+            text: 'Đã hủy thanh toán'
+          })
+          setTimeout(() => {
+            this.$router.push({ path: `/project/${this.responseData.storeId}` })
+          }, 2000)
         } else {
-          this.Alert = 'Đóng góp thành công'
           await axios.post(`api/Sponsor/${this.responseData.storeId}`, {
             name: this.responseData.extraData,
             contact: localStorage.getItem('email'),
@@ -96,9 +107,13 @@ export default {
           })
           localStorage.removeItem('email')
           localStorage.removeItem('address')
+          this.$notify({
+            type: 'success',
+            title: 'Thông báo',
+            text: this.response.localMessage
+          })
         }
       } catch (error) {
-        // Xử lý lỗi nếu có
         this.error = 'Có lỗi xảy ra khi lấy dữ liệu từ URL.'
         console.error('Error fetching data from URL:', error)
       }
@@ -106,7 +121,9 @@ export default {
   }
 }
 </script>
-
-<style>
+<style scoped>
 /* Thêm bất kỳ luật CSS tùy chỉnh nào bạn muốn ở đây */
+body {
+  background-color: #f3f4f6;
+}
 </style>

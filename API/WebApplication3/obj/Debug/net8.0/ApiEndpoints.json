@@ -226,8 +226,24 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.BlogController",
-    "Method": "GetAllBlog",
+    "Method": "AddBlog",
     "RelativePath": "api/Blog",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createBlog",
+        "Type": "WebApplication3.DTOs.Blog.CreateRequestBLogDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.BlogController",
+    "Method": "GetAllBlog",
+    "RelativePath": "api/Blog/all_blog",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
@@ -246,15 +262,35 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.BlogController",
-    "Method": "AddBlog",
-    "RelativePath": "api/Blog",
+    "Method": "GetAllBlogApprove",
+    "RelativePath": "api/Blog/all_blog_approve",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[WebApplication3.Entities.blog, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.BlogController",
+    "Method": "UpdateStatus",
+    "RelativePath": "api/Blog/update_status",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "createBlog",
-        "Type": "WebApplication3.DTOs.Blog.CreateRequestBLogDTO",
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Blog.updateApprovedRequest",
         "IsRequired": true
       }
     ],
@@ -639,22 +675,6 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.ProjectController",
-    "Method": "GetAllProject",
-    "RelativePath": "api/Project",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "pageNumber",
-        "Type": "System.Int32",
-        "IsRequired": false
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.ProjectController",
     "Method": "AddProject",
     "RelativePath": "api/Project",
     "HttpMethod": "POST",
@@ -708,6 +728,38 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.ProjectController",
+    "Method": "GetAllProject",
+    "RelativePath": "api/Project/get_all_project",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.ProjectController",
+    "Method": "GetAllProjectAprove",
+    "RelativePath": "api/Project/get_all_project_aprove",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.ProjectController",
     "Method": "GetProject",
     "RelativePath": "api/Project/get_project",
     "HttpMethod": "POST",
@@ -731,6 +783,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.ProjectController",
+    "Method": "UpdateStatus",
+    "RelativePath": "api/Project/update_status",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Project.updateStatusRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "WebApplication3.Controllers.SponsorController",

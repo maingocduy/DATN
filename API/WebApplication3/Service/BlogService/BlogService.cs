@@ -24,9 +24,9 @@ namespace WebApplication3.Service.BlogService
 
         Task UpdateBlog(string title, UpdatePasswordRequestDTO acc);
         Task DeleteBlog(string title);
-
+        Task UpdateStatus(updateApprovedRequest request);
         Task AddBlog(string jwt, CreateRequestBLogDTO create);
-
+        Task<List<BlogDTO>> GetAllBlogTrue();
     }
     public class BlogService : IBlogService
     {
@@ -57,6 +57,32 @@ namespace WebApplication3.Service.BlogService
       
         }
 
+        public async Task UpdateStatus(updateApprovedRequest request)
+        {
+            try
+            {
+                var getBlog = await IBlogRepository.GetBlog(request.Id);
+                if (getBlog == null)
+                {
+                    throw new KeyNotFoundException("Không tìm thấy blog");
+                }
+                if (getBlog.Approved)
+                {
+                    await IBlogRepository.UpdateStatus(false, request.Id);
+                }
+                else
+                {
+                    await IBlogRepository.UpdateStatus(true, request.Id);
+                }
+            }
+            catch(KeyNotFoundException ex) {
+                throw ex;
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+        }
         public Task DeleteBlog(string title)
         {
             throw new NotImplementedException();
@@ -66,7 +92,10 @@ namespace WebApplication3.Service.BlogService
         {
             return await IBlogRepository.GetAllBlogs();
         }
-
+        public async Task<List<BlogDTO>> GetAllBlogTrue()
+        {
+            return await IBlogRepository.GetAllBlogsTrue();
+        }
         public Task<AccountDTO> GetBlogsAsync(int id)
         {
             throw new NotImplementedException();

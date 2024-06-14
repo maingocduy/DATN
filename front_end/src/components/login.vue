@@ -55,12 +55,13 @@
         </div>
 
         <div v-else-if="otpSent && !otpVerified">
-          <input
-            type="text"
-            v-model="otps"
-            placeholder="Nhập mã OTP gồm 6 số"
-            class="input-field mb-4"
-          />
+          <div class="card flex justify-center mb-2">
+            <InputOtp v-model="otps" :length="6">
+              <template #default="{ attrs, events }">
+                <input type="text" v-bind="attrs" v-on="events" class="custom-otp-input rounded" />
+              </template>
+            </InputOtp>
+          </div>
           <button @click="verifyOTPAsync" class="btn-submit w-full">Xác thực OTP</button>
         </div>
 
@@ -137,14 +138,13 @@ export default {
           username: this.username,
           password: this.password
         })
-        console.log(this.response.flag)
         if (this.response.flag) {
           this.$notify({
             type: 'success',
             title: 'Thông báo',
             text: this.response.message
           })
-          this.$router.push('/blog')
+          this.$router.push('/')
         } else {
           this.$notify({
             type: 'error',
@@ -305,5 +305,21 @@ export default {
 .btn-close:hover {
   background-color: rgb(240 82 82);
   transform: translateY(-2px);
+}
+.custom-otp-input {
+  width: 53px;
+  font-size: 36px;
+  text-align: center;
+  transition: all 0.2s;
+  background: transparent;
+  padding: 10px;
+  margin-right: 8px;
+}
+.custom-otp-input:last-child {
+  margin-right: 0; /* Remove margin from the last input to avoid extra space */
+}
+.custom-otp-input:focus {
+  outline: 0 none;
+  border-bottom-color: var(--primary);
 }
 </style>

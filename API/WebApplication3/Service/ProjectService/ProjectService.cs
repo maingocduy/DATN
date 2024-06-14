@@ -3,8 +3,10 @@ using K4os.Compression.LZ4.Internal;
 using System.ComponentModel.DataAnnotations;
 using WebApplication3.DTOs;
 using WebApplication3.DTOs.Account;
+using WebApplication3.DTOs.Blog;
 using WebApplication3.DTOs.Project;
 using WebApplication3.repository.AccountRepository;
+using WebApplication3.repository.BlogRepository;
 using WebApplication3.repository.CloudRepository;
 using WebApplication3.repository.MemberRepository;
 using WebApplication3.repository.ProjectReposiotry;
@@ -17,13 +19,15 @@ namespace WebApplication3.Service.ProjectService
         Task<PagedResult<ProjectDTO>> GetAllProject(int pageNumber);
         Task<ProjectDTO> GetProject(int id);
         Task AddProject(CreateProjectRequest createProjectRequest);
-        Task<ProjectDTO> GetProjectsByName(string name, int? groupId = null);
+        Task<ProjectDTO> GetProjectsByName(string name);
 
         Task UpdateProject(string name, UpdateProjectRequest project);
         Task DeleteProject(string name);
 
+        Task<PagedResult<ProjectDTO>> GetAllProjectAprove(int pageNumber);
 
-        
+        Task UpdateStatus(updateStatusRequest request);
+
     }
     public class ProjectService(IProjectRepository IProjectRepository,ICloudinaryService cloudinaryService, IMapper _mapper, ILogger<ProjectService> logger) : IProjectService
     {
@@ -42,12 +46,47 @@ namespace WebApplication3.Service.ProjectService
             // Trả về kết quả dưới dạng tranginated (phân trang)
             return projects;
         }
+        public async Task<PagedResult<ProjectDTO>> GetAllProjectAprove(int pageNumber)
+        {
+
+            // Sử dụng IProjectRepository để lấy dự án từ cơ sở dữ liệu
+            var projects = await IProjectRepository.GetAllProjectAprove(pageNumber);
+
+            // Trả về kết quả dưới dạng tranginated (phân trang)
+            return projects;
+        }
 
         public Task<ProjectDTO> GetProject(int id)
         {
             throw new NotImplementedException();
         }
-
+        public async Task UpdateStatus(updateStatusRequest request)
+        {
+            try
+            {
+                var getProject = await IProjectRepository.GetProject(request.name);
+                if (getProject == null)
+                {
+                    throw new KeyNotFoundException("Không tìm thấy blog");
+                }
+                if (getProject.Status == 1)
+                {
+                    await IProjectRepository.UpdateStatus(0, getProject.Project_id);
+                }
+                else
+                {
+                    await IProjectRepository.UpdateStatus(1, getProject.Project_id);
+                }
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw ex;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         public async Task AddProject(CreateProjectRequest createRequest)
         {
             try
@@ -82,9 +121,9 @@ namespace WebApplication3.Service.ProjectService
 
         }
 
-        public async Task<ProjectDTO> GetProjectsByName(string name,int? groupId =null)
+        public async Task<ProjectDTO> GetProjectsByName(string name)
         {
-            var project = await IProjectRepository.GetProject(name,groupId);
+            var project = await IProjectRepository.GetProject(name);
 
 
             return project;
