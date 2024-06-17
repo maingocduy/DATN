@@ -249,63 +249,69 @@ LIMIT @pageSize OFFSET @offset;
 
             // Câu lệnh SQL để lấy dự án theo tên và lọc theo Group_id nếu có
             var dtoSql = @"
-SELECT 
-    p.*,
-    m.* ,
-    g.* ,
-    s.* ,
-    i.* 
-FROM 
-    Projects AS p
-    LEFT JOIN MemberProjects AS mp ON p.Project_id = mp.Project_id
-    LEFT JOIN Members AS m ON mp.Member_id = m.Member_id
-    LEFT JOIN `Groups` AS g ON m.Group_id = g.Group_id
-    LEFT JOIN ProjectSponsor AS ps ON p.Project_id = ps.Project_id
-    LEFT JOIN sponsor AS s ON ps.Sponsor_id = s.Sponsor_id
-    LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id
+SELECT p.*, m.*, g.*, s.*, i.*
+FROM Projects AS p
+LEFT JOIN MemberProjects AS mp ON p.Project_id = mp.Project_id
+LEFT JOIN Members AS m ON mp.Member_id = m.Member_id
+LEFT JOIN `Groups` AS g ON m.Group_id = g.Group_id
+LEFT JOIN ProjectSponsor AS ps ON p.Project_id = ps.Project_id
+LEFT JOIN sponsor AS s ON ps.Sponsor_id = s.Sponsor_id
+LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id
 WHERE 
     p.Name = @ProjectName";
 
             // Nếu có GroupId, thêm điều kiện lọc cho Members
             // Thực hiện truy vấn
             var projectQuery = await connection.QueryAsync<ProjectDTO, MemberDTO, Group, SponsorDTO, ImageDtos, ProjectDTO>(
-                dtoSql,
-                (project, member, group, sponsor, image) =>
-                {
-                    // Kiểm tra và khởi tạo danh sách thành viên, nhóm, nhà tài trợ và ảnh nếu cần
-                    project.Member ??= new List<MemberDTO>();
-                    project.Sponsor ??= new List<SponsorDTO>();
-                    project.images ??= new List<ImageDtos>();
+        dtoSql,
+        (project, member, group, sponsor, image) =>
+        {
+            // Kiểm tra và khởi tạo danh sách thành viên, nhóm, nhà tài trợ và ảnh nếu cần
+            project.Member ??= new List<MemberDTO>();
+            project.Sponsor ??= new List<SponsorDTO>();
+            project.images ??= new List<ImageDtos>();
 
-                    // Thêm thành viên, nhóm, nhà tài trợ và ảnh nếu không null
-                    if (member != null)
-                    {
-                        project.Member.Add(member);
-                        member.groups = group; // Gán nhóm cho thành viên
-                    }
-                    if (sponsor != null)
-                    {
-                        project.Sponsor.Add(sponsor);
-                    }
-                    if (image != null)
-                    {
-                        project.images.Add(image);
-                    }
-
-                    return project;
-                },
-                new { ProjectName = name}, // Đối tượng ẩn danh với tên dự án và GroupId nếu có
-                splitOn: "Member_id,Group_id,Sponsor_id,image_id");
-
-            // Lấy dự án đầu tiên hoặc trả về null nếu không có kết quả
-            var project = projectQuery.FirstOrDefault();
-
-            // Nếu không có thành viên được trả về, gán danh sách thành viên là rỗng
-            if (project != null && project.Member.Count == 0)
+            // Thêm thành viên, nhóm, nhà tài trợ và ảnh nếu không null
+            if (member != null)
             {
-                project.Member = new List<MemberDTO>();
+                project.Member.Add(member);
+                member.groups = group; // Gán nhóm cho thành viên
+            }
+            if (sponsor != null)
+            {
+                project.Sponsor.Add(sponsor);
+            }
+            if (image != null)
+            {
+                project.images.Add(image);
             }
 
+            return project;
+        },
+        new { ProjectName = name }, // Đối tượng ẩn danh với tên dự án
+        splitOn: "Member_id,Group_id,Sponsor_id,image_id");
+
+            // Lấy dự án đầu tiên hoặc trả về null nếu không có kết quả
+            var project = projectQuery.GroupBy(p => p.Project_id).Select(group =>
+            {
+                var groupedProject = group.First();
+
+                if (groupedProject.Member != null && groupedProject.Member.Any())
+                {
+                    groupedProject.Member = group.Select(p => p.Member.FirstOrDefault()).ToList();
+                }
+                if (groupedProject.Sponsor != null && groupedProject.Sponsor.Any())
+                {
+                    groupedProject.Sponsor = group.Select(p => p.Sponsor.FirstOrDefault()).ToList();
+                }
+                if (groupedProject.images != null && groupedProject.images.Any())
+                {
+                    groupedProject.images = group.Select(p => p.images.FirstOrDefault()).ToList();
+                }
+                return groupedProject;
+            }).FirstOrDefault();
+
+            // Trả về dự án hoặc null nếu không tìm thấy
             return project;
         }
 
