@@ -39,7 +39,10 @@
         </template>
       </div>
       <div class="sm:hidden">
-        <button class="flex items-center px-3 py-2 rounded text-gray-500 hover:text-gray-900">
+        <button
+          @click="toggleMobileMenu"
+          class="flex items-center px-3 py-2 rounded text-gray-500 hover:text-gray-900"
+        >
           <svg
             class="w-6 h-6"
             fill="none"
@@ -57,7 +60,7 @@
         </button>
       </div>
     </div>
-    <div class="sm:hidden px-4 pb-3">
+    <div class="sm:hidden px-4 pb-3" v-if="isMobileMenuOpen">
       <ul class="flex flex-col space-y-4">
         <li><a href="/" class="text-gray-800 hover:text-blue-500">Trang chủ</a></li>
         <li><a href="/blog" class="text-gray-800 hover:text-blue-500">Blog</a></li>
@@ -78,25 +81,26 @@
 <script>
 import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
-import { notify } from '@kyvg/vue3-notification'
+import { ElNotification } from 'element-plus'
 export default {
   setup() {
     const store = useStore()
     const showDropdown = ref(false)
     const countdown = ref(0)
-
+    const isMobileMenuOpen = ref(false)
     onMounted(() => {
       store.dispatch('initializeAuth')
     })
 
     const username = computed(() => store.getters['username'])
     const isAuthenticated = computed(() => store.getters['isAuthenticated'])
+    const roleManager = computed(() => store.getters['role'])
 
     const logout = async () => {
-      await notify({
-        type: 'success',
+      ElNotification({
+        type: 'error',
         title: 'Thông báo',
-        text: 'Đăng xuất thành công!'
+        message: 'Đăng xuất thành công!'
       })
 
       // Đặt bộ đếm ngược
@@ -111,13 +115,17 @@ export default {
       }, 1000)
       await store.dispatch('logout')
     }
+    const toggleMobileMenu = () => {
+      isMobileMenuOpen.value = !isMobileMenuOpen.value
+    }
 
     return {
       username,
       isAuthenticated,
       showDropdown,
       logout,
-      countdown
+      isMobileMenuOpen,
+      toggleMobileMenu
     }
   }
 }

@@ -27,6 +27,8 @@ namespace WebApplication3.repository.AccountRepository
         Task SaveOtp(string otp, string emailAccount);
 
         Task UpdatePasswordAccByEmail(string email, string newPassword);
+
+        Task<List<OtpDTO>> GetOtpByEmail(string email);
     }
     public class AccountRepository : IAccountRepository
     {
@@ -176,6 +178,17 @@ SELECT a.*, m.*,g.*
     """;
             var acc = await connection.QueryAsync<OtpDTO>(sql, new { otp });
             return acc.FirstOrDefault();
+        }
+        public async Task<List<OtpDTO>> GetOtpByEmail(string email)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = """
+    SELECT *
+           FROM otp_table
+           WHERE Account_id = (Select Account_id from account where Member_id = (select Member_id from members where email = @email)) and IsVerified = 0
+    """;
+            var otp = await connection.QueryAsync<OtpDTO>(sql, new { email });
+            return otp.ToList();
         }
         public async Task DeleteOtp(string otp)
         {

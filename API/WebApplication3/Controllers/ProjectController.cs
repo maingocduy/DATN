@@ -49,13 +49,13 @@ namespace WebApplication3.Controllers
             await IProjectService.DeleteProject(name);
             return Ok(new { message = "Project deleted" });
         }
-        [HttpPost]
+        [HttpPost("add_project")]
         public async Task<IActionResult> AddProject(CreateProjectRequest createProject)
         {
             try
             {
                 await IProjectService.AddProject(createProject);
-                return Ok($"Project '{createProject.Name}' Created successfully");
+                return Ok(new { message = "Tạo thành công dự án mới !" });
             }
             catch (Exception ex)
             {

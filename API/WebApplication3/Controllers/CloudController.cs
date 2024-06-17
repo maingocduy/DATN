@@ -77,7 +77,7 @@ namespace WebApplication3.Controllers
             return Ok(new { location =uploadResult.SecureUrl });
         }
         [HttpPost("delete")]
-        public async Task<IActionResult> Delete(string Public_id)
+        public async Task<IActionResult> Delete([FromBody]string Public_id)
         {
             try
             {
@@ -90,12 +90,12 @@ namespace WebApplication3.Controllers
             }
         }
         [HttpPost("UpImageProject")]
-        public async Task<IActionResult> UpImageProject([FromForm] imageUpload imageUploadModels,string ProjectName,string PRoject_content)
+        public async Task<IActionResult> UpImageProject(CreateProjectImageRequest request)
         {
             try
             {
-                await cloudinaryService.AddImageProject(imageUploadModels, PRoject_content, ProjectName);
-                return Ok();
+                await cloudinaryService.AddImageProject(request);
+                return Ok(new { message = "Tạo thành công dự án mới !" });
             }
             catch
             {

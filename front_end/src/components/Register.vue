@@ -137,7 +137,7 @@
 </template>
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
-
+import { ElNotification } from 'element-plus'
 export default {
   data() {
     return {
@@ -177,17 +177,17 @@ export default {
           name: this.name
         })
         if (this.response.flag) {
-          this.$notify({
+          ElNotification({
             type: 'success',
             title: 'Thông báo',
-            text: this.response.message
+            message: this.response.message
           })
           this.$router.push('/login')
         } else {
-          this.$notify({
+          ElNotification({
             type: 'error',
             title: 'Thông báo',
-            text: this.response.message
+            message: this.response.message
           })
         }
       } catch (error) {

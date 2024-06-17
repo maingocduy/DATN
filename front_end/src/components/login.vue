@@ -2,6 +2,7 @@
   <div
     class="bg-gradient-to-r from-blue-500 to-green-500 min-h-screen flex items-center justify-center"
   >
+    <!-- Login Form -->
     <div
       class="flex flex-row bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-300"
     >
@@ -39,7 +40,26 @@
       v-if="showForgotPasswordPopup"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
     >
-      <div class="bg-white w-full max-w-md p-8 rounded-lg shadow-lg">
+      <div class="bg-white w-full max-w-md p-8 rounded-lg shadow-lg relative">
+        <span
+          @click="closeForgotPassword"
+          class="absolute top-2 right-2 cursor-pointer text-gray-600 hover:text-gray-800 rounded-full bg-gray-200 p-2"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </span>
         <h2 class="text-xl font-bold mb-4 text-center" v-if="!otpSent">Nhập Email</h2>
         <h2 class="text-xl font-bold mb-4 text-center" v-else-if="!otpVerified">Nhập OTP</h2>
         <h2 class="text-xl font-bold mb-4 text-center" v-else>Đặt lại mật khẩu</h2>
@@ -63,6 +83,13 @@
             </InputOtp>
           </div>
           <button @click="verifyOTPAsync" class="btn-submit w-full">Xác thực OTP</button>
+
+          <p class="text-center mt-2">Gửi lại OTP sau: {{ countdownTimer }}</p>
+          <div v-if="showResendButton">
+            <a href="#" class="text-blue-600 text-center block mt-2" @click.prevent="resendOTP"
+              >Gửi lại OTP</a
+            >
+          </div>
         </div>
 
         <div v-else>
@@ -80,8 +107,6 @@
           />
           <button @click="resetPasswordAsync" class="btn-submit w-full">Đặt lại mật khẩu</button>
         </div>
-
-        <button @click="closeForgotPassword" class="btn-close mt-4 w-full">Đóng</button>
       </div>
     </div>
   </div>
@@ -89,6 +114,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
+import { ElNotification } from 'element-plus'
 
 export default {
   data() {
@@ -98,7 +124,9 @@ export default {
       emailInput: '',
       otps: '',
       newPass: '',
-      confirmPass: ''
+      confirmPass: '',
+      countdownTimer: 60,
+      showResendButton: false
     }
   },
   computed: {
@@ -119,6 +147,11 @@ export default {
   watch: {
     emailInput(newEmail) {
       this.updateForgotPasswordEmail(newEmail)
+    },
+    otpSent(newValue, oldValue) {
+      if (newValue && !oldValue) {
+        this.startCountdown()
+      }
     }
   },
   methods: {
@@ -130,7 +163,8 @@ export default {
       'displaySuccessNotification',
       'openForgotPasswordPopup',
       'closeForgotPasswordPopup',
-      'updateForgotPasswordEmail'
+      'updateForgotPasswordEmail',
+      'reSendOtp'
     ]),
     async loginAsync() {
       try {
@@ -139,24 +173,24 @@ export default {
           password: this.password
         })
         if (this.response.flag) {
-          this.$notify({
+          ElNotification({
             type: 'success',
             title: 'Thông báo',
-            text: this.response.message
+            message: this.response.message
           })
           this.$router.push('/')
         } else {
-          this.$notify({
+          ElNotification({
             type: 'error',
             title: 'Thông báo',
-            text: this.response.message || 'Lỗi hệ thống'
+            message: this.response.message
           })
         }
       } catch (error) {
         this.$notify({
           type: 'error',
           title: 'Thông báo',
-          text: 'Lỗi hệ thống '
+          message: 'Lỗi hệ thống '
         })
       }
     },
@@ -170,24 +204,59 @@ export default {
       this.newPass = ''
       this.confirmPass = ''
     },
-    async sendForgotPasswordAsync() {
+    startCountdown() {
+      this.countdownTimer = 60
+      this.showResendButton = false
+      const countdownInterval = setInterval(() => {
+        if (this.countdownTimer > 0) {
+          this.countdownTimer--
+        } else {
+          clearInterval(countdownInterval)
+          this.showResendButton = true
+        }
+      }, 1000)
+    },
+    async resendOTP() {
+      // Gửi lại yêu cầu gửi OTP tới email đã nhập
       try {
-        console.log(this.forgotPasswordEmail)
-        await this.sendForgotPassword({
+        await this.reSendOtp({
           email: this.forgotPasswordEmail
         })
-        this.$notify({
+        ElNotification({
           type: 'success',
           title: 'Thông báo',
-          text: this.forgotPasswordMessage
+          message: this.forgotPasswordMessage
+        })
+        this.startCountdown()
+      } catch (error) {
+        // Bắt đầu đếm ngược lại
+      }
+    },
+    async sendForgotPasswordAsync() {
+      if (!this.isValidEmail(this.emailInput)) {
+        ElNotification({
+          type: 'error',
+          title: 'Thông báo',
+          message: 'Email không hợp lệ. Vui lòng nhập lại'
+        })
+        return
+      }
+      try {
+        await this.sendForgotPassword({
+          email: this.emailInput
+        })
+        ElNotification({
+          type: 'success',
+          title: 'Thông báo',
+          message: this.forgotPasswordMessage
         })
       } catch (error) {
         const message = error.response?.data.message || 'Đã xảy ra lỗi khi gửi email!'
         console.log(message)
-        this.$notify({
+        ElNotification({
           type: 'error',
           title: 'Thông báo',
-          text: message
+          message: message
         })
       }
     },
@@ -197,20 +266,25 @@ export default {
         await this.verifyOTP({
           otp: this.otps
         })
-        this.$notify({
+        ElNotification({
           type: 'success',
           title: 'Thông báo',
-          text: 'Xác thực thành công!'
+          message: 'Xác thực thành công!'
         })
       } catch (error) {
         const message = error.response?.data.message
         console.log(message)
-        this.$notify({
+        ElNotification({
           type: 'error',
           title: 'Thông báo',
-          text: message
+          message: message
         })
       }
+    },
+    isValidEmail(email) {
+      // Biểu thức chính quy để kiểm tra định dạng email
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      return emailRegex.test(email)
     },
     async resetPasswordAsync() {
       try {
@@ -223,25 +297,25 @@ export default {
         })
         console.log(this.forgotPasswordMessage)
         if (this.forgotPasswordMessage == 'Đặt lại mật khẩu thành công') {
-          this.$notify({
+          ElNotification({
             type: 'success',
             title: 'Thông báo',
-            text: this.forgotPasswordMessage
+            message: this.forgotPasswordMessage
           })
         } else {
-          this.$notify({
+          ElNotification({
             type: 'error',
             title: 'Thông báo',
-            text: this.forgotPasswordMessage
+            message: this.forgotPasswordMessage
           })
         }
         this.forgotPasswordMessage = ''
       } catch (error) {
-        const message = error.response?.data.message
-        this.$notify({
+        const message = error.response?.message
+        ElNotification({
           type: 'error',
           title: 'Thông báo',
-          text: message
+          message: message
         })
       }
     }
@@ -306,6 +380,7 @@ export default {
   background-color: rgb(240 82 82);
   transform: translateY(-2px);
 }
+
 .custom-otp-input {
   width: 53px;
   font-size: 36px;
@@ -315,9 +390,11 @@ export default {
   padding: 10px;
   margin-right: 8px;
 }
+
 .custom-otp-input:last-child {
   margin-right: 0; /* Remove margin from the last input to avoid extra space */
 }
+
 .custom-otp-input:focus {
   outline: 0 none;
   border-bottom-color: var(--primary);

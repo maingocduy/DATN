@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Mvc;
 using WebApplication3.DTOs.Blog;
 using WebApplication3.DTOs.Project;
 using WebApplication3.Entities;
+using WebApplication3.Helper;
+using WebApplication3.Helper.Data;
 using WebApplication3.Service.AccountService;
 using WebApplication3.Service.BlogService;
 using WebApplication3.Service.ProjectService;
@@ -38,12 +40,24 @@ namespace WebApplication3.Controllers
             {
                 var jwt = Request.Headers["Authorization"].FirstOrDefault()?.Replace("Bearer ", "");
                 await IBlogService.AddBlog(jwt,createBlog);
-                return Ok($"Project '{createBlog.Title}' Created successfully");
+                return Ok(new { Message = "Thêm thành công blog mới!" });
+            }
+            catch (System.UnauthorizedAccessException ex)
+            {
+                // Xử lý và trả về lỗi 401
+                return StatusCode(401, $"Unauthorized access: {ex.Message}");
+            }
+            catch (ForbiddenAccessException ex)
+            {
+                // Xử lý và trả về lỗi 403
+                return StatusCode(403, $"Forbidden access: {ex.Message}");
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error Created project: {ex.Message}");
+                // Xử lý các ngoại lệ khác và trả về lỗi 500
+                return BadRequest(new { Message = ex.Message });
             };
+          
         }
 
         [HttpPost("update_status"), Authorize]

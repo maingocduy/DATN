@@ -27,6 +27,7 @@
 <script>
 import axios from 'axios'
 import TinyMCEEditor from '../Helper/tinymce.vue'
+import { ElNotification } from 'element-plus'
 export default {
   data() {
     return {
@@ -39,13 +40,34 @@ export default {
   methods: {
     async handleSubmit() {
       var myContent = tinymce.get('editor').getContent()
-      console.log('Title:', this.title) // Log tiêu đề
-      console.log('Form submitted:', myContent)
-      await axios.post('https://localhost:7188/api/Blog', {
-        title: this.title,
-        content: myContent
-      })
-      alert('Thêm thành công tiêu đề :' + this.title)
+      // console.log('Title:', this.title) // Log tiêu đề
+      // console.log('Form submitted:', myContent)
+      if (!this.title || !myContent) {
+        ElNotification({
+          type: 'error',
+          title: 'Thông báo',
+          message: 'Bạn nhập thiếu trường bắt buộc'
+        })
+        return
+      }
+      await axios
+        .post('https://localhost:7188/api/Blog', {
+          title: this.title,
+          content: myContent
+        })
+        .then(
+          (response) => {
+            console.log(response)
+            ElNotification({
+              type: 'success',
+              title: 'Thông báo',
+              message: response.message
+            })
+          },
+          (error) => {
+            console.error(error)
+          }
+        )
       // Tại đây bạn có thể thực hiện gửi dữ liệu đến server hoặc xử lý khác
     }
   },

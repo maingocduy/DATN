@@ -6,6 +6,7 @@ using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Auth;
 using WebApplication3.DTOs.Otp;
 using WebApplication3.Entities;
+using WebApplication3.Helper.Data;
 using WebApplication3.Service.AccountService;
 
 namespace WebApplication3.Controllers
@@ -23,7 +24,25 @@ namespace WebApplication3.Controllers
         [HttpGet, Authorize(Roles ="Admin")]
         public async Task<ActionResult<List<account>>> GetAllAcc()
         {
-            return Ok(await accountRepository.GetAllAcc());
+            try
+            {
+                return Ok(await accountRepository.GetAllAcc());
+            }
+            catch (System.UnauthorizedAccessException ex)
+            {
+                // Xử lý và trả về lỗi 401
+                return StatusCode(401, $"Unauthorized access: {ex.Message}");
+            }
+            catch (ForbiddenAccessException ex)
+            {
+                // Xử lý và trả về lỗi 403
+                return StatusCode(403, $"Forbidden access: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Xử lý các ngoại lệ khác và trả về lỗi 500
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
 
         [HttpGet("id")]
@@ -87,6 +106,23 @@ namespace WebApplication3.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, new { Message =ex.Message });
+            }
+        }
+        [HttpPost("re_send_otp")]
+        public async Task<IActionResult> ResendOtp([FromBody] ForgetPassDTO request)
+        {
+            try
+            {
+                await accountRepository.ReSendOtp(request.email);
+                return Ok(new { Message = "Gửi otp mới thành công." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Đã xảy ra lỗi. Vui lòng thử lại sau." });
             }
         }
         [HttpPost("changeForgetPass")]

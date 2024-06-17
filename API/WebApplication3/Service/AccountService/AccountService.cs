@@ -25,6 +25,7 @@ using WebApplication3.repository.MemberRepository;
 using static WebApplication3.DTOs.Auth.ServiceResponses;
 using MailKit.Net.Smtp;
 using MimeKit;
+using WebApplication3.Entities;
 
 namespace WebApplication3.Service.AccountService
 {
@@ -44,7 +45,7 @@ namespace WebApplication3.Service.AccountService
         Task SendEmailAsync(string email, string subject, string messager);
 
         Task changeForgetPass(string email, string newPass, string otp);
-
+        Task ReSendOtp(string email);
     }
     public class AccountService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,IAccountRepository _AccountRepository, IMapper _mapper) : IAccountService
     {
@@ -66,7 +67,7 @@ namespace WebApplication3.Service.AccountService
             var pw = "Mangcut11";
 
             var mimeMessage = new MimeMessage();
-            mimeMessage.From.Add(new MailboxAddress("Your Name", mail)); // Chú ý thay thế "Your Name" bằng tên hiển thị mong muốn
+            mimeMessage.From.Add(new MailboxAddress("Hội bác sĩ tình nguyện", mail)); // Chú ý thay thế "Your Name" bằng tên hiển thị mong muốn
             mimeMessage.To.Add(new MailboxAddress("Recipient", email)); // Chú ý thay thế "Recipient" bằng tên hiển thị mong muốn
             mimeMessage.Subject = subject;
             mimeMessage.Body = new TextPart("plain")
@@ -152,6 +153,20 @@ namespace WebApplication3.Service.AccountService
                 throw new Exception("OTP đã được xác nhận");
             }
 
+        }
+        public async Task ReSendOtp(string email)
+        {
+            var lstOtp = await _AccountRepository.GetOtpByEmail(email);
+            if(lstOtp == null)
+            {
+                throw new KeyNotFoundException("Không tìm thấy Otp");
+            }
+            foreach(var otp in lstOtp)
+            {
+                otp.IsVerified = true;
+                _AccountRepository.UpdateOtp(otp);
+            }
+             ForgotPassword(email);
         }
         private static string GenerateOTP()
         {

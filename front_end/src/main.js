@@ -5,14 +5,14 @@ import router from './router'
 import CKEditor from '@ckeditor/ckeditor5-vue'
 import './Helper/axios'
 import store from './store'
-import Notifications from './Helper/notificationPlugin'
 import PrimeVue from 'primevue/config'
 import ElementPlus from 'element-plus'
 import 'primeicons/primeicons.css'
 import InputOtp from 'primevue/inputotp'
 import Carousel from 'primevue/carousel'
+import 'element-plus/dist/index.css'
 const app = createApp(App)
-app.use(Notifications)
+
 app.use(store)
 app.use(router)
 app.use(ElementPlus)

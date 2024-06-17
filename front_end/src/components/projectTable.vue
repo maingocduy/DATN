@@ -3,7 +3,7 @@
     <div class="max-w-7xl mx-auto">
       <h1 class="text-3xl font-bold mb-4 text-center">Danh sách dự án</h1>
       <!-- Nút Thêm dự án -->
-      <div class="text-center mb-4">
+      <div v-if="roleManager" class="text-center mb-4">
         <a
           href="newProject"
           class="inline-block px-4 py-2 text-sm font-medium text-white bg-green-500 rounded-lg hover:bg-green-600 focus:ring-4 focus:outline-none focus:ring-green-300"
@@ -111,7 +111,7 @@
 
 <script>
 import axios from 'axios'
-
+import Cookies from 'js-cookie'
 export default {
   data() {
     return {
@@ -120,7 +120,8 @@ export default {
       loading: false,
       pageNumber: 1,
       pageSize: 6,
-      totalProjects: 0
+      totalProjects: 0,
+      roleManager: false
     }
   },
   computed: {
@@ -130,6 +131,9 @@ export default {
   },
   mounted() {
     this.fetchProjects()
+    if (Cookies.get('role') == 'Admin') {
+      this.roleManager = true
+    }
   },
   methods: {
     async fetchProjects() {

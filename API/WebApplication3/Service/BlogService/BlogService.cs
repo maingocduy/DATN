@@ -51,7 +51,9 @@ namespace WebApplication3.Service.BlogService
                 c => c.Type == ClaimTypes.Name
                 ).FirstOrDefault().Value;
             var BlogDTO = _mapper.Map<BlogDTO>(create);
-
+            if(string.IsNullOrEmpty(create.Content) || string.IsNullOrEmpty(create.Title)) {
+                throw new Exception("Nhập thiếu trường bắt buộc!");
+            }
             var id = await IAccountRepository.getIDAcount(userName);
             await IBlogRepository.AddBlog(id, BlogDTO);
       

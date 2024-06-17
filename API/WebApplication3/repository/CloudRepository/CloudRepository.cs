@@ -69,6 +69,8 @@ namespace WebApplication3.repository.CloudRepository
                 Project_id = projectQuery
             });
         }
+
+
         public async Task <String> GetPublicIdImageByProject(string ProjectName)
         {
             using var connection = _context.CreateConnection();

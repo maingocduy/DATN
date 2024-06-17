@@ -33,7 +33,6 @@ namespace WebApplication3.Service.ProjectService
     {
         public async Task DeleteProject(string name)
         {
-            await cloudinaryService.GetPublicIdByProjectName(name);
             await IProjectRepository.DeleteProject(name);
         }
 

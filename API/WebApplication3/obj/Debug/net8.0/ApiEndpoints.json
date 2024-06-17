@@ -147,6 +147,22 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "WebApplication3.Controllers.AccountController",
+    "Method": "ResendOtp",
+    "RelativePath": "api/Account/re_send_otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Account.ForgetPassDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
     "ContainingType": "WebApplication3.Controllers.AuthController",
     "Method": "ConfirmEmail",
     "RelativePath": "api/Auth/ConfirmEmail",
@@ -307,7 +323,7 @@
       {
         "Name": "Public_id",
         "Type": "System.String",
-        "IsRequired": false
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -347,24 +363,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "FileName",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "file",
-        "Type": "Microsoft.AspNetCore.Http.IFormFile",
-        "IsRequired": false
-      },
-      {
-        "Name": "ProjectName",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "PRoject_content",
-        "Type": "System.String",
-        "IsRequired": false
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.ImageDto.CreateProjectImageRequest",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -675,22 +676,6 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.ProjectController",
-    "Method": "AddProject",
-    "RelativePath": "api/Project",
-    "HttpMethod": "POST",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "createProject",
-        "Type": "WebApplication3.DTOs.Project.CreateProjectRequest",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.ProjectController",
     "Method": "UpdateProject",
     "RelativePath": "api/Project",
     "HttpMethod": "PUT",
@@ -721,6 +706,22 @@
       {
         "Name": "name",
         "Type": "System.String",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.ProjectController",
+    "Method": "AddProject",
+    "RelativePath": "api/Project/add_project",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "createProject",
+        "Type": "WebApplication3.DTOs.Project.CreateProjectRequest",
         "IsRequired": true
       }
     ],

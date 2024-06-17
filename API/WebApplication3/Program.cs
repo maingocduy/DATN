@@ -118,7 +118,8 @@ builder.Services.AddCors(options =>
         {
             builder.WithOrigins("http://localhost:5173") // Thay đổi địa chỉ này thành địa chỉ của trang web của bạn
                    .AllowAnyHeader()
-                   .AllowAnyMethod();
+                   .AllowAnyMethod()
+                   .AllowCredentials();
         });
 });
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
@@ -145,11 +146,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 //app.MapIdentityApi<ApplicationUser>();
+app.UseCors("AllowOrigin");
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseErrorHandlingMiddleware();
 app.UseMiddleware<WhitelistLogoutMiddleware>();
 app.MapControllers();
-app.UseCors("AllowOrigin");
 DotEnv.Load(options: new DotEnvOptions(probeForEnv: true));
 app.Run();

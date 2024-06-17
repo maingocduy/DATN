@@ -106,7 +106,27 @@ const authModule = {
         commit('SET_LOADING', false)
       }
     },
-
+    async reSendOtp({ commit, state }, { email }) {
+      try {
+        commit('SET_FORGOT_PASSWORD_EMAIL', email)
+        const response = await axios.post(
+          'https://localhost:7188/api/account/re_send_otp',
+          JSON.stringify({ email: state.forgotPasswordEmail }),
+          {
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          }
+        )
+        console.log(response.data.message)
+        commit('SET_FORGOT_PASSWORD_MESSAGE', response.data.message)
+        commit('SET_OTP_SENT', true)
+      } catch (error) {
+        const message = error.response?.data?.message || 'Đã xảy ra lỗi'
+        commit('SET_FORGOT_PASSWORD_MESSAGE', message)
+        throw error
+      }
+    },
     async sendForgotPassword({ commit, state }, { email }) {
       try {
         commit('SET_FORGOT_PASSWORD_EMAIL', email)

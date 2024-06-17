@@ -15,7 +15,7 @@ namespace WebApplication3.Service.Cloudinary_image
         public Task<List<ImageUploadResult>> UploadImages([FromForm] List<IFormFile> imageUploadDatas);
         public Task DeleteImage(string publicId);
 
-        public Task AddImageProject([FromForm] imageUpload imageUploadModels,string Image_content, string projectName);
+        public Task AddImageProject(CreateProjectImageRequest request);
         Task<string> GetPublicIdByProjectName(string projectName);
         Task<ImageDtos> GetImageDetail(string publicId);
     }
@@ -106,7 +106,7 @@ namespace WebApplication3.Service.Cloudinary_image
             }
         }
 
-        public async Task AddImageProject([FromForm] imageUpload imageUploadModels, string Image_content, string projectName)
+    /*    public async Task AddImageProject([FromForm] imageUpload imageUploadModels, string Image_content, string projectName)
         {
             var UpImage = await UpLoadSingleImage(imageUploadModels);
             var ImageDto = new ImageDtos()
@@ -120,6 +120,24 @@ namespace WebApplication3.Service.Cloudinary_image
 
             }
             catch (Exception ex) {
+                throw ex;
+            }
+        }*/
+        public async Task AddImageProject(CreateProjectImageRequest request)
+        {
+          
+            var ImageDto = new ImageDtos()
+            {
+                Image_id = request.publicID,
+                image_url = request.url
+            };
+            try
+            {
+                await clouRepository.InsertImageToProject(request.ProjectName, ImageDto);
+
+            }
+            catch (Exception ex)
+            {
                 throw ex;
             }
         }
