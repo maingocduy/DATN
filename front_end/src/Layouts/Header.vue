@@ -11,13 +11,18 @@
       <div class="flex-1 hidden sm:flex justify-center">
         <ul class="flex flex-row font-medium space-x-8">
           <li><a href="/" class="text-gray-800 hover:text-blue-500">Trang chủ</a></li>
-          <li><a href="#" class="text-gray-800 hover:text-blue-500">Giới thiệu</a></li>
+          <li><a href="/AboutUs" class="text-gray-800 hover:text-blue-500">Giới thiệu</a></li>
           <li><a href="/blog" class="text-gray-800 hover:text-blue-500">Blog</a></li>
 
           <li><a href="/project" class="text-gray-800 hover:text-blue-500">Dự án</a></li>
           <li>
             <a href="/admin" v-if="roleManager == 'Admin'" class="text-gray-800 hover:text-blue-500"
               >Admin</a
+            >
+          </li>
+          <li>
+            <a href="#" v-if="roleManager == 'Manager'" class="text-gray-800 hover:text-blue-500"
+              >Quản lý Blog</a
             >
           </li>
         </ul>
@@ -70,10 +75,15 @@
       <ul class="flex flex-col space-y-4">
         <li><a href="/" class="text-gray-800 hover:text-blue-500">Trang chủ</a></li>
         <li><a href="/blog" class="text-gray-800 hover:text-blue-500">Blog</a></li>
-        <li><a href="#" class="text-gray-800 hover:text-blue-500">Giới thiệu</a></li>
+        <li><a href="/AboutUs" class="text-gray-800 hover:text-blue-500">Giới thiệu</a></li>
         <li><a href="/project" class="text-gray-800 hover:text-blue-500">Dự án</a></li>
         <li v-if="isAuthenticated">
-          <span class="text-base text-gray-800">Xin chào, {{ username }}</span>
+          <span class="text-base text-gray-800"
+            >Xin chào, <a href="#">{{ username }}</a></span
+          >
+        </li>
+        <li v-if="isAuthenticated">
+          <a href="#" @click="logout" class="text-gray-800 hover:text-blue-500">Đăng xuất</a>
         </li>
         <li v-else>
           <a href="/register" class="text-base text-gray-800 hover:text-blue-500">Đăng ký</a>

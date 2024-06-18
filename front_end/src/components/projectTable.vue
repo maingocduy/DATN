@@ -131,7 +131,7 @@ export default {
   },
   mounted() {
     this.fetchProjects()
-    if (Cookies.get('role') == 'Admin') {
+    if (Cookies.get('role') == 'Manager') {
       this.roleManager = true
     }
   },

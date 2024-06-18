@@ -14,7 +14,7 @@
         placeholder="Tìm kiếm theo tên tài khoản"
         clearable
         class="search-input"
-        @change="handleSearch"
+        @input="handleSearch"
         style="width: 300px; margin-bottom: 10px"
       >
         <template #prefix>

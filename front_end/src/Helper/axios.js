@@ -14,9 +14,6 @@ axios.defaults.baseURL = 'https://localhost:7188/'
 
 // Tạo instance ElLoading
 let loadingService // Khai báo biến loadingService ở mức global
-const updateAuthorizationHeader = () => {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${Cookies.get('token')}`
-}
 // Hàm để khởi tạo loadingService
 const initLoadingService = () => {
   loadingService = ElLoading.service({
@@ -31,7 +28,7 @@ axios.interceptors.request.use(
       // Kiểm tra nếu loadingService chưa được khởi tạo
       initLoadingService() // Khởi tạo loadingService nếu chưa tồn tại
     } // Hiển thị loading trước khi gửi yêu cầu
-    updateAuthorizationHeader() // Cập nhật Authorization header
+    config.headers.Authorization = `Bearer ` + Cookies.get('token') // Cập nhật Authorization header
     return config
   },
   (error) => {

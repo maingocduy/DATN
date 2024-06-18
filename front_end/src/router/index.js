@@ -64,6 +64,11 @@ const mainRoutes = [
         path: 'ResponseRegister',
         name: 'ResponseRegister',
         component: () => import('../views/ResponseRegisterView.vue')
+      },
+      {
+        path: 'AboutUs',
+        name: 'AboutUs',
+        component: () => import('../views/AboutUsView.vue')
       }
     ]
   }
