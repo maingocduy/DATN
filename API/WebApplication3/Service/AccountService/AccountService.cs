@@ -26,12 +26,13 @@ using static WebApplication3.DTOs.Auth.ServiceResponses;
 using MailKit.Net.Smtp;
 using MimeKit;
 using WebApplication3.Entities;
+using WebApplication3.DTOs;
 
 namespace WebApplication3.Service.AccountService
 {
     public interface IAccountService
     {
-        Task<List<AccountDTO>> GetAllAcc();
+        Task<PagedResult<AccountDTO>> GetAllAcc(int pageNumber, string keyword = null);
         Task<AccountDTO> GetAccountsAsync(int id);
 
         Task<AccountDTO> GetAccountsByUserName(string username);
@@ -46,6 +47,8 @@ namespace WebApplication3.Service.AccountService
 
         Task changeForgetPass(string email, string newPass, string otp);
         Task ReSendOtp(string email);
+
+        Task ChangeRole(string username);
     }
     public class AccountService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager,IAccountRepository _AccountRepository, IMapper _mapper) : IAccountService
     {
@@ -53,11 +56,15 @@ namespace WebApplication3.Service.AccountService
         {
 
             var acc = await _AccountRepository.GetAccountsByUserName(username);
-
-            if (acc != null)
+            var accIden = await userManager.FindByNameAsync(username);
+            if (acc != null && accIden != null)
             {
-                
+                await userManager.DeleteAsync(accIden);
                 await _AccountRepository.DeleteAccount(acc);
+            }
+            else
+            {
+                throw new KeyNotFoundException("không tìm thấy tài khoản !");
             }
         }
 
@@ -104,10 +111,58 @@ namespace WebApplication3.Service.AccountService
             return Account;
         }
 
-        public async Task<List<AccountDTO>> GetAllAcc()
+        public async Task<PagedResult<AccountDTO>> GetAllAcc(int pageNumber, string keyword = null)
         {
-            return await _AccountRepository.GetAllAcc();
+            // Sử dụng _AccountRepository để lấy danh sách tài khoản phân trang
+            var pagedResult = await _AccountRepository.GetAllAccounts(pageNumber,keyword);
+            var lstacc = pagedResult.Data;
+
+            // Tạo danh sách để lưu trữ các tác vụ đợi hoàn thành
+            var tasks = new List<Task>();
+
+            // Duyệt qua từng tài khoản để tìm và cập nhật thông tin
+            foreach (var acc in lstacc)
+            {
+                // Tạo task để tìm người dùng theo tên
+                var findUserTask = userManager.FindByNameAsync(acc.Username);
+                tasks.Add(findUserTask); // Thêm task vào danh sách tác vụ
+
+                // Tìm người dùng
+                var user = await findUserTask;
+                if (user != null)
+                {
+                    // Cập nhật vai trò dựa trên vai trò của người dùng
+                    if (await userManager.IsInRoleAsync(user, "Admin"))
+                    {
+                        acc.Role = "Admin";
+                    }
+                    else if (await userManager.IsInRoleAsync(user, "User"))
+                    {
+                        acc.Role = "User";
+                    }
+                    else if (await userManager.IsInRoleAsync(user, "Manager"))
+                    {
+                        acc.Role = "Manager";
+                    }
+
+                    // Cập nhật trạng thái dựa trên EmailConfirmed của người dùng
+                    acc.Status = (sbyte)(user.EmailConfirmed ? 1 : 0);
+                }
+            }
+
+            // Đợi cho tất cả các tác vụ tìm người dùng hoàn thành
+            await Task.WhenAll(tasks);
+
+            // Trả về kết quả phân trang với các thông tin đã được cập nhật
+            return new PagedResult<AccountDTO>
+            {
+                Data = lstacc,
+                TotalPages = pagedResult.TotalPages
+            };
         }
+
+
+
 
         public async Task UpdatePasswordAcc(string username, UpdatePasswordRequestDTO acc)
         {
@@ -219,6 +274,51 @@ namespace WebApplication3.Service.AccountService
                 _AccountRepository.UpdatePasswordAccByEmail(email, newPass);
             }
         }
+
+        public async Task ChangeRole(string username)
+        {
+            // Tìm người dùng bằng tên người dùng
+            var user = await userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                throw new KeyNotFoundException("Tài khoản không tồn tại");
+            }
+
+            // Kiểm tra xem người dùng có quyền "User" hay không
+            if (await userManager.IsInRoleAsync(user, "User"))
+            {
+                // Xóa quyền "User"
+                var removeResult = await userManager.RemoveFromRoleAsync(user, "User");
+                if (!removeResult.Succeeded)
+                {
+                    throw new Exception("Failed to remove user role");
+                }
+
+                // Thêm quyền "Admin"
+                var addResult = await userManager.AddToRoleAsync(user, "Manager");
+                if (!addResult.Succeeded)
+                {
+                    throw new Exception("Failed to add Manager role");
+                }
+            }
+            else if (await userManager.IsInRoleAsync(user, "Manager"))
+            {
+                // Xóa quyền "Admin"
+                var removeResult = await userManager.RemoveFromRoleAsync(user, "Manager");
+                if (!removeResult.Succeeded)
+                {
+                    throw new Exception("Failed to remove Manager role");
+                }
+
+                // Thêm quyền "User"
+                var addResult = await userManager.AddToRoleAsync(user, "User");
+                if (!addResult.Succeeded)
+                {
+                    throw new Exception("Failed to add user role");
+                }
+            }
+        }
+
     }
 }
    

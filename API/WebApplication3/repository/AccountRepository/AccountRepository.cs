@@ -9,12 +9,16 @@ using WebApplication3.Helper.Data;
 using WebApplication3.DTOs.Otp;
 using Org.BouncyCastle.Crypto;
 using CloudinaryDotNet;
+using System.Xml.Linq;
+using WebApplication3.DTOs;
+using System.Data.Common;
+using System.Text;
 
 namespace WebApplication3.repository.AccountRepository
 {
     public interface IAccountRepository
     {
-        Task<List<AccountDTO>> GetAllAcc();
+        Task<PagedResult<AccountDTO>> GetAllAccounts(int pageNumber, string keyword = null);
         Task<AccountDTO> GetAccounts(int id);
         Task<AccountDTO> GetAccountsByUserName(string username);
         Task UpdatePasswordAcc(AccountDTO acc);
@@ -41,6 +45,13 @@ namespace WebApplication3.repository.AccountRepository
         {
             using var connection = _context.CreateConnection();
 
+
+            var sqlBlog = @"
+        DELETE FROM Blog 
+        WHERE Account_id = (select Account_id from account where Username = @name)
+    ";
+            await connection.ExecuteAsync(sqlBlog, new { name = acc.Username });
+
             // Xóa tài khoản từ bảng account
             var sqlAccount = @"
         DELETE FROM account 
@@ -48,12 +59,23 @@ namespace WebApplication3.repository.AccountRepository
     ";
             await connection.ExecuteAsync(sqlAccount, new { username = acc.Username });
 
+            var deleteMemberProjectsSql = @"
+DELETE FROM MemberProjects
+WHERE Member_id IN (
+    SELECT Member_id FROM account 
+        WHERE Username = @username
+);";
+
+            // Thực hiện câu lệnh SQL xóa MemberProjects
+            await connection.ExecuteAsync(deleteMemberProjectsSql, new { username = acc.Username });
             // Xóa thành viên từ bảng Members
             var sqlMember = @"
         DELETE FROM Members 
         WHERE Member_id = @member_id
     ";
             await connection.ExecuteAsync(sqlMember, new { member_id = acc.Member.Member_id });
+
+
         }
 
 
@@ -105,28 +127,59 @@ namespace WebApplication3.repository.AccountRepository
             return acc.FirstOrDefault();
         }
 
-        public async Task<List<AccountDTO>> GetAllAcc()
+        public async Task<PagedResult<AccountDTO>> GetAllAccounts(int pageNumber, string keyword = null)
         {
             using var connection = _context.CreateConnection();
+            int pageSize = 6;
+            var offset = (pageNumber - 1) * pageSize;
 
+            // Xây dựng câu lệnh SQL cơ bản
+            var sqlBuilder = new StringBuilder();
+            sqlBuilder.Append(@"
+        SELECT a.*, m.*, g.*
+        FROM account AS a
+        JOIN Members AS m ON a.Member_id = m.Member_id
+        JOIN `groups` AS g ON m.Group_id = g.Group_id
+    ");
 
-            // using Dapper's multi-mapping
-            var dtoSql = @"
-SELECT a.*, m.*,g.*
-			FROM account AS a
-			JOIN Members AS m ON a.Member_id = m.Member_id
-            JOIN `Groups` AS g ON m.Group_id = g.Group_id ;";
+            // Nếu có từ khóa tìm kiếm, thêm điều kiện WHERE
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                sqlBuilder.Append("WHERE a.username LIKE @keyword ");
+            }
 
-            var users = await connection.QueryAsync<AccountDTO, MemberDTO, Group, AccountDTO>(dtoSql,
-                (account, member,group) =>
+            sqlBuilder.Append("LIMIT @pageSize OFFSET @offset;");
+
+            // Thực hiện truy vấn
+            var queryResult = await connection.QueryAsync<AccountDTO, MemberDTO, Group, AccountDTO>(
+                sqlBuilder.ToString(),
+                (account, member, group) =>
                 {
                     account.Member = member;
-                    member.groups = group;// Assuming 'AccountDTO' has a property 'Member' of type 'Member'
-                    return account;           // Return the account with its member populated
+                    member.groups = group;
+                    return account;
                 },
-                splitOn: "Member_id,Group_id");
-            return users.ToList();
+                new { keyword = $"%{keyword}%", pageSize, offset },
+                splitOn: "Member_id,Group_id"
+            );
+
+            // Lấy tổng số bản ghi
+            var countSql = "SELECT COUNT(*) FROM account";
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                countSql += " WHERE username LIKE @keyword";
+            }
+            var totalCount = await connection.ExecuteScalarAsync<int>(countSql, new { keyword = $"%{keyword}%" });
+
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return new PagedResult<AccountDTO>
+            {
+                Data = queryResult.ToList(),
+                TotalPages = totalPages
+            };
         }
+
 
         public async Task UpdatePasswordAcc(AccountDTO acc)
         {

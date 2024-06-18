@@ -20,7 +20,7 @@
               :controls="false"
               :precision="0"
               :min="10000"
-              :formatter="formatBudget"
+              @change =""
               :parser="parseBudget"
               @blur="checkBudget"
               class="w-full"

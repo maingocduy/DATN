@@ -11,7 +11,11 @@ namespace WebApplication3.DTOs.Account
         [JsonIgnore]        
         public string Password { get; set; }
 
+        public sbyte Status { get; set; } = 0;
+
+        public string Role { get; set; } = "User";
         public MemberDTO Member { get; set; } = new MemberDTO();
+
 
     }
 }

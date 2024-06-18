@@ -167,6 +167,14 @@ export default {
     },
     async handleRegistration() {
       try {
+        if (this.username.includes(' ')) {
+          ElNotification({
+            type: 'error',
+            title: 'Thông báo',
+            message: 'Tên đăng nhập không được có khoảng trắng!'
+          })
+          return
+        }
         await this.register({
           username: this.username,
           password: this.password,

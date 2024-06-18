@@ -2,35 +2,55 @@ import axios from 'axios'
 import Cookies from 'js-cookie'
 import store from '../store/index'
 import router from '../router/index'
-import { ElNotification } from 'element-plus'
+import { ElNotification, ElLoading } from 'element-plus'
 
 // Cấu hình base URL mặc định cho axios
 axios.defaults.baseURL = 'https://localhost:7188/'
 
 // Hàm để cập nhật Authorization header với token mới từ Cookies
-const updateAuthorizationHeader = () => {
-  const token = Cookies.get('token')
-  if (token) {
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-  } else {
-    delete axios.defaults.headers.common['Authorization']
-  }
-}
 
 // Intercept request để cập nhật header Authorization trước khi gửi request
+// Intercept response errors để xử lý lỗi 401 và 403
+
+// Tạo instance ElLoading
+let loadingService // Khai báo biến loadingService ở mức global
+const updateAuthorizationHeader = () => {
+  axios.defaults.headers.common['Authorization'] = `Bearer ${Cookies.get('token')}`
+}
+// Hàm để khởi tạo loadingService
+const initLoadingService = () => {
+  loadingService = ElLoading.service({
+    fullscreen: true,
+    text: 'Loading...',
+    background: 'rgba(0, 0, 0, 0.7)'
+  })
+}
 axios.interceptors.request.use(
   (config) => {
-    updateAuthorizationHeader()
+    if (!loadingService) {
+      // Kiểm tra nếu loadingService chưa được khởi tạo
+      initLoadingService() // Khởi tạo loadingService nếu chưa tồn tại
+    } // Hiển thị loading trước khi gửi yêu cầu
+    updateAuthorizationHeader() // Cập nhật Authorization header
     return config
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    if (loadingService) {
+      loadingService.close() // Ẩn loading nếu gặp lỗi request
+    }
+    return Promise.reject(error)
+  }
 )
-
-// Intercept response errors để xử lý lỗi 401 và 403
 axios.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (loadingService) {
+      loadingService.close() // Ẩn loading sau khi nhận phản hồi
+    }
+    return response
+  },
   (error) => {
     if (error.response) {
+      loadingService.close()
       if (error.response.status === 401) {
         const token = Cookies.get('token')
         if (!token) {

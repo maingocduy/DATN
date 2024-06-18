@@ -70,7 +70,7 @@ namespace WebApplication3.Service.AuthService
             var userByUsername = await userManager.FindByNameAsync(registerDTO.username);
             string code = await userManager.GenerateEmailConfirmationTokenAsync(userByUsername);
             string confirmationLink = $"http://localhost:5173/ResponseRegister?userId={userByUsername.Id}&code={Uri.EscapeDataString(code)}&user={userByUsername.UserName}";
-            await accountService.SendEmailAsync(userByUsername.Email, "Xác nhận email của bạn",
+             accountService.SendEmailAsync(userByUsername.Email, "Xác nhận email của bạn",
         $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href='{confirmationLink}'>link</a>");
             return new GeneralResponse(true, "Tài khoản đã được tạo thành công. Vui lòng kiểm tra email để xác nhận tài khoản của bạn.");
         }
@@ -78,7 +78,7 @@ namespace WebApplication3.Service.AuthService
         {
             // Check if the username already exists
             if (await accountRepository.GetAccountsByUserName(acc.username) != null)
-                throw new Exception("User with the username '" + acc.username + "' already exists");
+                throw new Exception("Username này đã tồn tại");
             var getUser = await userManager.FindByEmailAsync(email);
             if (getUser != null)
             {
@@ -115,12 +115,12 @@ namespace WebApplication3.Service.AuthService
             {
              
                 // Assign Default Role: Admin to the first registrar; rest are Users
-                var checkAdmin = await roleManager.FindByNameAsync("Admin");
+                var checkAdmin = await roleManager.FindByNameAsync("Manager");
                 if (checkAdmin == null)
                 {
-                    await roleManager.CreateAsync(new IdentityRole() { Name = "Admin" });
-                    await userManager.AddToRoleAsync(newUser, "Admin");
-                    return new GeneralResponse(true, "Account admin Created");
+                    await roleManager.CreateAsync(new IdentityRole() { Name = "Manager" });
+                    await userManager.AddToRoleAsync(newUser, "Manager");
+                    return new GeneralResponse(true, "Tài khoản đã được tạo");
                 }
                 else
                 {
@@ -130,7 +130,7 @@ namespace WebApplication3.Service.AuthService
 
                     await userManager.AddToRoleAsync(newUser, "User");
 
-                    return new GeneralResponse(true, "Account user Created");
+                    return new GeneralResponse(true, "Tài khoản đã được tạo");
                 }
             }
         }
@@ -205,6 +205,7 @@ namespace WebApplication3.Service.AuthService
             var result = await userManager.ConfirmEmailAsync(user, code);
             if (result.Succeeded)
             {
+
                 return new GeneralResponse(true, "Xác nhận email thành công");
             }
             else

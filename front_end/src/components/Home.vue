@@ -5,11 +5,11 @@
       ref="imageCarousel"
       :interval="3000"
       arrow="always"
-      height="600px"
       @change="resetInterval"
+      height="auto"
       autoplay
     >
-      <el-carousel-item v-for="(product, index) in products" :key="index">
+      <el-carousel-item v-for="(product, index) in products" :key="index" style="height: auto">
         <img :src="product.image" :alt="product.name" class="carousel-image slide-animation" />
       </el-carousel-item>
     </el-carousel>
@@ -82,10 +82,10 @@ export default {
     return {
       products: [
         {
-          image: '../../public/Images/anhbia.jpg'
+          image: '../../public/Images/anhbia5.jpg'
         },
         {
-          image: '../../public/Images/anhbia2.jpg'
+          image: '../../public/Images/anhslide.jpg'
         },
         {
           image: '../../public/Images/anhbia4.jpg'
@@ -124,9 +124,9 @@ export default {
 }
 
 .carousel-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover; /* Đảm bảo hình ảnh vừa với khu vực carousel */
+  width: 100%; /* Ảnh sẽ chiếm toàn bộ chiều rộng của slide */
+  height: 100%; /* Ảnh sẽ chiếm toàn bộ chiều cao của slide */
+  object-fit: fill; /* Đảm bảo ảnh không bị méo khi điều chỉnh kích thước */
 }
 
 .projects-section {

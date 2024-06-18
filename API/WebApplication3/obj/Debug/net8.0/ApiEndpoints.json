@@ -1,23 +1,19 @@
 [
   {
     "ContainingType": "WebApplication3.Controllers.AccountController",
-    "Method": "GetAllAcc",
+    "Method": "GetAllAccounts",
     "RelativePath": "api/Account",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
+    "Parameters": [
       {
-        "Type": "System.Collections.Generic.List\u00601[[WebApplication3.Entities.account, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Account.GetAllAccountRequest",
+        "IsRequired": true
       }
-    ]
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "WebApplication3.Controllers.AccountController",
@@ -42,22 +38,6 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.AccountController",
-    "Method": "Delete",
-    "RelativePath": "api/Account/{username}",
-    "HttpMethod": "DELETE",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "username",
-        "Type": "System.String",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.AccountController",
     "Method": "ChangeForgetPass",
     "RelativePath": "api/Account/changeForgetPass",
     "HttpMethod": "POST",
@@ -68,6 +48,22 @@
         "Name": "request",
         "Type": "WebApplication3.DTOs.Account.EnterPassRequest",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.AccountController",
+    "Method": "Delete",
+    "RelativePath": "api/Account/delete_acc",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "username",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []
@@ -99,6 +95,22 @@
       {
         "Name": "forgetPass",
         "Type": "WebApplication3.DTOs.Account.ForgetPassDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.AccountController",
+    "Method": "GetAllAccounts",
+    "RelativePath": "api/Account/get_all_accounts",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Account.GetAllAccountRequest",
         "IsRequired": true
       }
     ],
@@ -158,6 +170,22 @@
         "Name": "request",
         "Type": "WebApplication3.DTOs.Account.ForgetPassDTO",
         "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.AccountController",
+    "Method": "updateRole",
+    "RelativePath": "api/Account/update_role",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "username",
+        "Type": "System.String",
+        "IsRequired": false
       }
     ],
     "ReturnTypes": []

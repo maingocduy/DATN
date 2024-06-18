@@ -16,17 +16,19 @@ namespace WebApplication3.Controllers
 
     public class AccountController : Controller
     {
-        private readonly IAccountService accountRepository;
-        public AccountController(IAccountService accountRepository)
+        private readonly IAccountService accountService;
+        public AccountController(IAccountService accountService)
         {
-            this.accountRepository = accountRepository;
+            this.accountService = accountService;
         }
         [HttpGet, Authorize(Roles ="Admin")]
-        public async Task<ActionResult<List<account>>> GetAllAcc()
+        [HttpPost("get_all_accounts")]
+        public async Task<IActionResult> GetAllAccounts(GetAllAccountRequest request)
         {
             try
             {
-                return Ok(await accountRepository.GetAllAcc());
+                var result = await accountService.GetAllAcc(request.pageNumber,request.keyword);
+                return Ok(new { accounts = result.Data, totalPages = result.TotalPages });
             }
             catch (System.UnauthorizedAccessException ex)
             {
@@ -45,25 +47,53 @@ namespace WebApplication3.Controllers
             }
         }
 
+        [HttpPost("update_role")]
+        public async Task<ActionResult> updateRole(string username)
+        {
+            try
+            {
+                await accountService.ChangeRole(username);
+                return Ok(new { message  = "Đổi quyền thành công"});
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Đã xảy ra lỗi. Vui lòng thử lại sau." });
+            }
+        }
         [HttpGet("id")]
         public async Task<ActionResult<account>> GetAccount(int id)
         {
-            var account = await accountRepository.GetAccountsAsync(id);
+            var account = await accountService.GetAccountsAsync(id);
             return Ok(account);
         }
        
         [HttpPut("{username}")]
         public async Task<IActionResult> Update(string username,UpdatePasswordRequestDTO acc)
         {
-            await accountRepository.UpdatePasswordAcc(username, acc);
+            await accountService.UpdatePasswordAcc(username, acc);
             return Ok(new { message = "Pass updated" });
         }
 
-        [HttpDelete("{username}")]
+        [HttpDelete("delete_acc")]
         public async Task<IActionResult> Delete(string username)
         {
-            await accountRepository.DeleteAccount(username);
-            return Ok(new { message = "User deleted" });
+            try
+            {
+                await accountService.DeleteAccount(username);
+                return Ok(new { message = "Xóa thành công" });
+                    }
+            catch(KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch(Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi hệ thống" });
+            }
         }
 
         [HttpPost("logout")]
@@ -79,7 +109,7 @@ namespace WebApplication3.Controllers
         {
             try
             {
-                await accountRepository.ForgotPassword(forgetPass.email);
+                await accountService.ForgotPassword(forgetPass.email);
                 return Ok(new { Message = "Gửi thành công." });
             }
             catch (KeyNotFoundException ex)
@@ -96,7 +126,7 @@ namespace WebApplication3.Controllers
         {
             try
             {
-                await accountRepository.EnterOtp(request.Otp);
+                await accountService.EnterOtp(request.Otp);
                 return Ok("Thành công");
             }
             catch (KeyNotFoundException ex)
@@ -113,7 +143,7 @@ namespace WebApplication3.Controllers
         {
             try
             {
-                await accountRepository.ReSendOtp(request.email);
+                await accountService.ReSendOtp(request.email);
                 return Ok(new { Message = "Gửi otp mới thành công." });
             }
             catch (KeyNotFoundException ex)
@@ -130,7 +160,7 @@ namespace WebApplication3.Controllers
         {
             try
             {
-                await accountRepository.changeForgetPass(request.Email, request.Password, request.Otp);
+                await accountService.changeForgetPass(request.Email, request.Password, request.Otp);
                 return Ok(new { Message = "Đặt lại mật khẩu thành công" });
             }
             catch (KeyNotFoundException ex)

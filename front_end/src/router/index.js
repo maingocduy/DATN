@@ -1,82 +1,93 @@
+// src/router/index.js
+
 import { createRouter, createWebHistory } from 'vue-router'
+import AppLayout from '../mainVue/DefaultLayout.vue'
+import AdminLayout from '../mainVue/AdminLayout.vue'
+
+// Routes for the main application
+const mainRoutes = [
+  {
+    path: '/',
+    component: AppLayout,
+    children: [
+      {
+        path: '',
+        name: 'home',
+        component: () => import('../views/HomeView.vue')
+      },
+      {
+        path: 'blog',
+        name: 'blog',
+        component: () => import('../views/TiptapView.vue')
+      },
+      {
+        path: 'Momo/:name',
+        name: 'Momo',
+        component: () => import('../views/momoView.vue')
+      },
+      {
+        path: 'Response',
+        name: 'Response',
+        component: () => import('../views/ResponseMomoView.vue')
+      },
+      {
+        path: 'project',
+        name: 'project',
+        component: () => import('../views/projectView.vue')
+      },
+      {
+        path: 'project/:name',
+        name: 'projectDetail',
+        component: () => import('../components/DetailProject.vue')
+      },
+      {
+        path: 'test',
+        name: 'test',
+        component: () => import('../views/test.vue')
+      },
+      {
+        path: 'login',
+        name: 'login',
+        component: () => import('../views/loginView.vue')
+      },
+      {
+        path: 'newProject',
+        name: 'newProject',
+        component: () => import('../views/newProjectView.vue')
+      },
+      {
+        path: 'register',
+        name: 'register',
+        component: () => import('../views/RegisterView.vue')
+      },
+      {
+        path: 'ResponseRegister',
+        name: 'ResponseRegister',
+        component: () => import('../views/ResponseRegisterView.vue')
+      }
+    ]
+  }
+]
+
+// Routes for the admin application
+const adminRoutes = [
+  {
+    path: '/admin',
+    component: AdminLayout,
+    children: [
+      {
+        path: '',
+        name: 'adminHome',
+        component: () => import('../views/AdminView.vue')
+      }
+      // Add other admin-specific routes here
+    ]
+  }
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    {
-      path: '/',
-      name: 'home',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/HomeView.vue')
-    },
-    {
-      path: '/blog',
-      name: 'blog',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/TiptapView.vue')
-    },
-    {
-      path: '/Momo/:name',
-      name: 'Momo',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/momoView.vue')
-    },
-    {
-      path: '/Response',
-      name: 'Response',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ResponseMomoView.vue')
-    },
-    {
-      path: '/project',
-      name: 'project',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/projectView.vue')
-    },
-    {
-      path: '/project/:name', // Thêm route cho trang chi tiết dự án và đặt parameter cho id của dự án
-      name: 'projectDetail',
-      component: () => import('../components/DetailProject.vue')
-    },
-    {
-      path: '/test', // Thêm route cho trang chi tiết dự án và đặt parameter cho id của dự án
-      name: 'test',
-      component: () => import('../views/test.vue')
-    },
-    {
-      path: '/login', // Thêm route cho trang chi tiết dự án và đặt parameter cho id của dự án
-      name: 'login',
-      component: () => import('../views/loginView.vue')
-    },
-    {
-      path: '/newProject', // Thêm route cho trang chi tiết dự án và đặt parameter cho id của dự án
-      name: 'newProject',
-      component: () => import('../views/newProjectView.vue')
-    },
-    {
-      path: '/register', // Thêm route cho trang chi tiết dự án và đặt parameter cho id của dự án
-      name: 'register',
-      component: () => import('../views/RegisterView.vue')
-    },
-    {
-      path: '/ResponseRegister',
-      name: 'ResponseRegister',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('../views/ResponseRegisterView.vue')
-    }
-  ]
+  routes: [...mainRoutes, ...adminRoutes]
 })
 
 export default router

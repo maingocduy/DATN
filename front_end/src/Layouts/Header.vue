@@ -11,14 +11,20 @@
       <div class="flex-1 hidden sm:flex justify-center">
         <ul class="flex flex-row font-medium space-x-8">
           <li><a href="/" class="text-gray-800 hover:text-blue-500">Trang chủ</a></li>
+          <li><a href="#" class="text-gray-800 hover:text-blue-500">Giới thiệu</a></li>
           <li><a href="/blog" class="text-gray-800 hover:text-blue-500">Blog</a></li>
-          <li><a href="#" class="text-gray-800 hover:text-blue-500">Danh sách bác sĩ</a></li>
+
           <li><a href="/project" class="text-gray-800 hover:text-blue-500">Dự án</a></li>
+          <li>
+            <a href="/admin" v-if="roleManager == 'Admin'" class="text-gray-800 hover:text-blue-500"
+              >Admin</a
+            >
+          </li>
         </ul>
       </div>
       <div class="hidden sm:flex items-center space-x-6">
         <template v-if="isAuthenticated">
-          <div class="relative" @click="showDropdown = !showDropdown">
+          <div class="relative z-50" @click="showDropdown = !showDropdown">
             <span class="text-base text-gray-800 cursor-pointer">Xin chào, {{ username }}</span>
             <div
               v-if="showDropdown"
@@ -64,7 +70,7 @@
       <ul class="flex flex-col space-y-4">
         <li><a href="/" class="text-gray-800 hover:text-blue-500">Trang chủ</a></li>
         <li><a href="/blog" class="text-gray-800 hover:text-blue-500">Blog</a></li>
-        <li><a href="#" class="text-gray-800 hover:text-blue-500">Danh sách bác sĩ</a></li>
+        <li><a href="#" class="text-gray-800 hover:text-blue-500">Giới thiệu</a></li>
         <li><a href="/project" class="text-gray-800 hover:text-blue-500">Dự án</a></li>
         <li v-if="isAuthenticated">
           <span class="text-base text-gray-800">Xin chào, {{ username }}</span>
@@ -98,7 +104,7 @@ export default {
 
     const logout = async () => {
       ElNotification({
-        type: 'error',
+        type: 'success',
         title: 'Thông báo',
         message: 'Đăng xuất thành công!'
       })
@@ -125,7 +131,8 @@ export default {
       showDropdown,
       logout,
       isMobileMenuOpen,
-      toggleMobileMenu
+      toggleMobileMenu,
+      roleManager
     }
   }
 }
