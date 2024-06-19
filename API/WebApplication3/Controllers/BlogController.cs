@@ -21,18 +21,34 @@ namespace WebApplication3.Controllers
         {
             this.IBlogService = IBlogService;
         }
-        [HttpGet("all_blog"), Authorize]
-        public async Task<ActionResult<List<blog>>> GetAllBlog()
+        [HttpPost("all_blog"), Authorize(Roles = "Manager")]
+        public async Task<ActionResult> GetAllBlog(GetAllBlogRequest request)
         {
-            var blog = await IBlogService.GetAllBlog();
-            return Ok(blog);
+            try
+            {
+                var result = await IBlogService.GetAllBlog(request.pageNumber,request.keyword,request.approved);
+                return Ok(new { blogs = result.Data, totalPages = result.TotalPages });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
-        [HttpGet("all_blog_approve")]
-        public async Task<ActionResult<List<blog>>> GetAllBlogApprove()
+
+        [HttpPost("all_blog_approve")]
+        public async Task<ActionResult> GetAllBlogApprove(int pageNumber = 1)
         {
-            var blog = await IBlogService.GetAllBlogTrue();
-            return Ok(blog);
+            try
+            {
+                var result = await IBlogService.GetAllBlogTrue(pageNumber);
+                return Ok(new { blogs = result.Data, totalPages = result.TotalPages });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
         }
+
         [HttpPost, Authorize]
         public async Task<IActionResult> AddBlog(CreateRequestBLogDTO createBlog)
         {
@@ -75,6 +91,23 @@ namespace WebApplication3.Controllers
             catch (Exception ex)
             {
                 return BadRequest(new { Message = ex.Message });
+            }
+        }
+        [HttpGet("get_blog")]
+        public async Task<IActionResult> GetBlog(string title)
+        {
+            try
+            {
+                return Ok(await IBlogService.GetBlogsByTitle(title));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new {message = ex.Message});
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message
+                    );
             }
         }
     }

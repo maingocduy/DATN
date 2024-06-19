@@ -1,5 +1,5 @@
 <script setup>
-import TheWelcome from '../components/Momo.vue'
+import TheWelcome from '../components/Momo/Momo.vue'
 </script>
 
 <template>

@@ -72,6 +72,7 @@ axios.interceptors.response.use(
           title: 'Thông báo',
           message: 'Bạn không có quyền truy cập chức năng này.'
         })
+        router.push('/')
       } else if (error.response.status === 500) {
         ElNotification({
           type: 'error',

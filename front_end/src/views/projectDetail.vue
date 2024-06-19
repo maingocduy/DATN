@@ -1,5 +1,5 @@
 <script setup>
-import TheWelcome from '../components/DetailProject.vue'
+import TheWelcome from '../components/Project/DetailProject.vue'
 </script>
 
 <template>

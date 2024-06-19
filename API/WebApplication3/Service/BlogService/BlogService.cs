@@ -4,6 +4,7 @@ using Org.BouncyCastle.Asn1.Ocsp;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Xml.Linq;
+using WebApplication3.DTOs;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Blog;
 using WebApplication3.DTOs.Member;
@@ -17,16 +18,16 @@ namespace WebApplication3.Service.BlogService
 {
     public interface IBlogService
     {
-        Task<List<BlogDTO>> GetAllBlog();
+        Task<PagedResult<BlogDTO>> GetAllBlog(int pageNumber, string? keyword = null, bool? approved = null);
         Task<AccountDTO> GetBlogsAsync(int id);
 
-        Task<AccountDTO> GetBlogsByTitle(string title);
+        Task<BlogDTO> GetBlogsByTitle(string title);
 
         Task UpdateBlog(string title, UpdatePasswordRequestDTO acc);
         Task DeleteBlog(string title);
         Task UpdateStatus(updateApprovedRequest request);
         Task AddBlog(string jwt, CreateRequestBLogDTO create);
-        Task<List<BlogDTO>> GetAllBlogTrue();
+        Task<PagedResult<BlogDTO>> GetAllBlogTrue(int pageNumber);
     }
     public class BlogService : IBlogService
     {
@@ -90,22 +91,28 @@ namespace WebApplication3.Service.BlogService
             throw new NotImplementedException();
         }
 
-        public async Task<List<BlogDTO>> GetAllBlog()
+        public async Task<PagedResult<BlogDTO>> GetAllBlog(int pageNumber, string? keyword = null, bool? approved = null)
         {
-            return await IBlogRepository.GetAllBlogs();
+            return await IBlogRepository.GetAllBlogs(pageNumber,keyword,approved);
         }
-        public async Task<List<BlogDTO>> GetAllBlogTrue()
+
+        public async Task<PagedResult<BlogDTO>> GetAllBlogTrue(int pageNumber)
         {
-            return await IBlogRepository.GetAllBlogsTrue();
+            return await IBlogRepository.GetAllBlogsTrue(pageNumber);
         }
         public Task<AccountDTO> GetBlogsAsync(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Task<AccountDTO> GetBlogsByTitle(string title)
+        public async Task<BlogDTO> GetBlogsByTitle(string title)
         {
-            throw new NotImplementedException();
+            var blog = await IBlogRepository.GetBlogsByTitle(title);
+
+            if (blog == null)
+                throw new KeyNotFoundException("Không tìm thấy Blog");
+
+            return blog;
         }
 
         public Task UpdateBlog(string title, UpdatePasswordRequestDTO acc)

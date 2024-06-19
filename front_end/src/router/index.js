@@ -18,6 +18,11 @@ const mainRoutes = [
       {
         path: 'blog',
         name: 'blog',
+        component: () => import('../views/BlogTableView.vue')
+      },
+      {
+        path: 'addBlog',
+        name: 'addBlog',
         component: () => import('../views/TiptapView.vue')
       },
       {
@@ -38,7 +43,7 @@ const mainRoutes = [
       {
         path: 'project/:name',
         name: 'projectDetail',
-        component: () => import('../components/DetailProject.vue')
+        component: () => import('../components/Project/DetailProject.vue')
       },
       {
         path: 'test',
@@ -69,6 +74,11 @@ const mainRoutes = [
         path: 'AboutUs',
         name: 'AboutUs',
         component: () => import('../views/AboutUsView.vue')
+      },
+      {
+        path: 'BlogTable',
+        name: 'BlogTable',
+        component: () => import('../views/BlogTableView.vue')
       }
     ]
   }
@@ -84,6 +94,11 @@ const adminRoutes = [
         path: '',
         name: 'adminHome',
         component: () => import('../views/AdminView.vue')
+      },
+      {
+        path: 'ManagerBlog',
+        name: 'ManagerBlog',
+        component: () => import('../views/ManagerBlogView.vue')
       }
       // Add other admin-specific routes here
     ]

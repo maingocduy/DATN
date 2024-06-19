@@ -1,35 +1,35 @@
 <template>
   <nav class="bg-white shadow-lg">
     <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-      <a href="#" class="flex items-center">
+      <a href="/" class="flex items-center">
         <img
           src="../../public/Images/logo.jpg"
           class="h-16 w-16 object-cover rounded-full"
           alt="Logo"
         />
       </a>
-      <div class="flex-1 hidden sm:flex justify-center">
+
+      <!-- Menu trên Desktop -->
+      <div class="flex-1 hidden sm:flex justify-center items-center space-x-8">
         <ul class="flex flex-row font-medium space-x-8">
           <li><a href="/" class="text-gray-800 hover:text-blue-500">Trang chủ</a></li>
           <li><a href="/AboutUs" class="text-gray-800 hover:text-blue-500">Giới thiệu</a></li>
           <li><a href="/blog" class="text-gray-800 hover:text-blue-500">Blog</a></li>
-
           <li><a href="/project" class="text-gray-800 hover:text-blue-500">Dự án</a></li>
-          <li>
-            <a href="/admin" v-if="roleManager == 'Admin'" class="text-gray-800 hover:text-blue-500"
-              >Admin</a
-            >
+          <li v-if="roleManager === 'Manager'">
+            <a href="/admin/ManagerBlog" class="text-gray-800 hover:text-blue-500">Quản lý Blog</a>
           </li>
-          <li>
-            <a href="#" v-if="roleManager == 'Manager'" class="text-gray-800 hover:text-blue-500"
-              >Quản lý Blog</a
-            >
+          <li v-if="roleManager === 'Admin'">
+            <a href="/admin" class="text-gray-800 hover:text-blue-500">Admin</a>
           </li>
         </ul>
       </div>
-      <div class="hidden sm:flex items-center space-x-6">
+
+      <!-- User Profile và Menu Mobile -->
+      <div class="flex items-center space-x-6">
+        <!-- Nếu đã đăng nhập -->
         <template v-if="isAuthenticated">
-          <div class="relative z-50" @click="showDropdown = !showDropdown">
+          <div class="relative z-50 sm:hidden-auth" @click="showDropdown = !showDropdown">
             <span class="text-base text-gray-800 cursor-pointer">Xin chào, {{ username }}</span>
             <div
               v-if="showDropdown"
@@ -44,50 +44,62 @@
             </div>
           </div>
         </template>
+        <!-- Nếu chưa đăng nhập -->
         <template v-else>
-          <a href="/register" class="text-base text-gray-800 hover:text-blue-500">Đăng ký</a>
-          <a href="/login" class="text-base text-gray-800 hover:text-blue-500">Đăng nhập</a>
-        </template>
-      </div>
-      <div class="sm:hidden">
-        <button
-          @click="toggleMobileMenu"
-          class="flex items-center px-3 py-2 rounded text-gray-500 hover:text-gray-900"
-        >
-          <svg
-            class="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
+          <a href="/register" class="text-base text-gray-800 hover:text-blue-500 sm:hidden-auth"
+            >Đăng ký</a
           >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M4 6h16M4 12h16m-7 6h7"
-            ></path>
-          </svg>
-        </button>
+          <h1 class="sm:hidden-auth text-base">/</h1>
+          <a href="/login" class="text-base text-gray-800 hover:text-blue-500 sm:hidden-auth"
+            >Đăng nhập</a
+          >
+        </template>
+
+        <!-- Button Menu Mobile -->
+        <div class="sm:hidden">
+          <button
+            @click="toggleMobileMenu"
+            class="flex items-center px-3 py-2 rounded text-gray-500 hover:text-gray-900"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16m-7 6h7"
+              ></path>
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
+
+    <!-- Menu Mobile -->
     <div class="sm:hidden px-4 pb-3" v-if="isMobileMenuOpen">
       <ul class="flex flex-col space-y-4">
         <li><a href="/" class="text-gray-800 hover:text-blue-500">Trang chủ</a></li>
-        <li><a href="/blog" class="text-gray-800 hover:text-blue-500">Blog</a></li>
         <li><a href="/AboutUs" class="text-gray-800 hover:text-blue-500">Giới thiệu</a></li>
+        <li><a href="/blog" class="text-gray-800 hover:text-blue-500">Blog</a></li>
         <li><a href="/project" class="text-gray-800 hover:text-blue-500">Dự án</a></li>
-        <li v-if="isAuthenticated">
-          <span class="text-base text-gray-800"
-            >Xin chào, <a href="#">{{ username }}</a></span
-          >
+        <li v-if="roleManager === 'Manager' || roleManager === 'Admin'">
+          <a href="#" class="text-gray-800 hover:text-blue-500">Quản lý Blog</a>
+        </li>
+        <li v-if="roleManager === 'Admin'">
+          <a href="/admin" class="text-gray-800 hover:text-blue-500">Admin</a>
         </li>
         <li v-if="isAuthenticated">
+          <span class="text-base text-gray-800">Xin chào, {{ username }}</span>
           <a href="#" @click="logout" class="text-gray-800 hover:text-blue-500">Đăng xuất</a>
         </li>
         <li v-else>
-          <a href="/register" class="text-base text-gray-800 hover:text-blue-500">Đăng ký</a>
-          <a href="/login" class="text-base text-gray-800 hover:text-blue-500">Đăng nhập</a>
+          <a href="/register" class="text-base text-gray-800 hover:text-blue-500">Đăng ký /</a>
+          <a href="/login" class="text-base text-gray-800 hover:text-blue-500"> Đăng nhập</a>
         </li>
       </ul>
     </div>
@@ -98,12 +110,14 @@
 import { computed, onMounted, ref } from 'vue'
 import { useStore } from 'vuex'
 import { ElNotification } from 'element-plus'
+
 export default {
   setup() {
     const store = useStore()
     const showDropdown = ref(false)
     const countdown = ref(0)
     const isMobileMenuOpen = ref(false)
+
     onMounted(() => {
       store.dispatch('initializeAuth')
     })
@@ -119,7 +133,6 @@ export default {
         message: 'Đăng xuất thành công!'
       })
 
-      // Đặt bộ đếm ngược
       countdown.value = 2
       const interval = setInterval(() => {
         if (countdown.value > 0) {
@@ -129,8 +142,10 @@ export default {
           location.reload()
         }
       }, 1000)
+
       await store.dispatch('logout')
     }
+
     const toggleMobileMenu = () => {
       isMobileMenuOpen.value = !isMobileMenuOpen.value
     }
@@ -181,8 +196,8 @@ button {
   .sm\:flex {
     display: none;
   }
-  .space-x-6 {
-    justify-content: space-around;
+  .sm\:hidden-auth {
+    display: none;
   }
 }
 </style>

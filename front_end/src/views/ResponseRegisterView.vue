@@ -1,5 +1,5 @@
 <script setup>
-import TheWelcome from '../components/ReponseRegister.vue'
+import TheWelcome from '../components/auth/ReponseRegister.vue'
 </script>
 
 <template>

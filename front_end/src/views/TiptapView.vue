@@ -1,5 +1,5 @@
 <script setup>
-import TheWelcome from '../components/TiptapTest.vue'
+import TheWelcome from '../components/Blog/TiptapTest.vue'
 </script>
 
 <template>
