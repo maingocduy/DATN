@@ -86,9 +86,14 @@ namespace WebApplication3.Service.BlogService
                 throw ex;
             }
         }
-        public Task DeleteBlog(string title)
+        public async Task DeleteBlog(string title)
         {
-            throw new NotImplementedException();
+            var blog = await GetBlogsByTitle(title);
+            if(blog == null)
+            {
+                throw new KeyNotFoundException("Không tìm thấy blog!");
+            }
+            await IBlogRepository.DeleteBlog(blog);
         }
 
         public async Task<PagedResult<BlogDTO>> GetAllBlog(int pageNumber, string? keyword = null, bool? approved = null)

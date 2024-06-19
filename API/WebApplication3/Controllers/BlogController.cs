@@ -34,7 +34,23 @@ namespace WebApplication3.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-
+        [HttpDelete("delete_blog")]
+        public async Task<IActionResult> Delete(string title)
+        {
+            try
+            {
+                await IBlogService.DeleteBlog(title);
+                return Ok(new { message = "Xóa thành công" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Lỗi hệ thống" });
+            }
+        }
         [HttpPost("all_blog_approve")]
         public async Task<ActionResult> GetAllBlogApprove(int pageNumber = 1)
         {

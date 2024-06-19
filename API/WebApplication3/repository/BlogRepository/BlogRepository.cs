@@ -51,9 +51,11 @@ namespace WebApplication3.repository.BlogRepository
 
 
 
-        public Task DeleteBlog(BlogDTO blog)
+        public async Task DeleteBlog(BlogDTO blog)
         {
-            throw new NotImplementedException();
+            using var connection = _context.CreateConnection();
+            var sql = "Delete From Blog where Title = @title";
+            await connection.ExecuteAsync(sql, new { title = blog.Title });
         }
         public async Task UpdateStatus(bool Approved, int id)
         {

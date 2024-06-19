@@ -318,6 +318,22 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.BlogController",
+    "Method": "Delete",
+    "RelativePath": "api/Blog/delete_blog",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "title",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.BlogController",
     "Method": "GetBlog",
     "RelativePath": "api/Blog/get_blog",
     "HttpMethod": "GET",

@@ -1,70 +1,65 @@
 <template>
-  <div class="blog-list">
-    <el-row type="flex" justify="center" class="blog-list-content">
-      <el-col :span="24">
-        <h2 class="font-bold text-xl">Danh Sách Blog</h2>
-        <!-- Nút Thêm mới -->
-        <el-button
-          v-if="blogs.length !== 0"
-          class="add-new-button"
-          type="primary"
-          size="medium"
-          @click="navigateToAddNew"
-          >Thêm mới</el-button
-        >
-        <el-row :gutter="20">
-          <template v-if="blogs.length === 0">
-            <div class="no-blogs">
-              <div class="no-blogs-content">
-                <img src="../../../public/Images/Empty.jpg" alt="Hình ảnh rỗng" />
-                <p>Không có bài viết nào.</p>
-              </div>
-            </div>
+  <div class="blog-list p-4 min-h-screen flex flex-col items-center">
+    <div class="w-full max-w-7xl">
+      <h2 class="font-bold text-2xl mb-4 text-center">Danh Sách Blog</h2>
+      <button
+        v-if="blogs.length !== 0"
+        class="mb-6 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
+        @click="navigateToAddNew"
+      >
+        Thêm mới
+      </button>
+      <div v-if="blogs.length === 0" class="flex flex-col items-center">
+        <img src="../../../public/Images/Empty.jpg" alt="Hình ảnh rỗng" class="max-w-xs mb-4" />
+        <p class="italic">Không có bài viết nào.</p>
+      </div>
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <div v-for="blog in blogs" :key="blog.id" class="bg-white shadow-lg rounded-lg p-4">
+          <template v-if="extractFirstImage(blog.content)">
+            <img
+              :src="extractFirstImage(blog.content)"
+              class="w-full h-48 object-cover rounded-t-lg mb-4"
+              alt="Hình ảnh của blog"
+            />
           </template>
-          <template v-else>
-            <el-col :xs="24" :sm="12" :md="8" v-for="blog in blogs" :key="blog.id">
-              <el-card shadow="hover" class="blog-card">
-                <template v-if="blog.image">
-                  <img :src="blog.image" class="blog-image" alt="Hình ảnh của blog" />
-                </template>
-                <h3>{{ blog.title }}</h3>
-                <p><strong>Tác giả:</strong> {{ blog.account.username }}</p>
-                <p><strong>Thời gian tạo:</strong> {{ formatDate(blog.createdAt) }}</p>
-                <el-button type="text" @click="showBlogDetail(blog)">Xem chi tiết</el-button>
-                <el-dialog
-                  title="Nội dung chi tiết"
-                  :visible.sync="dialogVisible"
-                  width="60%"
-                  :before-close="handleDialogClose"
-                >
-                  <div v-html="blog.content"></div>
-                  <span slot="footer" class="dialog-footer">
-                    <el-button @click="dialogVisible = false">Đóng</el-button>
-                  </span>
-                </el-dialog>
-              </el-card>
-            </el-col>
-          </template>
-        </el-row>
-        <div v-if="blogs.length !== 0" class="pagination">
-          <el-pagination
-            @current-change="handlePageChange"
-            :current-page="pageNumber"
-            :page-size="pageSize"
-            layout="prev, pager, next"
-            :total="totalBlogs"
-          />
+          <h3 class="text-xl font-bold mb-2">{{ blog.title }}</h3>
+          <p class="text-gray-600"><strong>Tác giả:</strong> {{ blog.account.username }}</p>
+          <p class="text-gray-600">
+            <strong>Thời gian tạo:</strong> {{ formatDate(blog.createdAt) }}
+          </p>
+          <button class="mt-4 text-blue-500 hover:underline" @click="showBlogDetail(blog)">
+            Xem chi tiết
+          </button>
+          <el-dialog
+            title="Nội dung chi tiết"
+            :visible.sync="dialogVisible"
+            width="60%"
+            :before-close="handleDialogClose"
+          >
+            <div v-html="currentBlog.content"></div>
+            <span slot="footer" class="dialog-footer">
+              <el-button @click="dialogVisible = false">Đóng</el-button>
+            </span>
+          </el-dialog>
         </div>
-        <el-button
-          v-if="blogs.length === 0"
-          class="add-new-button"
-          type="primary"
-          size="medium"
-          @click="navigateToAddNew"
-          >Thêm mới</el-button
-        >
-      </el-col>
-    </el-row>
+      </div>
+      <div v-if="blogs.length !== 0" class="mt-6 flex justify-center">
+        <el-pagination
+          @current-change="handlePageChange"
+          :current-page="pageNumber"
+          :page-size="pageSize"
+          layout="prev, pager, next"
+          :total="totalBlogs"
+        />
+      </div>
+      <button
+        v-if="blogs.length === 0"
+        class="mt-6 bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition duration-200"
+        @click="navigateToAddNew"
+      >
+        Thêm mới
+      </button>
+    </div>
   </div>
 </template>
 
@@ -72,6 +67,7 @@
 import Cookies from 'js-cookie'
 import axios from 'axios'
 import { ElNotification } from 'element-plus'
+
 export default {
   name: 'BlogList',
   data() {
@@ -118,7 +114,6 @@ export default {
       }
     },
     navigateToAddNew() {
-      // Thực hiện điều hướng đến trang thêm mới blog hoặc hiển thị dialog thêm mới tại đây
       if (Cookies.get('token')) {
         this.$router.push('/addBlog')
       } else {
@@ -128,6 +123,10 @@ export default {
           message: 'Bạn cần phải đăng nhập thì mới dùng được chức năng này'
         })
       }
+    },
+    extractFirstImage(content) {
+      const imgTag = content.match(/<img[^>]+src="([^">]+)"/)
+      return imgTag ? imgTag[1] : null
     }
   },
   created() {
@@ -139,57 +138,21 @@ export default {
 <style scoped>
 .blog-list {
   padding: 20px;
-  min-height: 80vh; /* Điều chỉnh chiều cao tối thiểu cho trang */
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-.blog-list-content {
-  text-align: center;
+.max-w-xs {
+  max-width: 20rem;
 }
 
-.blog-cards {
-  margin-top: 20px;
+.mt-6 {
+  margin-top: 1.5rem;
 }
 
-.blog-card {
-  margin-bottom: 20px;
-  height: 100%; /* Đặt chiều cao cho thẻ blog */
+.mb-6 {
+  margin-bottom: 1.5rem;
 }
 
-.pagination {
-  margin-top: 20px;
-  display: flex;
-  justify-content: center;
-}
-
-.no-blogs {
-  text-align: center;
-  width: 100%;
-}
-
-.no-blogs-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 600px; /* Điều chỉnh chiều rộng tối đa của phần nội dung */
-  padding: 20px;
-}
-
-.no-blogs-content img {
-  max-width: 30%; /* Đảm bảo hình ảnh không vượt quá chiều rộng của phần nội dung */
-  height: auto;
-  margin-bottom: 10px;
-}
-
-.no-blogs-content p {
-  margin: 0;
-  font-style: italic;
-}
-
-.add-new-button {
-  margin-bottom: 20px; /* Khoảng cách giữa nút Thêm mới và danh sách blog */
+.mb-4 {
+  margin-bottom: 1rem;
 }
 </style>

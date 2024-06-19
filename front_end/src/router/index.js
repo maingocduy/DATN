@@ -79,6 +79,11 @@ const mainRoutes = [
         path: 'BlogTable',
         name: 'BlogTable',
         component: () => import('../views/BlogTableView.vue')
+      },
+      {
+        path: 'BlogDetail/:title',
+        name: 'BlogDetail',
+        component: () => import('../views/BlogDetailView.vue')
       }
     ]
   }

@@ -171,7 +171,7 @@ export default {
           try {
             const response = await axios.delete('api/blog/delete_blog', {
               params: {
-                id: row.id
+                title: row.title
               }
             })
             if (response.status === 200) {
@@ -223,7 +223,7 @@ export default {
     },
     handleDetail(row) {
       // Implement your detail view logic here, for example, navigate to a detailed blog page
-      console.log('View detail of blog:', row)
+      this.$router.push('/BlogDetail/' + row.title)
     },
     handleCurrentChange(val) {
       this.pageNumber = val
