@@ -13,6 +13,7 @@ namespace WebApplication3.Entities
         public string Name { get; set; }
         public decimal Budget { get; set; }
 
+        public decimal Contributions { get; set; }
         [Column(TypeName = "TEXT")]
         public string Description { get; set; }
 

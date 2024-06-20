@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
+using WebApplication3.DTOs;
 using WebApplication3.DTOs.Blog;
 using WebApplication3.DTOs.Project;
 using WebApplication3.DTOs.Sponsor;
@@ -36,6 +37,12 @@ namespace WebApplication3.Controllers
         {
             var result = await IProjectService.GetAllProjectAprove(pageNumber);
             return Ok(new { projects = result.Data, totalPages = result.TotalPages });
+        }
+        [HttpGet("overview")]
+        public async Task<ActionResult<OverViewDTO>> GetOverView()
+        {
+            var overview = await IProjectService.GetOverView();
+            return Ok(overview);
         }
         [HttpPost("get_project")]
         public async Task<ActionResult<Project>> GetProject([FromBody]GetProjectRequest request)

@@ -16,6 +16,7 @@ namespace WebApplication3.DTOs.Project
         [Column(TypeName = "TEXT")]
         public string Description { get; set; }
 
+        public decimal Contributions { get; set; }
         public sbyte Status { get; set; } = 0;
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }

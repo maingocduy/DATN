@@ -92,15 +92,12 @@ export default {
         }
       ],
       projects: [],
-      stats: {
-        'Dự án': 10,
-        'Lượt ủng hộ': 500,
-        'Tổng số tiền ủng hộ': '1,000,000 VND'
-      }
+      overview: [],
+      stats: {}
     }
   },
   mounted() {
-    this.viewAllProjects()
+    this.viewAllProjects(), this.Overview()
   },
   methods: {
     async viewAllProjects() {
@@ -113,6 +110,22 @@ export default {
       } catch (error) {
         console.error('Error fetching projects:', error)
       }
+    },
+    async Overview() {
+      try {
+        const response = await axios.get('/api/Project/overview')
+        this.overview = response.data
+        this.stats = {
+          'Dự án': this.overview.totalProject,
+          'Lượt ủng hộ': this.overview.totalSponsor,
+          'Tổng số tiền ủng hộ': this.formatCurrencyToVND(this.overview.totalContribution)
+        }
+      } catch (error) {
+        console.error('Error fetching projects:', error)
+      }
+    },
+    formatCurrencyToVND(amount) {
+      return amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + ' ₫'
     }
   }
 }

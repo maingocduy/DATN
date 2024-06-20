@@ -25,7 +25,7 @@ namespace WebApplication3.Service.ProjectService
         Task DeleteProject(string name);
 
         Task<PagedResult<ProjectDTO>> GetAllProjectAprove(int pageNumber);
-
+        Task<OverViewDTO> GetOverView();
         Task UpdateStatus(updateStatusRequest request);
 
     }
@@ -35,7 +35,19 @@ namespace WebApplication3.Service.ProjectService
         {
             await IProjectRepository.DeleteProject(name);
         }
+        public async Task<OverViewDTO> GetOverView()
+        {
+            var totalProject = await IProjectRepository.GetTotalProjectCount();
+            var totalSponsor = await IProjectRepository.GetTotalSponsorCount();
+            var totalContribution = await IProjectRepository.GetTotalContributionAmount();
 
+            return new OverViewDTO
+            {
+                TotalProject = totalProject,
+                TotalSponsor = totalSponsor,
+                TotalContribution = totalContribution
+            };
+        }
         public async Task<PagedResult<ProjectDTO>> GetAllProject(int pageNumber)
         {
 

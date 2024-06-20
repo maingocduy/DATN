@@ -22,7 +22,9 @@ namespace WebApplication3.repository.ProjectReposiotry
         Task<PagedResult<ProjectDTO>> GetAllProject(int pageNumber = 1);
         Task<ProjectDTO> GetProjectID(string name);
         Task UpdateStatus(sbyte status, int id);
-
+        Task<int> GetTotalSponsorCount();
+        Task<int> GetTotalProjectCount();
+        Task<decimal> GetTotalContributionAmount();
         Task<PagedResult<ProjectDTO>> GetAllProjectAprove(int pageNumber = 1);
     }
     public class ProjectRepository : IProjectRepository
@@ -242,6 +244,27 @@ LIMIT @pageSize OFFSET @offset;
             };
         }
 
+        public async Task<int> GetTotalProjectCount()
+        {
+            var dtosqlproject = @"SELECT COUNT(*) FROM Projects;";
+            using var connection = _context.CreateConnection();
+            return await connection.ExecuteScalarAsync<int>(dtosqlproject);
+        }
+
+        public async Task<int> GetTotalSponsorCount()
+        {
+            var dtosqlsponsor = @"SELECT COUNT(*) FROM sponsor;";
+            using var connection = _context.CreateConnection();
+            return await connection.ExecuteScalarAsync<int>(dtosqlsponsor);
+        }
+
+        public async Task<decimal> GetTotalContributionAmount()
+        {
+            var dtosqlcontribution = @"SELECT SUM(ContributionAmount) FROM sponsor;";
+            using var connection = _context.CreateConnection();
+            var result = await connection.ExecuteScalarAsync<decimal?>(dtosqlcontribution);
+            return result ?? 0;
+        }
 
         public async Task<ProjectDTO> GetProject(string name)
         {

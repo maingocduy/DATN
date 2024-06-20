@@ -839,6 +839,26 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.ProjectController",
+    "Method": "GetOverView",
+    "RelativePath": "api/Project/overview",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "WebApplication3.DTOs.OverViewDTO",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.ProjectController",
     "Method": "UpdateStatus",
     "RelativePath": "api/Project/update_status",
     "HttpMethod": "POST",
