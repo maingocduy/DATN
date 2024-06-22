@@ -36,7 +36,7 @@
               <img
                 v-if="project.image"
                 class="rounded-t-lg w-full h-48 object-cover"
-                :src="project.image"
+                :src="project.image.image_url"
                 alt=""
               />
               <img
@@ -52,7 +52,6 @@
                   {{ project.name }}
                 </h5>
               </a>
-              <p class="mb-4 text-gray-700">{{ project.description }}</p>
               <a
                 :href="'/project/' + project.name"
                 class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300"
@@ -147,7 +146,7 @@ export default {
       this.loading = true
       try {
         const response = await axios.get(
-          `https://localhost:7188/api/Project/get_all_project_aprove?pageNumber=${this.pageNumber}`
+          `https://localhost:7188/api/Project/get_all_project?pageNumber=${this.pageNumber}`
         )
         this.projects = response.data.projects.map((project) => {
           return {
@@ -156,7 +155,6 @@ export default {
           }
         })
         this.totalProjects = response.headers['x-total-count']
-        console.log(this.projects)
       } catch (error) {
         this.error = 'Không thể tải dữ liệu dự án.'
         console.error('Lỗi khi tải dữ liệu dự án:', error)

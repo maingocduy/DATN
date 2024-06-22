@@ -70,7 +70,13 @@ namespace WebApplication3.Controllers
             var account = await accountService.GetAccountsAsync(id);
             return Ok(account);
         }
-       
+
+        [HttpGet("Username"),Authorize]
+        public async Task<ActionResult<account>> GetAccountByUsername(string username)
+        {
+            var account = await accountService.GetAccountsByUserName(username);
+            return Ok(account);
+        }
         [HttpPut("{username}")]
         public async Task<IActionResult> Update(string username,UpdatePasswordRequestDTO acc)
         {

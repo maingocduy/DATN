@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Server.IIS;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Member;
 using WebApplication3.DTOs.Otp;
@@ -26,7 +28,7 @@ namespace WebApplication3.Controllers
         public async Task<IActionResult> Create(CreateRequestMemberDTO mem)
         {
             await IMemberService.AddMember(mem.nameProject,mem);
-            return Ok(new { message = "User created" });
+            return Ok(new { message = "Mã OTP đã được gửi vào email của bạn" });
         }
         [HttpPost("get_all_member")]
         public async Task<ActionResult<List<MemberDTO>>> GetAllMember(GetlAllMemberRequest request)
@@ -60,26 +62,26 @@ namespace WebApplication3.Controllers
             };
         }
 
-        [HttpPost("JoinProject")]
-        public async Task<ActionResult> JoinProject(string Member_name,string project_name)
+        [HttpPost("JoinProject"),Authorize]
+        public async Task<ActionResult> JoinProject(JoinProjectRequest request)
         {
             try
             {
-                await IMemberService.JoinProject(project_name, Member_name);
-                return Ok($"Join project successfully");
+                await IMemberService.JoinProject(request.ProjectName, request.username);
+                return Ok(new {messenger =  $"Đăng ký tham gia thành công" });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Error :{ex.Message}");
+                return BadRequest(new { messenger = ex.Message });
             };
         }
         [HttpPost("enter_otp")]
-        public async Task<IActionResult> EnterOtp([FromBody] otpRequest request)
+        public async Task<IActionResult> EnterOtp([FromBody] EnterOtpMemberRequest request)
         {
             try
             {
-                await IMemberService.EnterOtp(request.Otp);
-                return Ok("Thành công");
+                await IMemberService.EnterOtp(request.Otp,request.ProjectName,request.Email);
+                return Ok(new { messenger = "Tạo thành Công"});
             }
             catch (Exception ex)
             {

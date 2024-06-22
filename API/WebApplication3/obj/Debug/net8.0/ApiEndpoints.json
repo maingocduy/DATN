@@ -191,6 +191,32 @@
     "ReturnTypes": []
   },
   {
+    "ContainingType": "WebApplication3.Controllers.AccountController",
+    "Method": "GetAccountByUsername",
+    "RelativePath": "api/Account/Username",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "username",
+        "Type": "System.String",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebApplication3.Entities.account",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
     "ContainingType": "WebApplication3.Controllers.AuthController",
     "Method": "ConfirmEmail",
     "RelativePath": "api/Auth/ConfirmEmail",
@@ -616,7 +642,7 @@
     "Parameters": [
       {
         "Name": "request",
-        "Type": "WebApplication3.DTOs.Otp.otpRequest",
+        "Type": "WebApplication3.DTOs.Member.EnterOtpMemberRequest",
         "IsRequired": true
       }
     ],
@@ -657,14 +683,9 @@
     "Order": 0,
     "Parameters": [
       {
-        "Name": "Member_name",
-        "Type": "System.String",
-        "IsRequired": false
-      },
-      {
-        "Name": "project_name",
-        "Type": "System.String",
-        "IsRequired": false
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Project.JoinProjectRequest",
+        "IsRequired": true
       }
     ],
     "ReturnTypes": []
@@ -698,16 +719,11 @@
   {
     "ContainingType": "WebApplication3.Controllers.MomoController",
     "Method": "CreatePaymentUrl",
-    "RelativePath": "api/Momo/{nameProject}",
+    "RelativePath": "api/Momo/momo",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
-      {
-        "Name": "nameProject",
-        "Type": "System.String",
-        "IsRequired": true
-      },
       {
         "Name": "model",
         "Type": "WebApplication3.DTOs.Momo.OrderInfoModel",
@@ -875,26 +891,6 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.SponsorController",
-    "Method": "GetAllSponsor",
-    "RelativePath": "api/Sponsor",
-    "HttpMethod": "GET",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [],
-    "ReturnTypes": [
-      {
-        "Type": "System.Collections.Generic.List\u00601[[WebApplication3.Entities.sponsor, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
-        "MediaTypes": [
-          "text/plain",
-          "application/json",
-          "text/json"
-        ],
-        "StatusCode": 200
-      }
-    ]
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.SponsorController",
     "Method": "DeleteSponsor",
     "RelativePath": "api/Sponsor",
     "HttpMethod": "DELETE",
@@ -959,16 +955,11 @@
   {
     "ContainingType": "WebApplication3.Controllers.SponsorController",
     "Method": "AddSponsor",
-    "RelativePath": "api/Sponsor/{Project_name}",
+    "RelativePath": "api/Sponsor/add_sponsor",
     "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
-      {
-        "Name": "Project_name",
-        "Type": "System.String",
-        "IsRequired": true
-      },
       {
         "Name": "create",
         "Type": "WebApplication3.DTOs.Sponsor.CreateRequestSponsorDTO",
@@ -976,6 +967,32 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.SponsorController",
+    "Method": "GetAllSponsor",
+    "RelativePath": "api/Sponsor/get_all_sponsor",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Sponsor.GetAllSponsorRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[WebApplication3.Entities.sponsor, WebApplication3, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "WebApplication3.Controllers.WeatherForecastController",

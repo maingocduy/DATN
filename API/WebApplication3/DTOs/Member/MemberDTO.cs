@@ -6,7 +6,7 @@ namespace WebApplication3.DTOs.Member
 {
     public class MemberDTO
     {
-        [JsonIgnore]
+        
         public int Member_id { get; set; }
         public string name { get; set; }
         public string email { get; set; }

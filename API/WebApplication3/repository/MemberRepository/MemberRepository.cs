@@ -1,6 +1,8 @@
-﻿using CloudinaryDotNet.Core;
+﻿using AutoMapper.Execution;
+using CloudinaryDotNet.Core;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
+using Mysqlx.Crud;
 using System.Linq;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Groups;
@@ -8,6 +10,8 @@ using WebApplication3.DTOs.Member;
 using WebApplication3.DTOs.Otp;
 using WebApplication3.Entities;
 using WebApplication3.Helper.Data;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using static System.Net.WebRequestMethods;
 
 namespace WebApplication3.repository.MemberRepository
 {
@@ -27,6 +31,9 @@ namespace WebApplication3.repository.MemberRepository
         Task<int> getIDMember(string name);
         Task SaveOtp(string otp, string emailMember);
         Task UpdateOtp(OtpDTO otp);
+        Task<bool> CheckIsInProject(int Member_id, int Project_id);
+
+        Task<int> GetMemberIDByUsername(string username);
     }
     public class MemberRepository : IMemberRepository
     {
@@ -315,6 +322,29 @@ SELECT LAST_INSERT_ID();";
         """;
             await connection.QueryAsync(sql, new { otp });
 
+        }
+        public async Task<bool> CheckIsInProject(int Member_id, int Project_id)
+        {
+            using var connection = _context.CreateConnection();
+            string sqlQuery = "SELECT CASE WHEN EXISTS (SELECT 1 FROM memberprojects WHERE member_id = @MemberId AND project_id = @ProjectId) THEN 1 ELSE 0 END";
+
+            // Thực thi câu truy vấn và lấy kết quả
+            bool exists = await connection.ExecuteScalarAsync<bool>(sqlQuery, new { MemberId = Member_id, ProjectId = Project_id });
+            return exists;
+        }
+
+
+        public async Task<int> GetMemberIDByUsername(string username)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = """
+    SELECT m.Member_id
+    			FROM account AS a
+    			JOIN Members AS m ON a.Member_id = m.Member_id
+        WHERE Username = @username
+    """;
+            var acc = await connection.QueryAsync<int>(sql, new { username });
+            return acc.FirstOrDefault();
         }
     }
 }

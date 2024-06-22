@@ -31,7 +31,7 @@
             @click="navigateToBlog"
             class="bg-blue-500 text-white py-3 px-6 mt-8 w-full hover:bg-blue-600 transition duration-200"
           >
-            Trở về trang Blog
+            Trở về trang Dự án
           </button>
         </div>
       </div>
@@ -102,25 +102,29 @@ export default {
           this.$notify({
             type: 'error',
             title: 'Thông báo',
-            text: 'Đã hủy thanh toán'
+            message: 'Đã hủy thanh toán'
           })
           setTimeout(() => {
-            this.$router.push({ path: `/project/${this.responseData.storeId}` })
+            this.$router.push({ path: `/project/${localStorage.getItem('nameProject')}` })
           }, 2000)
         } else {
-          await axios.post(`api/Sponsor/${this.responseData.storeId}`, {
+          await axios.post(`api/Sponsor/add_sponsor`, {
+            nameProject: localStorage.getItem('nameProject'),
             name: this.responseData.extraData,
             contact: localStorage.getItem('email'),
             address: localStorage.getItem('address'),
             contributionAmount: this.responseData.amount
           })
+          localStorage.removeItem('name')
           localStorage.removeItem('email')
           localStorage.removeItem('address')
           this.$notify({
             type: 'success',
             title: 'Thông báo',
-            text: this.responseData.localMessage
+            message: this.responseData.localMessage
           })
+          console.log(localStorage.getItem('nameProject'))
+          console.log(decodeURIComponent(localStorage.getItem('nameProject')))
         }
       } catch (error) {
         this.error = 'Có lỗi xảy ra khi lấy dữ liệu từ URL.'
@@ -130,7 +134,7 @@ export default {
       }
     },
     navigateToBlog() {
-      this.$router.push('/blog')
+      this.$router.push('/project')
     }
   }
 }

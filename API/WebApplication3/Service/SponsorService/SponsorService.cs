@@ -19,8 +19,8 @@ namespace WebApplication3.Service.SponsorService
 {
     public interface ISponsorService
     {
-        Task<List<SponsorDTO>> GetAllSponsor();
-        Task AddSponsor(string name, CreateRequestSponsorDTO sponsor);
+        Task<List<SponsorDTO>> GetAllSponsor(int? ProjectId = null);
+        Task AddSponsor(CreateRequestSponsorDTO sponsor);
         Task DeleteSponsor(string name);
         Task<SponsorDTO> GetSponsor(string name);
         Task UpdateSponsors(string name, UpdateRequestSponsorDTO sponsor);
@@ -37,19 +37,18 @@ namespace WebApplication3.Service.SponsorService
             this.projectRepository = projectRepository;
         }
 
-        public async Task AddSponsor(string Project_name,CreateRequestSponsorDTO createRequestSponsorDTO)
+        public async Task AddSponsor(CreateRequestSponsorDTO createRequestSponsorDTO)
         {
-            var project = await projectRepository.GetProjectID(Project_name);
+            var project = await projectRepository.GetProjectID(createRequestSponsorDTO.nameProject);
             if (project == null)
             {
                 throw new KeyNotFoundException("Project not found");
             }
-            if (await ISponsorRepository.GetSponsor(createRequestSponsorDTO.name) == null)
-            {
+           
                 var sponsorDTO = _mapper.Map<SponsorDTO>(createRequestSponsorDTO);
 
                 await ISponsorRepository.AddSponsor(project.Project_id, sponsorDTO);
-            }
+           
         }
 
         public async Task DeleteSponsor(string name)
@@ -57,9 +56,9 @@ namespace WebApplication3.Service.SponsorService
             await ISponsorRepository.DeleteSponsor(name);
         }
 
-        public async Task<List<SponsorDTO>> GetAllSponsor()
+        public async Task<List<SponsorDTO>> GetAllSponsor(int? ProjectId = null)
         {
-            return await ISponsorRepository.GetAllSponsor();
+            return await ISponsorRepository.GetAllSponsor(ProjectId);
         }
 
         public async Task<SponsorDTO> GetSponsor(string name)

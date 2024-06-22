@@ -15,10 +15,10 @@ namespace WebApplication3.Controllers
         {
             _momoService = momoService;
         }
-        [HttpPost("{nameProject}")]
-        public async Task<IActionResult> CreatePaymentUrl(string nameProject, OrderInfoModel model)
+        [HttpPost("momo")]
+        public async Task<IActionResult> CreatePaymentUrl(OrderInfoModel model)
         {
-            var response = await _momoService.CreatePaymentAsync(nameProject,model);
+            var response = await _momoService.CreatePaymentAsync(model);
             return Ok(response);
         }
 

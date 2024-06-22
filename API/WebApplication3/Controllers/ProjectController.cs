@@ -26,7 +26,7 @@ namespace WebApplication3.Controllers
         {
             this.IProjectService = IProjectService;
         }
-        [HttpGet("get_all_project"), Authorize]
+        [HttpGet("get_all_project")]
         public async Task<IActionResult> GetAllProject([FromQuery] int pageNumber = 1)
         {
             var result = await IProjectService.GetAllProject(pageNumber);

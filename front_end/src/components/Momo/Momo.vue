@@ -74,6 +74,7 @@
 
 <script>
 import axios from 'axios'
+import Cookies from 'js-cookie'
 
 export default {
   data() {
@@ -84,6 +85,9 @@ export default {
       amount: '',
       orderInfo: ''
     }
+  },
+  mounted() {
+    this.GetAccInfor()
   },
   methods: {
     async submitForm() {
@@ -96,17 +100,30 @@ export default {
       try {
         localStorage.setItem('email', this.email)
         localStorage.setItem('address', this.address)
-        const response = await axios.post(
-          `https://localhost:7188/api/Momo/${this.$route.params.name}`,
-          {
-            fullName: this.fullName,
-            orderInfo: this.orderInfo,
-            amount: this.amount
-          }
-        )
+        const response = await axios.post(`https://localhost:7188/api/Momo/momo`, {
+          fullName: this.fullName,
+          orderInfo: this.orderInfo,
+          amount: this.amount
+        })
+        localStorage.setItem('nameProject', this.$route.params.name)
         window.location.href = response.data.payUrl
       } catch (error) {
         console.error('Error submitting payment:', error)
+      }
+    },
+    async GetAccInfor() {
+      if (Cookies.get('username') && Cookies.get('token') && Cookies.get('role')) {
+        try {
+          const response = await axios.get('https://localhost:7188/api/account/Username', {
+            params: {
+              username: Cookies.get('username')
+            }
+          })
+          this.fullName = response.data.member.name
+          this.email = response.data.member.email
+        } catch (error) {
+          console.error('Error fetching account information:', error)
+        }
       }
     }
   }

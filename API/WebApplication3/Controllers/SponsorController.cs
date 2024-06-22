@@ -18,10 +18,10 @@ namespace WebApplication3.Controllers
         {
             this.sponsorService = sponsorService;
         }
-        [HttpGet]
-        public async Task<ActionResult<List<sponsor>>> GetAllSponsor()
+        [HttpPost("get_all_sponsor")]
+        public async Task<ActionResult<List<sponsor>>> GetAllSponsor(GetAllSponsorRequest request)
         {
-            var spon = await sponsorService.GetAllSponsor();
+            var spon = await sponsorService.GetAllSponsor(request.projectId);
             return Ok(spon);
         }
         [HttpGet("{name}")]
@@ -30,11 +30,23 @@ namespace WebApplication3.Controllers
             var spon = await sponsorService.GetSponsor(name);
             return Ok(spon);
         }
-        [HttpPost("{Project_name}")]
-        public async Task<ActionResult> AddSponsor(string Project_name,CreateRequestSponsorDTO create)
+        [HttpPost("add_sponsor")]
+        public async Task<ActionResult> AddSponsor(CreateRequestSponsorDTO create)
         {
-            await sponsorService.AddSponsor(Project_name,create);
-            return Ok(new { message = "sponsor created" });
+            try
+            {
+                await sponsorService.AddSponsor(create);
+                return Ok(new { message = "sponsor created" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }    
+
         }
         [HttpDelete]
         public async Task<ActionResult> DeleteSponsor(string name)

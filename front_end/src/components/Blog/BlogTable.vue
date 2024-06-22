@@ -27,7 +27,7 @@
           <p class="text-gray-600">
             <strong>Thời gian tạo:</strong> {{ formatDate(blog.createdAt) }}
           </p>
-          <button class="mt-4 text-blue-500 hover:underline" @click="showBlogDetail(blog)">
+          <button class="mt-4 text-blue-500 hover:underline" @click="showBlogDetail(blog.title)">
             Xem chi tiết
           </button>
           <el-dialog
@@ -104,8 +104,7 @@ export default {
       return formattedDate
     },
     showBlogDetail(blog) {
-      this.currentBlog = blog
-      this.dialogVisible = true
+      this.$router.push('/BlogDetail/' + blog)
     },
     handleDialogClose(done) {
       if (done) {

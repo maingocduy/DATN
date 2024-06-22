@@ -11,7 +11,7 @@ namespace WebApplication3.Service.MomoService
 {
     public interface IMomoService
     {
-        Task<MomoCreatePaymentResponseModel> CreatePaymentAsync(string nameProject, OrderInfoModel model);
+        Task<MomoCreatePaymentResponseModel> CreatePaymentAsync(OrderInfoModel model);
         MomoExecuteResponseModel PaymentExecuteAsync(IQueryCollection collection);
     }
     public class MomoService : IMomoService
@@ -23,12 +23,12 @@ namespace WebApplication3.Service.MomoService
             _options = options;
         }
 
-        public async Task<MomoCreatePaymentResponseModel> CreatePaymentAsync(string nameProject,OrderInfoModel model)
+        public async Task<MomoCreatePaymentResponseModel> CreatePaymentAsync(OrderInfoModel model)
         {
             model.OrderId = DateTime.UtcNow.Ticks.ToString();
       
             //model.OrderInfo = "Khách hàng: " + model.FullName + ". Nội dung: " + model.OrderInfo;
-            var rawData = $"partnerCode={_options.Value.PartnerCode}&accessKey={_options.Value.AccessKey}&requestId={model.OrderId}&amount={model.Amount}&orderId={model.OrderId}&orderInfo={model.OrderInfo}&returnUrl={_options.Value.ReturnUrl}&notifyUrl={_options.Value.NotifyUrl}&extraData={model.FullName}&storeId={nameProject}";
+            var rawData = $"partnerCode={_options.Value.PartnerCode}&accessKey={_options.Value.AccessKey}&requestId={model.OrderId}&amount={model.Amount}&orderId={model.OrderId}&orderInfo={model.OrderInfo}&returnUrl={_options.Value.ReturnUrl}&notifyUrl={_options.Value.NotifyUrl}&extraData={model.FullName}";
 
             var signature = ComputeHmacSha256(rawData, _options.Value.SecretKey);
 
@@ -49,7 +49,6 @@ namespace WebApplication3.Service.MomoService
                 orderInfo = model.OrderInfo,
                 requestId = model.OrderId,
                 extraData = model.FullName,
-                storeId = nameProject,
                 signature = signature
             };
 

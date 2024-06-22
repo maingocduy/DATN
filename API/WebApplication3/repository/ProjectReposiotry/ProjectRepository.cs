@@ -70,6 +70,16 @@ WHERE Project_id IN (
 
             // Thực hiện câu lệnh SQL xóa MemberProjects
             await connection.ExecuteAsync(deleteMemberProjectsSql, new { ProjectName = name });
+            var deleteSponsorProjectsSql = @"
+DELETE FROM projectsponsor
+WHERE Project_id IN (
+    SELECT Project_id FROM Projects WHERE Name = @ProjectName
+);";
+
+            // Thực hiện câu lệnh SQL xóa MemberProjects
+            await connection.ExecuteAsync(deleteSponsorProjectsSql, new { ProjectName = name });
+
+
             var deleteProject_ImagesSql = @"
 DELETE FROM Project_image
 WHERE Project_id IN (
@@ -77,7 +87,7 @@ WHERE Project_id IN (
 );";
 
             // Thực hiện câu lệnh SQL xóa MemberProjects
-            await connection.ExecuteAsync(deleteMemberProjectsSql, new { ProjectName = name });
+            await connection.ExecuteAsync(deleteProject_ImagesSql, new { ProjectName = name });
             // Sau đó, xóa dự án
             var deleteProjectSql = @"
 DELETE FROM Projects
@@ -96,35 +106,21 @@ WHERE Name = @ProjectName;";
 
             // Câu lệnh SQL mới
             var dtoSql = @"
-SELECT p.*, m.*, g.*, s.*, i.*
+SELECT p.*, i.*
 FROM Projects AS p
-LEFT JOIN MemberProjects AS mp ON p.Project_id = mp.Project_id
-LEFT JOIN Members AS m ON mp.Member_id = m.Member_id
-LEFT JOIN `Groups` AS g ON m.Group_id = g.Group_id
-LEFT JOIN ProjectSponsor AS ps ON p.Project_id = ps.Project_id
-LEFT JOIN sponsor AS s ON ps.Sponsor_id = s.Sponsor_id
 LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id
 LIMIT @pageSize OFFSET @offset;
 ";
 
             // Thực hiện truy vấn
-            var projectsQuery = await connection.QueryAsync<ProjectDTO, MemberDTO, Group, SponsorDTO, ImageDtos, ProjectDTO>(
+            var projectsQuery = await connection.QueryAsync<ProjectDTO,  ImageDtos, ProjectDTO>(
                 dtoSql,
-                (project, member, group, sponsor, image) =>
+                (project, image) =>
                 {
-                    project.Member ??= new List<MemberDTO>();
-                    project.Sponsor ??= new List<SponsorDTO>();
+                   
                     project.images ??= new List<ImageDtos>();
 
-                    if (member != null)
-                    {
-                        project.Member.Add(member);
-                        member.groups = group;
-                    }
-                    if (sponsor != null)
-                    {
-                        project.Sponsor.Add(sponsor);
-                    }
+                    
                     if (image != null)
                     {
                         project.images.Add(image);
@@ -132,20 +128,12 @@ LIMIT @pageSize OFFSET @offset;
                     return project;
                 },
                 new { pageSize, offset },
-                splitOn: "Member_id,Group_id,Sponsor_id,image_id");
+                splitOn: "image_id");
 
             var projects = projectsQuery.GroupBy(p => p.Project_id).Select(group =>
             {
                 var groupedProject = group.First();
 
-                if (groupedProject.Member != null && groupedProject.Member.Any())
-                {
-                    groupedProject.Member = group.Select(p => p.Member.FirstOrDefault()).ToList();
-                }
-                if (groupedProject.Sponsor != null && groupedProject.Sponsor.Any())
-                {
-                    groupedProject.Sponsor = group.Select(p => p.Sponsor.FirstOrDefault()).ToList();
-                }
                 if (groupedProject.images != null && groupedProject.images.Any())
                 {
                     groupedProject.images = group.Select(p => p.images.FirstOrDefault()).ToList();
@@ -272,38 +260,24 @@ LIMIT @pageSize OFFSET @offset;
 
             // Câu lệnh SQL để lấy dự án theo tên và lọc theo Group_id nếu có
             var dtoSql = @"
-SELECT p.*, m.*, g.*, s.*, i.*
+SELECT p.*,i.*
 FROM Projects AS p
-LEFT JOIN MemberProjects AS mp ON p.Project_id = mp.Project_id
-LEFT JOIN Members AS m ON mp.Member_id = m.Member_id
-LEFT JOIN `Groups` AS g ON m.Group_id = g.Group_id
-LEFT JOIN ProjectSponsor AS ps ON p.Project_id = ps.Project_id
-LEFT JOIN sponsor AS s ON ps.Sponsor_id = s.Sponsor_id
 LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id
 WHERE 
     p.Name = @ProjectName";
 
             // Nếu có GroupId, thêm điều kiện lọc cho Members
             // Thực hiện truy vấn
-            var projectQuery = await connection.QueryAsync<ProjectDTO, MemberDTO, Group, SponsorDTO, ImageDtos, ProjectDTO>(
+            var projectQuery = await connection.QueryAsync<ProjectDTO, ImageDtos, ProjectDTO>(
         dtoSql,
-        (project, member, group, sponsor, image) =>
+        (project, image) =>
         {
             // Kiểm tra và khởi tạo danh sách thành viên, nhóm, nhà tài trợ và ảnh nếu cần
-            project.Member ??= new List<MemberDTO>();
-            project.Sponsor ??= new List<SponsorDTO>();
+            
             project.images ??= new List<ImageDtos>();
 
             // Thêm thành viên, nhóm, nhà tài trợ và ảnh nếu không null
-            if (member != null)
-            {
-                project.Member.Add(member);
-                member.groups = group; // Gán nhóm cho thành viên
-            }
-            if (sponsor != null)
-            {
-                project.Sponsor.Add(sponsor);
-            }
+           
             if (image != null)
             {
                 project.images.Add(image);
@@ -319,14 +293,6 @@ WHERE
             {
                 var groupedProject = group.First();
 
-                if (groupedProject.Member != null && groupedProject.Member.Any())
-                {
-                    groupedProject.Member = group.Select(p => p.Member.FirstOrDefault()).ToList();
-                }
-                if (groupedProject.Sponsor != null && groupedProject.Sponsor.Any())
-                {
-                    groupedProject.Sponsor = group.Select(p => p.Sponsor.FirstOrDefault()).ToList();
-                }
                 if (groupedProject.images != null && groupedProject.images.Any())
                 {
                     groupedProject.images = group.Select(p => p.images.FirstOrDefault()).ToList();

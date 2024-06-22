@@ -8,7 +8,7 @@ namespace WebApplication3.repository.SponsorRepository
 {
     public interface ISponsorRepository
     {
-        Task<List<SponsorDTO>> GetAllSponsor();
+        Task<List<SponsorDTO>> GetAllSponsor(int? ProjectId = null);
         Task AddSponsor(int Project_id, SponsorDTO sponsor);
         Task DeleteSponsor(string name);
         Task<SponsorDTO> GetSponsor(string name);
@@ -66,11 +66,17 @@ WHERE Project_id = @project_id;";
             await connection.ExecuteAsync(sql, new { name });
         }
 
-        public async Task<List<SponsorDTO>> GetAllSponsor()
+        public async Task<List<SponsorDTO>> GetAllSponsor(int? ProjectId = null)
         {
             using var connection = _context.CreateConnection();
             var sql = "SELECT * FROM sponsor";
-            var sponsor = await connection.QueryAsync<SponsorDTO>(sql);
+
+            if (ProjectId.HasValue)
+            {
+                sql += " WHERE Sponsor_id IN (SELECT Sponsor_id FROM projectsponsor WHERE Project_id = @ProjectId)";
+            }
+
+            var sponsor = await connection.QueryAsync<SponsorDTO>(sql, new { ProjectId });
             return sponsor.ToList();
         }
 

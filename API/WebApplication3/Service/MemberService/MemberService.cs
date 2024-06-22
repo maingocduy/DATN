@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoMapper.Execution;
 using CloudinaryDotNet.Core;
 using Microsoft.AspNetCore.Identity;
 using MimeKit;
@@ -24,9 +25,9 @@ namespace WebApplication3.Service.MemberService
         Task UpdateMember(UpdateRequestMember update);
         Task DeleteMember(string member);
 
-        Task JoinProject(string project_name, string member_name);
+        Task JoinProject(string project_name, string username);
 
-        Task EnterOtp(string otp);
+        Task EnterOtp(string otp, string ProjectName, string email);
     }
     public class MemberService : IMemberService
     {
@@ -66,31 +67,47 @@ namespace WebApplication3.Service.MemberService
             };
             
         }
-        public async Task EnterOtp(string otp)
+        public async Task EnterOtp(string otp, string ProjectName, string email)
         {
-            var vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"); // Mã này tương ứng với GMT+7
-            var vnTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTimeZone);
-            var OTP = await IMemberRepository.GetOtp(otp);
-            if (OTP == null)
+            try
             {
-                throw new KeyNotFoundException("Otp bị sai, mời nhập lại");
-            }
-            else if (OTP.expires_at < vnTime)
-            {
-                throw new Exception("OTP đã hết hạn");
-            }
-            else if (OTP.IsVerified == true)
-            {
-                throw new Exception("OTP đã được xác nhận");
-            }
-            else
-            {
-                OTP.IsVerified = true;
-                IMemberRepository.UpdateOtp(OTP);
-            }
+                var vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"); // Mã này tương ứng với GMT+7
+                var vnTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTimeZone);
 
+                // Lấy thông tin mã OTP từ cơ sở dữ liệu
+                var OTP = await IMemberRepository.GetOtp(otp);
+
+                if (OTP == null)
+                {
+                    throw new KeyNotFoundException("Otp bị sai, mời nhập lại");
+                }
+                else if (OTP.expires_at < vnTime)
+                {
+                    throw new Exception("OTP đã hết hạn");
+                }
+                else if (OTP.IsVerified)
+                {
+                    throw new Exception("OTP đã được xác nhận");
+                }
+                else
+                {
+                    // Xác nhận mã OTP và cập nhật trạng thái
+                    OTP.IsVerified = true;
+                    IMemberRepository.UpdateOtp(OTP);
+
+                    // Thêm thành viên vào dự án
+                    var member = await IMemberRepository.GetMemberByEmail(email);
+                        var project = await projectRepository.GetProject(ProjectName);
+                       await IMemberRepository.JoinProject(project.Project_id, member.Member_id);
+                    
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error while entering OTP: {ex.Message}");
+            }
         }
-        
+
         public async Task SendEmailAsync(string email, string subject, string message)
         {
             var mail = "2051063514@e.tlu.edu.vn";
@@ -150,18 +167,25 @@ namespace WebApplication3.Service.MemberService
             throw new NotImplementedException();
         }
 
-        public async Task JoinProject(string project_name, string member_name)
+        public async Task JoinProject(string project_name, string username)
         {
-            var member = await IMemberRepository.GetMember(member_name);
+           
 
             var project = await projectRepository.GetProject(project_name);
 
-            if (member== null || project == null)
+            if (project == null)
             {
                 throw new Exception($"Member or project does not exist");
             }
-
-            await IMemberRepository.JoinProject(project.Project_id, member.Member_id);
+            var member_id = await IMemberRepository.GetMemberIDByUsername(username);
+            if (await IMemberRepository.CheckIsInProject(member_id, project.Project_id))
+            {
+                throw new Exception("Tài khoản này đã được tham gia dự án này");
+            }
+            else
+            {
+                await IMemberRepository.JoinProject(project.Project_id, member_id);
+            }
         }
 
         public async Task UpdateMember(UpdateRequestMember update)

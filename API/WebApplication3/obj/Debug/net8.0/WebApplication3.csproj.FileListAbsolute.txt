@@ -192,14 +192,10 @@ C:\Users\mai duy\source\repos\TT62TH3-G2\API\WebApplication3\obj\Debug\net8.0\We
 C:\Users\mai duy\source\repos\TT62TH3-G2\API\WebApplication3\obj\Debug\net8.0\WebApplication3.genruntimeconfig.cache
 C:\Users\mai duy\source\repos\TT62TH3-G2\API\WebApplication3\obj\Debug\net8.0\ref\WebApplication3.dll
 C:\Users\mai duy\source\repos\TT62TH3-G2\API\WebApplication3\bin\Debug\net8.0\RestSharp.dll
+D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.exe
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\appsettings.Development.json
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\appsettings.json
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\libman.json
-D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.exe
-D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.deps.json
-D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.runtimeconfig.json
-D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.dll
-D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.pdb
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\AutoMapper.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\BCrypt.Net-Next.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\BouncyCastle.Cryptography.dll
@@ -212,6 +208,7 @@ D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\Humanizer.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\K4os.Compression.LZ4.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\K4os.Compression.LZ4.Streams.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\K4os.Hash.xxHash.dll
+D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\MailKit.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\System.Net.Http.Formatting.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\System.Web.Http.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
@@ -239,6 +236,7 @@ D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\Microsoft.IdentityModel.Pro
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\Microsoft.OpenApi.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\Microsoft.Win32.SystemEvents.dll
+D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\MimeKit.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\Mono.TextTemplating.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\MySql.Data.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\MySqlConnector.dll
@@ -347,7 +345,9 @@ D:\fronten\DATN\API\WebApplication3\obj\Debug\net8.0\WebAppli.18867FDF.Up2Date
 D:\fronten\DATN\API\WebApplication3\obj\Debug\net8.0\WebApplication3.dll
 D:\fronten\DATN\API\WebApplication3\obj\Debug\net8.0\refint\WebApplication3.dll
 D:\fronten\DATN\API\WebApplication3\obj\Debug\net8.0\WebApplication3.pdb
+D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.deps.json
+D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.runtimeconfig.json
+D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.dll
+D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.pdb
 D:\fronten\DATN\API\WebApplication3\obj\Debug\net8.0\WebApplication3.genruntimeconfig.cache
 D:\fronten\DATN\API\WebApplication3\obj\Debug\net8.0\ref\WebApplication3.dll
-D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\MailKit.dll
-D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\MimeKit.dll

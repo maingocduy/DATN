@@ -6,7 +6,11 @@
       <div class="w-full lg:w-1/2 mb-4 lg:mb-0">
         <el-carousel :interval="3000" arrow="always" height="300px" autoplay>
           <el-carousel-item v-for="(image, index) in projectImages" :key="index">
-            <img :src="image" alt="Project Image" class="w-full h-full object-cover rounded-lg" />
+            <img
+              :src="image.image_url"
+              alt="Project Image"
+              class="w-full h-full object-cover rounded-lg"
+            />
           </el-carousel-item>
         </el-carousel>
       </div>
@@ -23,8 +27,9 @@
           <p><strong>Số tiền đích:</strong> {{ formatCurrencyToVND(project.budget) }}</p>
         </div>
         <div class="flex space-x-4">
-          <el-button type="primary" round>Tham gia</el-button>
-          <el-button type="success" round>Đóng góp</el-button>
+          <el-button type="primary" round @click="showJoinPopup">Tham gia</el-button>
+          <el-button type="success" round @click="handleDonate">Đóng góp</el-button>
+          <el-button type="danger" round @click="handleDelete">Xóa dự án</el-button>
         </div>
       </div>
     </div>
@@ -39,8 +44,24 @@
       </el-tab-pane>
       <el-tab-pane label="Thành viên tham gia" name="members">
         <div class="p-4 bg-white rounded-lg shadow-md">
-          <h3 class="text-2xl font-bold mb-4">Thành viên tham gia</h3>
-          <el-table :data="members" style="width: 100%">
+          <div class="items-center mb-4">
+            <el-select
+              v-model="selectedGroup"
+              placeholder="Chọn nhóm"
+              @change="fetchMember"
+              style="width: 200px; margin-left: 10px"
+            >
+              <el-option label="Tất cả" :value="null"></el-option>
+              <el-option
+                v-for="group in groups"
+                :key="group.id"
+                :label="group.group_name"
+                :value="group.group_name"
+              ></el-option>
+            </el-select>
+          </div>
+          <el-table :data="membersWithIndex" style="width: 100%">
+            <el-table-column prop="index" label="STT" width="60"></el-table-column>
             <el-table-column prop="name" label="Tên" width="180"></el-table-column>
             <el-table-column prop="email" label="Email"></el-table-column>
             <el-table-column prop="phone" label="Số điện thoại"></el-table-column>
@@ -50,20 +71,63 @@
       </el-tab-pane>
       <el-tab-pane label="Người đóng góp" name="sponsors">
         <div class="p-4 bg-white rounded-lg shadow-md">
-          <h3 class="text-2xl font-bold mb-4">Người đóng góp</h3>
-          <el-table :data="sponsors" style="width: 100%">
+          <el-table :data="sponsorsWithIndex" style="width: 100%">
+            <el-table-column prop="index" label="STT" width="60"></el-table-column>
             <el-table-column prop="name" label="Tên" width="180"></el-table-column>
             <el-table-column prop="contact" label="Email"></el-table-column>
-            <el-table-column prop="contributionAmount" label="Số tiền đóng góp"
-              ><template #default="{ row }">
+            <el-table-column prop="contributionAmount" label="Số tiền đóng góp">
+              <template #default="{ row }">
                 <span>{{ formatCurrencyToVND(row.contributionAmount) }}</span>
-              </template></el-table-column
-            >
+              </template>
+            </el-table-column>
             <el-table-column prop="address" label="Địa chỉ"></el-table-column>
           </el-table>
         </div>
       </el-tab-pane>
     </el-tabs>
+
+    <!-- Join Project Popup -->
+    <el-dialog title="Tham gia dự án" v-model="joinPopupVisible" width="600px">
+      <el-form :model="joinForm" label-width="120px">
+        <el-form-item label="Tên">
+          <el-input v-model="joinForm.name"></el-input>
+        </el-form-item>
+        <el-form-item label="Email">
+          <el-input v-model="joinForm.email"></el-input>
+        </el-form-item>
+        <el-form-item label="Số điện thoại">
+          <el-input v-model="joinForm.phone"></el-input>
+        </el-form-item>
+        <el-form-item label="Nhóm">
+          <el-select v-model="joinForm.group" clearable placeholder="Chọn nhóm">
+            <el-option label="Tất cả" :value="null"></el-option>
+            <el-option
+              v-for="group in groups"
+              :key="group.id"
+              :label="group.group_name"
+              :value="group.group_name"
+            ></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="joinPopupVisible = false">Hủy</el-button>
+        <el-button type="primary" @click="submitJoin">Gửi</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- OTP Popup -->
+    <el-dialog title="Nhập mã OTP" v-model="otpPopupVisible" width="400px">
+      <el-form :model="otpForm" label-width="120px">
+        <el-form-item label="Mã OTP">
+          <el-input v-model="otpForm.otp"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="otpPopupVisible = false">Hủy</el-button>
+        <el-button type="primary" @click="submitOtp">Gửi</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -77,10 +141,18 @@ import {
   ElTabs,
   ElTabPane,
   ElTable,
-  ElTableColumn
+  ElTableColumn,
+  ElDialog,
+  ElForm,
+  ElFormItem,
+  ElInput,
+  ElSelect,
+  ElOption,
+  ElMessageBox,
+  ElNotification
 } from 'element-plus'
 import 'element-plus/dist/index.css'
-
+import Cookies from 'js-cookie'
 export default {
   name: 'DetailProject',
   components: {
@@ -91,7 +163,13 @@ export default {
     ElTabs,
     ElTabPane,
     ElTable,
-    ElTableColumn
+    ElTableColumn,
+    ElDialog,
+    ElForm,
+    ElFormItem,
+    ElInput,
+    ElSelect,
+    ElOption
   },
   data() {
     return {
@@ -99,51 +177,190 @@ export default {
       image: [],
       members: [],
       sponsors: [],
-      activeTab: 'details'
+      groups: [],
+      activeTab: 'details',
+      joinPopupVisible: false,
+      otpPopupVisible: false,
+      joinForm: {
+        name: '',
+        email: '',
+        phone: '',
+        group: ''
+      },
+      otpForm: {
+        otp: ''
+      },
+      selectedGroup: '' // Add this line to manage the selected group
     }
   },
   computed: {
     projectImages() {
-      return this.project.images ? this.project.images : ['../../public/Images/placeholder.jpg']
-    },
-    progress() {
-      return this.project.budget ? (this.project.contributions / this.project.budget) * 100 : 0
-    }
-  },
-  mounted() {
-    this.fetchProjectDetails()
-  },
-  methods: {
-    async fetchProjectDetails() {
-      try {
-        const projectName = this.$route.params.name
-        const projectResponse = await axios.post(`https://localhost:7188/api/Project/get_project`, {
-          projectName: projectName
-        })
-        this.project = projectResponse.data
-        this.sponsors = this.project.sponsor
-        this.members = this.project.member
-        this.image = this.project.images
-
-        console.log(this.project)
-        console.log(this.sponsors)
-        console.log(this.members)
-        console.log(this.image)
-        // const membersResponse = await axios.get(
-        //   `https://localhost:7188/api/Project/${projectId}/members`
-        // )
-        // this.members = membersResponse.data
-
-        // const sponsorsResponse = await axios.get(
-        //   `https://localhost:7188/api/Project/${projectId}/sponsors`
-        // )
-        // this.sponsors = sponsorsResponse.data
-      } catch (error) {
-        console.error('Error fetching project details:', error)
+      if (!this.project.images || this.project.images.length === 0) {
+        return ['../../../public/Images/doctor.jpg'] // Provide a default image
+      } else {
+        return this.project.images
       }
     },
     progress() {
       return this.project.budget ? (this.project.contributions / this.project.budget) * 100 : 0
+    },
+    membersWithIndex() {
+      return this.members.map((member, index) => ({ ...member, index: index + 1 }))
+    },
+    sponsorsWithIndex() {
+      return this.sponsors.map((sponsor, index) => ({ ...sponsor, index: index + 1 }))
+    }
+  },
+  mounted() {
+    this.initialize()
+  },
+  methods: {
+    async initialize() {
+      await this.fetchProjectDetails()
+      await this.fetchGroups()
+      await this.fetchMember()
+      await this.fetchSponsor()
+    },
+    async fetchProjectDetails() {
+      try {
+        const projectName = this.$route.params.name
+        const projectResponse = await axios.post(`api/Project/get_project`, {
+          projectName: projectName
+        })
+        this.project = projectResponse.data
+        this.image = this.project.images
+
+        console.log(this.project)
+        console.log(this.image)
+      } catch (error) {
+        console.error('Error fetching project details:', error)
+      }
+    },
+    async fetchMember() {
+      try {
+        const memberResponse = await axios.post(`api/Member/get_all_member`, {
+          projectId: this.project.project_id,
+          groupName: this.selectedGroup // Filter members by selected group
+        })
+
+        this.members = memberResponse.data
+
+        console.log(this.members)
+      } catch (error) {
+        console.error('Error fetching members:', error)
+      }
+    },
+    async fetchSponsor() {
+      try {
+        const SponsorResponse = await axios.post(`api/Sponsor/get_all_sponsor`, {
+          projectId: this.project.project_id
+        })
+
+        this.sponsors = SponsorResponse.data
+
+        console.log(this.sponsors)
+      } catch (error) {
+        console.error('Error fetching sponsors:', error)
+      }
+    },
+    async fetchGroups() {
+      try {
+        const response = await axios.get(`api/Group`)
+        this.groups = response.data
+      } catch (error) {
+        console.error('Error fetching groups:', error)
+      }
+    },
+    async showJoinPopup() {
+      if (Cookies.get('username') && Cookies.get('token') && Cookies.get('role')) {
+        try {
+          const response = await axios.post('https://localhost:7188/api/Member/JoinProject', {
+            projectName: this.project.name,
+            username: Cookies.get('username')
+          })
+          ElNotification({
+            title: 'Thành công',
+            message: response.data.messenger,
+            type: 'success'
+          })
+        } catch (error) {
+          ElNotification({
+            title: 'Lỗi',
+            message: error?.response.data.messenger,
+            type: 'error'
+          })
+        }
+      } else this.joinPopupVisible = true
+    },
+    async submitJoin() {
+      try {
+        const response = await axios.post(`https://localhost:7188/api/Member/create`, {
+          nameProject: this.project.name,
+          ...this.joinForm
+        })
+        if (response.status === 200) {
+          this.joinPopupVisible = false
+          this.otpPopupVisible = true
+          ElNotification({
+            title: 'Thành công',
+            message: response.data.message,
+            type: 'success'
+          })
+        }
+      } catch (error) {
+        console.error('Error submitting join:', error)
+      }
+    },
+    async submitOtp() {
+      try {
+        const response = await axios.post(`https://localhost:7188/api/Member/enter_otp`, {
+          Otp: this.otpForm.otp,
+          ProjectName: this.project.name,
+          Email: this.joinForm.email
+        })
+        if (response.status === 200) {
+          this.otpPopupVisible = false
+          ElNotification({
+            title: 'Thành công',
+            message: response.data.message,
+            type: 'success'
+          })
+        }
+      } catch (error) {
+        console.error('Error submitting OTP:', error)
+      }
+    },
+    handleDonate() {
+      this.$router.push('/Momo/' + this.$route.params.name)
+    },
+    async handleDelete() {
+      ElMessageBox.confirm('Bạn có chắc muốn xóa dự án này không ?', 'Xác nhận', {
+        confirmButtonText: 'Chấp nhận',
+        cancelButtonText: 'Hủy',
+        type: 'warning'
+      })
+        .then(async () => {
+          try {
+            const response = await axios.delete(
+              `https://localhost:7188/api/Project/${this.project.name}`
+            )
+            if (response.status === 200) {
+              this.showSuccessNotification(response.data.message)
+              this.$router.push('/Project')
+            } else {
+              this.showErrorNotification('Xóa dự án thất bại.')
+            }
+          } catch (error) {
+            if (error.response && error.response.status === 404) {
+              this.showErrorNotification(error.response.data)
+            } else {
+              this.showErrorNotification('Đã xảy ra lỗi. Vui lòng thử lại sau.')
+            }
+          }
+        })
+        .catch(() => {
+          this.showErrorNotification('Xóa dự án thất bại!')
+        })
     },
     formatCurrencyToVND(amount) {
       return amount
@@ -151,6 +368,27 @@ export default {
             .toString()
             .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' ₫'
         : '0 ₫'
+    },
+    showErrorNotification(message) {
+      ElNotification({
+        title: 'Lỗi',
+        message: message,
+        type: 'error'
+      })
+    },
+    showSuccessNotification(message) {
+      ElNotification({
+        title: 'Thành công',
+        message: message,
+        type: 'success'
+      })
+    },
+    showInfoNotification(message) {
+      ElNotification({
+        title: 'Thông tin',
+        message: message,
+        type: 'info'
+      })
     }
   }
 }
@@ -158,6 +396,47 @@ export default {
 
 <style scoped>
 .container {
-  max-width: 1200px;
+  width: 100%;
+}
+
+.el-dialog__wrapper {
+  backdrop-filter: blur(5px);
+}
+
+.el-dialog {
+  border-radius: 10px;
+}
+
+.el-dialog__header {
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.el-dialog__title {
+  font-weight: bold;
+}
+
+.dialog-footer {
+  text-align: right;
+}
+
+.el-button--primary {
+  background-color: #409eff;
+  border-color: #409eff;
+}
+
+.el-button--primary:hover {
+  background-color: #66b1ff;
+  border-color: #66b1ff;
+}
+
+.el-button--danger {
+  background-color: #f56c6c;
+  border-color: #f56c6c;
+}
+
+.el-button--danger:hover {
+  background-color: #ff7878;
+  border-color: #ff7878;
 }
 </style>

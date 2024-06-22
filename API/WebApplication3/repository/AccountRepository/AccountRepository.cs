@@ -30,6 +30,7 @@ namespace WebApplication3.repository.AccountRepository
         Task<Account> GetAccountByEmail(string email);
         Task SaveOtp(string otp, string emailAccount);
 
+
         Task UpdatePasswordAccByEmail(string email, string newPassword);
 
         Task<List<OtpDTO>> GetOtpByEmail(string email);
