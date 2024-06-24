@@ -84,6 +84,11 @@ const mainRoutes = [
         path: 'BlogDetail/:title',
         name: 'BlogDetail',
         component: () => import('../views/BlogDetailView.vue')
+      },
+      {
+        path: 'Profile/:username',
+        name: 'Profile',
+        component: () => import('../views/ProfileView.vue')
       }
     ]
   }

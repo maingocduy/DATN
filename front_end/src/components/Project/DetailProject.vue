@@ -366,7 +366,7 @@ export default {
       return amount
         ? Math.round(amount)
             .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, ',') + ' ₫'
+            .replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ₫'
         : '0 ₫'
     },
     showErrorNotification(message) {

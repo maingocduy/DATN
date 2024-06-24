@@ -35,9 +35,12 @@
               v-if="showDropdown"
               class="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg"
             >
-              <a href="/profile" class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
-                >Thông tin cá nhân</a
+              <router-link
+                :to="'/profile/' + username"
+                class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                >Thông tin cá nhân</router-link
               >
+
               <a href="#" @click="logout" class="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 >Đăng xuất</a
               >
@@ -145,7 +148,9 @@ export default {
 
       await store.dispatch('logout')
     }
-
+    const profile = () => {
+      this.$router.push('Profile/' + username)
+    }
     const toggleMobileMenu = () => {
       isMobileMenuOpen.value = !isMobileMenuOpen.value
     }
@@ -157,7 +162,8 @@ export default {
       logout,
       isMobileMenuOpen,
       toggleMobileMenu,
-      roleManager
+      roleManager,
+      profile
     }
   }
 }

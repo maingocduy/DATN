@@ -37,7 +37,7 @@ namespace WebApplication3.Service.AccountService
 
         Task<AccountDTO> GetAccountsByUserName(string username);
 
-        Task UpdatePasswordAcc(string username, UpdatePasswordRequestDTO acc);
+        Task UpdatePasswordAcc(UpdatePasswordRequestDTO acc);
         Task DeleteAccount(string username);
 
         Task ForgotPassword(string email);
@@ -164,19 +164,23 @@ namespace WebApplication3.Service.AccountService
 
 
 
-        public async Task UpdatePasswordAcc(string username, UpdatePasswordRequestDTO acc)
+        public async Task UpdatePasswordAcc(UpdatePasswordRequestDTO acc)
         {
-            var user = await _AccountRepository.GetAccountsByUserName(username);
+            var user = await _AccountRepository.GetAccountsByUserName(acc.username);
 
             if (user == null)
                 throw new KeyNotFoundException("User not found");
-
+            if(acc.OldPassword != user.Password)
+            {
+                throw new Exception("Mật khẩu cũ sai");
+            }
             // copy model props to user
+         
+            var getUser = await userManager.FindByNameAsync(acc.username);
+            var a = await userManager.ChangePasswordAsync(getUser, user.Password, acc.Password);
             _mapper.Map(acc, user);
-            var getUser = await userManager.FindByNameAsync(username);
-            await userManager.ChangePasswordAsync(getUser, getUser.PasswordHash, acc.Password);
             // save user
-            await _AccountRepository.UpdatePasswordAcc(user);
+            _AccountRepository.UpdatePasswordAcc(user);
         }
 
         public async Task ForgotPassword(string email)

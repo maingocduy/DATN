@@ -23,7 +23,7 @@ namespace WebApplication3.repository.MemberRepository
         Task AddMember(int project_id, MemberDTO mem);
         Task DeleteMember(string name);
         Task<MemberDTO> GetMember(string name);
-        Task UpdateMember(MemberDTO member);
+        Task UpdateMember(MemberDTO member,string group_name);
         Task<int> AddNewMember(MemberDTO memberDTO);
         Task<MemberDTO> GetMemberByEmail(string email);
         Task JoinProject(int project_id, int member_id);
@@ -229,19 +229,26 @@ SELECT LAST_INSERT_ID();";
             return member.FirstOrDefault();
         }
 
-        public async Task UpdateMember(MemberDTO member)
+        public async Task UpdateMember(MemberDTO member, string group_name)
         {
             using var connection = _context.CreateConnection();
 
             var sql = @"
-        UPDATE Members
-        SET Name = @Name,
-            Email = @Email,
-            Phone = @Phone
-        WHERE Member_id = @Member_id;";
+    UPDATE Members
+    SET Name = @Name,
+        Phone = @Phone,
+        Group_id = (SELECT g.Group_id FROM `groups` g WHERE g.Group_name = @group_name)
+    WHERE Email = @Email;";
 
-            await connection.ExecuteAsync(sql, member);
+            await connection.ExecuteAsync(sql, new
+            {
+                Name = member.name,
+                Email = member.email,
+                Phone = member.phone,
+                group_name = group_name,
+            });
         }
+
         public async Task JoinProject(int project_id,int member_id)
         {
             using var connection = _context.CreateConnection();

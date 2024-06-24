@@ -32,6 +32,18 @@ namespace WebApplication3.Controllers
             var result = await IProjectService.GetAllProject(pageNumber);
             return Ok(new { projects = result.Data, totalPages = result.TotalPages });
         }
+        [HttpGet("get_all_project_out_date")]
+        public async Task<IActionResult> GetAllProjectOutDate([FromQuery] int pageNumber = 1)
+        {
+            var result = await IProjectService.GetAllProjectEndDate(pageNumber);
+            return Ok(new { projects = result.Data, totalPages = result.TotalPages });
+        }
+        [HttpGet("get_all_project_in_date")]
+        public async Task<IActionResult> GetAllProjectInDate([FromQuery] int pageNumber = 1)
+        {
+            var result = await IProjectService.GetAllProjectNotExpired(pageNumber);
+            return Ok(new { projects = result.Data, totalPages = result.TotalPages });
+        }
         [HttpGet("get_all_project_aprove")]
         public async Task<IActionResult> GetAllProjectAprove([FromQuery] int pageNumber = 1)
         {

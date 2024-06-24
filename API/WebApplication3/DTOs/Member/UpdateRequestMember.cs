@@ -1,9 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
+using System.ComponentModel.DataAnnotations;
 
 namespace WebApplication3.DTOs.Member
 {
     public class UpdateRequestMember
     {
+  
         [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
         [Required(ErrorMessage = "Email is required")]
@@ -13,6 +15,6 @@ namespace WebApplication3.DTOs.Member
         [DataType(DataType.PhoneNumber)]
         public string Phone { get; set; }
         [Required(ErrorMessage = "Group_id is required")]
-        public int Group_id { get; set; }
+        public string Group_name { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using AutoMapper.Execution;
 using CloudinaryDotNet.Core;
+using K4os.Compression.LZ4.Internal;
 using Microsoft.AspNetCore.Identity;
 using MimeKit;
 using System.Xml.Linq;
@@ -34,7 +35,8 @@ namespace WebApplication3.Service.MemberService
         private readonly IMemberRepository IMemberRepository;
         private readonly IMapper _mapper;
         private readonly IProjectRepository projectRepository;
-        public MemberService(IMemberRepository IMemberRepository,IProjectRepository projectRepository,IAccountService accountService, IMapper mapper)
+        private readonly IGroupsRepository groupsRepository;
+        public MemberService(IMemberRepository IMemberRepository,IProjectRepository projectRepository, IGroupsRepository groupsRepository,IAccountService accountService, IMapper mapper)
         {
             this.IMemberRepository = IMemberRepository;
             _mapper = mapper;
@@ -190,27 +192,22 @@ namespace WebApplication3.Service.MemberService
 
         public async Task UpdateMember(UpdateRequestMember update)
         {
-            // Kiểm tra xem thành viên có tồn tại không
-            var existingMember = await IMemberRepository.GetMember(update.Name);
-            if (existingMember == null)
-            {
-                throw new Exception($"Member with the name '{update.Name}' does not exist");
-            }
-
-            // Kiểm tra xem email mới đã tồn tại cho một thành viên khác chưa
+            // Check if the new email is already taken by another member
             var existingMemberByEmail = await IMemberRepository.GetMemberByEmail(update.Email);
-            if (existingMemberByEmail != null && existingMemberByEmail.email != existingMember.email)
+            if (existingMemberByEmail == null )
             {
-                throw new Exception($"Member with the email '{update.Email}' already exists for another member");
+                throw new Exception($"Không tìm thấy thành viên!");
             }
+            // Update member information
+            existingMemberByEmail.name = update.Name;
+            existingMemberByEmail.phone = update.Phone;
+            
 
-            // Cập nhật thông tin thành viên
-            existingMember.name = update.Name;
-            existingMember.phone = update.Phone;
-            existingMember.email = update.Email;
 
-            // Gọi repository để cập nhật thông tin thành viên
-            await IMemberRepository.UpdateMember(existingMember);
+            // Retrieve the group_id based on the provided group_name
+        
+            // Call repository to update member information
+            await IMemberRepository.UpdateMember(existingMemberByEmail, update.Group_name );
         }
 
 

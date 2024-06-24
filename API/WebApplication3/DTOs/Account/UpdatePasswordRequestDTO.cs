@@ -5,19 +5,14 @@ namespace WebApplication3.DTOs.Account
     public class UpdatePasswordRequestDTO
     {
         private string? _password;
+
+        public string OldPassword {  get; set; }
         public string? Password
         {
             get => _password;
             set => _password = replaceEmptyWithNull(value);
         }
-
-        private string? _confirmPassword;
-        [Compare("Password")]
-        public string? ConfirmPassword
-        {
-            get => _confirmPassword;
-            set => _confirmPassword = replaceEmptyWithNull(value);
-        }
+        public string username { get; set; }
 
         // helpers
 

@@ -26,6 +26,8 @@ namespace WebApplication3.repository.ProjectReposiotry
         Task<int> GetTotalProjectCount();
         Task<decimal> GetTotalContributionAmount();
         Task<PagedResult<ProjectDTO>> GetAllProjectAprove(int pageNumber = 1);
+        Task<PagedResult<ProjectDTO>> GetAllProjectNotExpired(int pageNumber = 1);
+        Task<PagedResult<ProjectDTO>> GetAllProjectEndDate(int pageNumber = 1);
     }
     public class ProjectRepository : IProjectRepository
     {
@@ -121,6 +123,118 @@ LIMIT @pageSize OFFSET @offset;
                     project.images ??= new List<ImageDtos>();
 
                     
+                    if (image != null)
+                    {
+                        project.images.Add(image);
+                    }
+                    return project;
+                },
+                new { pageSize, offset },
+                splitOn: "image_id");
+
+            var projects = projectsQuery.GroupBy(p => p.Project_id).Select(group =>
+            {
+                var groupedProject = group.First();
+
+                if (groupedProject.images != null && groupedProject.images.Any())
+                {
+                    groupedProject.images = group.Select(p => p.images.FirstOrDefault()).ToList();
+                }
+                return groupedProject;
+            }).ToList();
+
+            // Lấy tổng số dự án
+            var countSql = "SELECT COUNT(*) FROM Projects";
+            var totalCount = await connection.ExecuteScalarAsync<int>(countSql);
+
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return new PagedResult<ProjectDTO>
+            {
+                Data = projects,
+                TotalPages = totalPages
+            };
+        }
+        public async Task<PagedResult<ProjectDTO>> GetAllProjectEndDate(int pageNumber = 1)
+        {
+            using var connection = _context.CreateConnection();
+            int pageSize = 6;
+            // Tính toán offset
+            var offset = (pageNumber - 1) * pageSize;
+
+            // Câu lệnh SQL mới
+            var dtoSql = @"
+SELECT p.*, i.*
+FROM Projects AS p
+LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id WHERE EndDate < CURDATE()
+LIMIT @pageSize OFFSET @offset ;
+";
+
+            // Thực hiện truy vấn
+            var projectsQuery = await connection.QueryAsync<ProjectDTO, ImageDtos, ProjectDTO>(
+                dtoSql,
+                (project, image) =>
+                {
+
+                    project.images ??= new List<ImageDtos>();
+
+
+                    if (image != null)
+                    {
+                        project.images.Add(image);
+                    }
+                    return project;
+                },
+                new { pageSize, offset },
+                splitOn: "image_id");
+
+            var projects = projectsQuery.GroupBy(p => p.Project_id).Select(group =>
+            {
+                var groupedProject = group.First();
+
+                if (groupedProject.images != null && groupedProject.images.Any())
+                {
+                    groupedProject.images = group.Select(p => p.images.FirstOrDefault()).ToList();
+                }
+                return groupedProject;
+            }).ToList();
+
+            // Lấy tổng số dự án
+            var countSql = "SELECT COUNT(*) FROM Projects";
+            var totalCount = await connection.ExecuteScalarAsync<int>(countSql);
+
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return new PagedResult<ProjectDTO>
+            {
+                Data = projects,
+                TotalPages = totalPages
+            };
+        }
+        public async Task<PagedResult<ProjectDTO>> GetAllProjectNotExpired(int pageNumber = 1)
+        {
+            using var connection = _context.CreateConnection();
+            int pageSize = 6;
+            // Tính toán offset
+            var offset = (pageNumber - 1) * pageSize;
+
+            // Câu lệnh SQL mới
+            var dtoSql = @"
+SELECT p.*, i.*
+FROM Projects AS p
+LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id WHERE EndDate >= CURDATE()
+LIMIT @pageSize OFFSET @offset ;
+";
+
+            // Thực hiện truy vấn
+            var projectsQuery = await connection.QueryAsync<ProjectDTO, ImageDtos, ProjectDTO>(
+                dtoSql,
+                (project, image) =>
+                {
+
+                    project.images ??= new List<ImageDtos>();
+
+
                     if (image != null)
                     {
                         project.images.Add(image);

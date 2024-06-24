@@ -125,7 +125,11 @@ export default {
       }
     },
     formatCurrencyToVND(amount) {
-      return amount.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,') + ' ₫'
+      return amount
+        ? Math.round(amount)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ₫'
+        : '0 ₫'
     }
   }
 }

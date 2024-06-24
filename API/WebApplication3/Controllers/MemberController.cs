@@ -48,13 +48,13 @@ namespace WebApplication3.Controllers
             await IMemberService.DeleteMember(name);
             return Ok(new { message = "Member deleted" });
         }
-        [HttpPut]
+        [HttpPost("update_member")]
         public async Task<ActionResult> UpdateMember(UpdateRequestMember up)
         {
             try
             {
                 await IMemberService.UpdateMember(up);
-                return Ok($"Member updated successfully");
+                return Ok(new { messenger = $"Cập nhật thành công !" });
             }
             catch (Exception ex)
             {

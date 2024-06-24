@@ -27,6 +27,8 @@ namespace WebApplication3.Service.ProjectService
         Task<PagedResult<ProjectDTO>> GetAllProjectAprove(int pageNumber);
         Task<OverViewDTO> GetOverView();
         Task UpdateStatus(updateStatusRequest request);
+        Task<PagedResult<ProjectDTO>> GetAllProjectEndDate(int pageNumber);
+        Task<PagedResult<ProjectDTO>> GetAllProjectNotExpired(int pageNumber);
 
     }
     public class ProjectService(IProjectRepository IProjectRepository,ICloudinaryService cloudinaryService, IMapper _mapper, ILogger<ProjectService> logger) : IProjectService
@@ -53,6 +55,24 @@ namespace WebApplication3.Service.ProjectService
 
             // Sử dụng IProjectRepository để lấy dự án từ cơ sở dữ liệu
             var projects = await IProjectRepository.GetAllProject(pageNumber);
+
+            // Trả về kết quả dưới dạng tranginated (phân trang)
+            return projects;
+        }
+        public async Task<PagedResult<ProjectDTO>> GetAllProjectNotExpired(int pageNumber)
+        {
+
+            // Sử dụng IProjectRepository để lấy dự án từ cơ sở dữ liệu
+            var projects = await IProjectRepository.GetAllProjectNotExpired(pageNumber);
+
+            // Trả về kết quả dưới dạng tranginated (phân trang)
+            return projects;
+        }
+        public async Task<PagedResult<ProjectDTO>> GetAllProjectEndDate(int pageNumber)
+        {
+
+            // Sử dụng IProjectRepository để lấy dự án từ cơ sở dữ liệu
+            var projects = await IProjectRepository.GetAllProjectEndDate(pageNumber);
 
             // Trả về kết quả dưới dạng tranginated (phân trang)
             return projects;

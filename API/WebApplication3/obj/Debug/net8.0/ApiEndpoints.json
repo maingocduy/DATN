@@ -17,19 +17,14 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.AccountController",
-    "Method": "Update",
-    "RelativePath": "api/Account/{username}",
-    "HttpMethod": "PUT",
+    "Method": "ChangePass",
+    "RelativePath": "api/Account/change_pass",
+    "HttpMethod": "POST",
     "IsController": true,
     "Order": 0,
     "Parameters": [
       {
-        "Name": "username",
-        "Type": "System.String",
-        "IsRequired": true
-      },
-      {
-        "Name": "acc",
+        "Name": "request",
         "Type": "WebApplication3.DTOs.Account.UpdatePasswordRequestDTO",
         "IsRequired": true
       }
@@ -602,22 +597,6 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.MemberController",
-    "Method": "UpdateMember",
-    "RelativePath": "api/Member",
-    "HttpMethod": "PUT",
-    "IsController": true,
-    "Order": 0,
-    "Parameters": [
-      {
-        "Name": "up",
-        "Type": "WebApplication3.DTOs.Member.UpdateRequestMember",
-        "IsRequired": true
-      }
-    ],
-    "ReturnTypes": []
-  },
-  {
-    "ContainingType": "WebApplication3.Controllers.MemberController",
     "Method": "Delete",
     "RelativePath": "api/Member/{name}",
     "HttpMethod": "DELETE",
@@ -715,6 +694,22 @@
         "StatusCode": 200
       }
     ]
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.MemberController",
+    "Method": "UpdateMember",
+    "RelativePath": "api/Member/update_member",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "up",
+        "Type": "WebApplication3.DTOs.Member.UpdateRequestMember",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
   },
   {
     "ContainingType": "WebApplication3.Controllers.MomoController",
@@ -815,6 +810,38 @@
     "ContainingType": "WebApplication3.Controllers.ProjectController",
     "Method": "GetAllProjectAprove",
     "RelativePath": "api/Project/get_all_project_aprove",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.ProjectController",
+    "Method": "GetAllProjectInDate",
+    "RelativePath": "api/Project/get_all_project_in_date",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "pageNumber",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.ProjectController",
+    "Method": "GetAllProjectOutDate",
+    "RelativePath": "api/Project/get_all_project_out_date",
     "HttpMethod": "GET",
     "IsController": true,
     "Order": 0,

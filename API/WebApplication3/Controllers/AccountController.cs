@@ -77,12 +77,7 @@ namespace WebApplication3.Controllers
             var account = await accountService.GetAccountsByUserName(username);
             return Ok(account);
         }
-        [HttpPut("{username}")]
-        public async Task<IActionResult> Update(string username,UpdatePasswordRequestDTO acc)
-        {
-            await accountService.UpdatePasswordAcc(username, acc);
-            return Ok(new { message = "Pass updated" });
-        }
+   
 
         [HttpDelete("delete_acc")]
         public async Task<IActionResult> Delete(string username)
@@ -167,6 +162,23 @@ namespace WebApplication3.Controllers
             try
             {
                 await accountService.changeForgetPass(request.Email, request.Password, request.Otp);
+                return Ok(new { Message = "Đặt lại mật khẩu thành công" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = ex.Message });
+            }
+        }
+        [HttpPost("change_pass")]
+        public async Task<IActionResult> ChangePass(UpdatePasswordRequestDTO request)
+        {
+            try
+            {
+                await accountService.UpdatePasswordAcc(request);
                 return Ok(new { Message = "Đặt lại mật khẩu thành công" });
             }
             catch (KeyNotFoundException ex)
