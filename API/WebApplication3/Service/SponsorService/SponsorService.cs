@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.Web.Http.ModelBinding;
-
+using WebApplication3.DTOs;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Member;
 using WebApplication3.DTOs.Sponsor;
@@ -19,7 +19,7 @@ namespace WebApplication3.Service.SponsorService
 {
     public interface ISponsorService
     {
-        Task<List<SponsorDTO>> GetAllSponsor(int? ProjectId = null);
+        Task<PagedResult<SponsorDTO>> GetAllSponsor(int pageNumber, int? ProjectId = null);
         Task AddSponsor(CreateRequestSponsorDTO sponsor);
         Task DeleteSponsor(string name);
         Task<SponsorDTO> GetSponsor(string name);
@@ -55,10 +55,10 @@ namespace WebApplication3.Service.SponsorService
         {
             await ISponsorRepository.DeleteSponsor(name);
         }
-
-        public async Task<List<SponsorDTO>> GetAllSponsor(int? ProjectId = null)
+        
+        public async Task<PagedResult<SponsorDTO>> GetAllSponsor(int pageNumber ,int? ProjectId = null)
         {
-            return await ISponsorRepository.GetAllSponsor(ProjectId);
+            return await ISponsorRepository.GetAllSponsor(pageNumber,ProjectId);
         }
 
         public async Task<SponsorDTO> GetSponsor(string name)

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using K4os.Compression.LZ4.Internal;
+using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mail;
 using WebApplication3.DTOs.Sponsor;
@@ -21,8 +22,8 @@ namespace WebApplication3.Controllers
         [HttpPost("get_all_sponsor")]
         public async Task<ActionResult<List<sponsor>>> GetAllSponsor(GetAllSponsorRequest request)
         {
-            var spon = await sponsorService.GetAllSponsor(request.projectId);
-            return Ok(spon);
+            var spon = await sponsorService.GetAllSponsor(request.pageNumber,request.projectId);
+            return Ok(new { spons = spon.Data, totalPages = spon.TotalPages });
         }
         [HttpGet("{name}")]
         public async Task<ActionResult<sponsor>> GetSponsor(string name)

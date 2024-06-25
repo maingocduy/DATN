@@ -4,6 +4,7 @@ using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Mysqlx.Crud;
 using System.Linq;
+using WebApplication3.DTOs;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Groups;
 using WebApplication3.DTOs.Member;
@@ -19,7 +20,7 @@ namespace WebApplication3.repository.MemberRepository
     {
         Task<OtpDTO> GetOtp(string otp);
         Task DeleteOtp(string otp);
-        Task<List<MemberDTO>> GetAllMember(int? ProjectId = null, string? GroupName = null);
+        Task<PagedResult<MemberDTO>> GetAllMember(int pageNumber, int? ProjectId = null, string? GroupName = null);
         Task AddMember(int project_id, MemberDTO mem);
         Task DeleteMember(string name);
         Task<MemberDTO> GetMember(string name);
@@ -144,9 +145,11 @@ SELECT LAST_INSERT_ID();";
 
         }
 
-        public async Task<List<MemberDTO>> GetAllMember(int? ProjectId = null, string? GroupName = null)
+        public async Task<PagedResult<MemberDTO>> GetAllMember(int pageNumber, int? ProjectId = null, string? GroupName = null)
         {
             using var connection = _context.CreateConnection();
+            int pageSize = 6;
+            var offset = (pageNumber - 1) * pageSize;
 
             // SQL query using multi-mapping
             var dtoSql = @"
@@ -173,6 +176,9 @@ SELECT LAST_INSERT_ID();";
                 dtoSql += " WHERE " + string.Join(" AND ", conditions);
             }
 
+            // Add LIMIT and OFFSET for pagination
+            dtoSql += " LIMIT @pageSize OFFSET @offset;";
+
             // Perform query with Dapper
             var members = await connection.QueryAsync<MemberDTO, Group, MemberDTO>(
                 dtoSql,
@@ -181,11 +187,32 @@ SELECT LAST_INSERT_ID();";
                     member.groups = group; // Assuming MemberDTO has a property 'Group' of type 'Group'
                     return member; // Returns the member with associated group
                 },
-                param: new { ProjectId = ProjectId, GroupName = GroupName },
+                param: new { ProjectId, GroupName, pageSize, offset },
                 splitOn: "Group_id");
 
-            return members.ToList();
+            // Get the total count of records
+            var countSql = @"
+        SELECT COUNT(*)
+        FROM Members AS m
+        JOIN `Groups` AS g ON m.Group_id = g.Group_id";
+
+            // Append conditions to count query if any
+            if (conditions.Any())
+            {
+                countSql += " WHERE " + string.Join(" AND ", conditions);
+            }
+
+            var totalCount = await connection.ExecuteScalarAsync<int>(countSql, new { ProjectId, GroupName });
+
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return new PagedResult<MemberDTO>
+            {
+                Data = members.ToList(),
+                TotalPages = totalPages
+            };
         }
+
 
         public async Task<MemberDTO> GetMember(string name)
         {

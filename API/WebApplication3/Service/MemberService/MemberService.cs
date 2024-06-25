@@ -5,6 +5,7 @@ using K4os.Compression.LZ4.Internal;
 using Microsoft.AspNetCore.Identity;
 using MimeKit;
 using System.Xml.Linq;
+using WebApplication3.DTOs;
 using WebApplication3.DTOs.Member;
 using WebApplication3.DTOs.Sponsor;
 using WebApplication3.Entities;
@@ -18,7 +19,7 @@ namespace WebApplication3.Service.MemberService
 {
     public interface IMemberService
     {
-        Task<List<MemberDTO>> GetAllMember(int? ProjectId = null, string? groupName = null);
+        Task<PagedResult<MemberDTO>> GetAllMember(int pageNumber, int? ProjectId = null, string? groupName = null);
         Task<MemberDTO> GetMemberAsync(int id);
 
         Task<MemberDTO> GetMember(string member);
@@ -149,9 +150,9 @@ namespace WebApplication3.Service.MemberService
             
         }
 
-        public async Task<List<MemberDTO>> GetAllMember(int? ProjectId = null, string? groupName = null)
+        public async Task<PagedResult<MemberDTO>> GetAllMember(int pageNumber,int? ProjectId = null, string? groupName = null)
         {
-            return await IMemberRepository.GetAllMember(ProjectId, groupName);
+            return await IMemberRepository.GetAllMember(pageNumber,ProjectId, groupName);
         }
 
         public async Task<MemberDTO> GetMember(string member)

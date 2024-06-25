@@ -2,10 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\WebApplication3",
-    "\\WebApplication3\\Controllers",
-    "\\WebApplication3\\Service",
-    "\\WebApplication3\\Service\\AccountService"
+    "\\WebApplication3\\DTOs",
+    "\\WebApplication3\\DTOs\\Sponsor"
   ],
-  "SelectedNode": "\\WebApplication3\\Service\\AccountService\\IAccountService.cs",
+  "SelectedNode": "\\WebApplication3\\DTOs\\Sponsor\\GetAllSponsorRequest.cs",
   "PreviewInSolutionExplorer": false
 }

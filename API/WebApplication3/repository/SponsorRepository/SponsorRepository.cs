@@ -1,5 +1,7 @@
 ﻿using Dapper;
 using Microsoft.EntityFrameworkCore;
+using System.Text;
+using WebApplication3.DTOs;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Sponsor;
 using WebApplication3.Helper.Data;
@@ -8,7 +10,7 @@ namespace WebApplication3.repository.SponsorRepository
 {
     public interface ISponsorRepository
     {
-        Task<List<SponsorDTO>> GetAllSponsor(int? ProjectId = null);
+        Task<PagedResult<SponsorDTO>> GetAllSponsor(int pageNumber, int? ProjectId = null);
         Task AddSponsor(int Project_id, SponsorDTO sponsor);
         Task DeleteSponsor(string name);
         Task<SponsorDTO> GetSponsor(string name);
@@ -66,18 +68,43 @@ WHERE Project_id = @project_id;";
             await connection.ExecuteAsync(sql, new { name });
         }
 
-        public async Task<List<SponsorDTO>> GetAllSponsor(int? ProjectId = null)
+        public async Task<PagedResult<SponsorDTO>> GetAllSponsor(int pageNumber, int? ProjectId = null)
         {
             using var connection = _context.CreateConnection();
-            var sql = "SELECT * FROM sponsor";
+            int pageSize = 6;
+            var offset = (pageNumber - 1) * pageSize;
 
+            // Build the base SQL query
+            var sqlBuilder = new StringBuilder();
+            sqlBuilder.Append("SELECT * FROM sponsor");
+
+            // If a ProjectId is specified, add a WHERE clause
             if (ProjectId.HasValue)
             {
-                sql += " WHERE Sponsor_id IN (SELECT Sponsor_id FROM projectsponsor WHERE Project_id = @ProjectId)";
+                sqlBuilder.Append(" WHERE Sponsor_id IN (SELECT Sponsor_id FROM projectsponsor WHERE Project_id = @ProjectId)");
             }
 
-            var sponsor = await connection.QueryAsync<SponsorDTO>(sql, new { ProjectId });
-            return sponsor.ToList();
+            // Add LIMIT and OFFSET for pagination
+            sqlBuilder.Append(" LIMIT @pageSize OFFSET @offset;");
+
+            // Execute the query
+            var sponsors = await connection.QueryAsync<SponsorDTO>(sqlBuilder.ToString(), new { ProjectId, pageSize, offset });
+
+            // Get the total count of records
+            var countSql = "SELECT COUNT(*) FROM sponsor";
+            if (ProjectId.HasValue)
+            {
+                countSql += " WHERE Sponsor_id IN (SELECT Sponsor_id FROM projectsponsor WHERE Project_id = @ProjectId)";
+            }
+            var totalCount = await connection.ExecuteScalarAsync<int>(countSql, new { ProjectId });
+
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return new PagedResult<SponsorDTO>
+            {
+                Data = sponsors.ToList(),
+                TotalPages = totalPages
+            };
         }
 
         public async Task<SponsorDTO> GetSponsor(string name)

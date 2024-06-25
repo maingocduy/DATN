@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.IIS;
+using MySqlX.XDevAPI.Common;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Member;
 using WebApplication3.DTOs.Otp;
@@ -33,8 +34,8 @@ namespace WebApplication3.Controllers
         [HttpPost("get_all_member")]
         public async Task<ActionResult<List<MemberDTO>>> GetAllMember(GetlAllMemberRequest request)
         {
-            var mem = await IMemberService.GetAllMember(request.ProjectId,request.groupName);
-            return Ok(mem);
+            var mem = await IMemberService.GetAllMember(request.pageNumber, request.ProjectId,request.groupName);
+            return Ok(new { mems = mem.Data, totalPages = mem.TotalPages });
         }
         [HttpGet("name")]
         public async Task<ActionResult<Member>> GetMember(string name)

@@ -4,7 +4,7 @@
     <el-carousel
       ref="imageCarousel"
       :interval="3000"
-      arrow="always"
+      arrow="never"
       @change="resetInterval"
       height="auto"
       autoplay
@@ -21,17 +21,16 @@
         ref="projectCarousel"
         :interval="3000"
         arrow="always"
-        type="card"
         @change="resetInterval"
         autoplay
         class="project-carousel"
       >
         <el-carousel-item v-for="(project, index) in projects" :key="index">
-          <el-card class="project-card slide-animation">
+          <el-card class="project-card slide-animation" style="height: 280px">
             <template #header>
               <div class="project-title">{{ project.name }}</div>
             </template>
-            <p>{{ project.description }}</p>
+            <div class="descProject" v-html="project.description"></div>
           </el-card>
         </el-carousel-item>
       </el-carousel>
@@ -42,11 +41,12 @@
 
     <!-- Thống kê -->
     <div class="statistics">
-      <div class="stat" v-for="(value, key) in stats" :key="key">
-        <el-card class="stat-card">
-          <h3>{{ value }}</h3>
-          <p>{{ key }}</p>
-        </el-card>
+      <h2 class="text-5xl">Những con số biết nói</h2>
+      <div class="stat-container">
+        <div class="stat" v-for="(value, key) in stats" :key="key">
+          <p class="text-lg font-sans">{{ key }}</p>
+          <h3 class="text-4xl font-bold font-sans">{{ value }}</h3>
+        </div>
       </div>
     </div>
 
@@ -102,9 +102,7 @@ export default {
   methods: {
     async viewAllProjects() {
       try {
-        const response = await axios.get(
-          'https://localhost:7188/api/Project/get_all_project_aprove'
-        )
+        const response = await axios.get('https://localhost:7188/api/Project/get_all_project')
         this.projects = response.data.projects
         console.log(this.projects)
       } catch (error) {
@@ -138,16 +136,30 @@ export default {
 <style scoped>
 #home-page {
   text-align: center;
+  padding: 1rem 1rem;
+  background-color: #f4f4f9;
+  font-family: 'Arial', sans-serif;
+}
+
+.carousel-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .carousel-image {
-  width: 100%; /* Ảnh sẽ chiếm toàn bộ chiều rộng của slide */
-  height: 100%; /* Ảnh sẽ chiếm toàn bộ chiều cao của slide */
-  object-fit: fill; /* Đảm bảo ảnh không bị méo khi điều chỉnh kích thước */
+  width: 100%;
+  height: auto;
+  object-fit: cover;
+  border-radius: 8px;
 }
 
 .projects-section {
-  margin-top: 2rem;
+  margin-top: 1rem;
+  background-color: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .project-card {
@@ -157,32 +169,58 @@ export default {
 }
 
 .project-title {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: bold;
+  color: #333;
 }
 
 .view-all-button {
   margin-top: 1rem;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
-.statistics {
-  display: flex;
-  justify-content: space-around;
-  padding: 2rem 0;
-  text-align: center;
-  background-color: #f8f9fa;
-  animation: fadeIn 2s;
+.view-all-button:hover {
+  background-color: #0056b3;
 }
 
-.stat-card {
-  padding: 1rem;
+.statistics {
+  text-align: center;
+  padding: 60px 0px 60px 0px;
+  background: url('../../public/Images/homeStatic.jpg');
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  color: #fff;
+  margin-top: 1rem;
+  height: 302px;
+}
+
+.stat-container {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.stat {
+  flex: 1;
+  min-width: 150px;
+  margin: 0.5rem;
+  color: #fff; /* Ensure text color is white for readability */
 }
 
 .introduction {
   display: flex;
   align-items: center;
   padding: 2rem 0;
+  background-color: #fff;
+  margin-top: 2rem;
+  border-radius: 8px;
   animation: slideUp 1s ease-out;
 }
 
@@ -190,10 +228,21 @@ export default {
   width: 200px;
   height: auto;
   margin-right: 2rem;
+  border-radius: 8px;
 }
 
 .intro-text {
   flex: 1;
+  text-align: left;
+}
+
+.descProject {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
 }
 
 .slide-animation {

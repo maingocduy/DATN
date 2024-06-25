@@ -7,6 +7,13 @@
         <el-carousel :interval="3000" arrow="always" height="300px" autoplay>
           <el-carousel-item v-for="(image, index) in projectImages" :key="index">
             <img
+              v-if="!project.images || project.images.length === 0"
+              class="w-full h-full object-cover rounded-lg"
+              src="../../../public/Images/doctor.jpg"
+              alt="Placeholder"
+            />
+            <img
+              v-else
               :src="image.image_url"
               alt="Project Image"
               class="w-full h-full object-cover rounded-lg"
@@ -60,18 +67,27 @@
               ></el-option>
             </el-select>
           </div>
-          <el-table :data="membersWithIndex" style="width: 100%">
+          <el-table :data="indexedMembers" style="width: 100%">
             <el-table-column prop="index" label="STT" width="60"></el-table-column>
             <el-table-column prop="name" label="Tên" width="180"></el-table-column>
             <el-table-column prop="email" label="Email"></el-table-column>
             <el-table-column prop="phone" label="Số điện thoại"></el-table-column>
             <el-table-column prop="groups.group_name" label="Vai trò"></el-table-column>
           </el-table>
+          <div class="flex justify-center mt-4">
+            <el-pagination
+              @current-change="handleMembersCurrentChange"
+              :current-page="currentPageMembers"
+              :page-size="membersPerPage"
+              layout="prev, pager, next"
+              :total="totalMembersPages"
+            ></el-pagination>
+          </div>
         </div>
       </el-tab-pane>
       <el-tab-pane label="Người đóng góp" name="sponsors">
         <div class="p-4 bg-white rounded-lg shadow-md">
-          <el-table :data="sponsorsWithIndex" style="width: 100%">
+          <el-table :data="indexedSponsors" style="width: 100%">
             <el-table-column prop="index" label="STT" width="60"></el-table-column>
             <el-table-column prop="name" label="Tên" width="180"></el-table-column>
             <el-table-column prop="contact" label="Email"></el-table-column>
@@ -82,6 +98,16 @@
             </el-table-column>
             <el-table-column prop="address" label="Địa chỉ"></el-table-column>
           </el-table>
+          <div class="flex justify-center mt-4">
+            <el-pagination
+              @current-change="handleSponsorsCurrentChange"
+              :current-page="currentPageSponsors"
+              :pager-count="5"
+              :page-size="sponsorsPerPage"
+              layout="prev, pager, next"
+              :total="totalSponsorsPages"
+            ></el-pagination>
+          </div>
         </div>
       </el-tab-pane>
     </el-tabs>
@@ -148,11 +174,12 @@ import {
   ElInput,
   ElSelect,
   ElOption,
+  ElNotification,
   ElMessageBox,
-  ElNotification
+  ElPagination
 } from 'element-plus'
-import 'element-plus/dist/index.css'
 import Cookies from 'js-cookie'
+
 export default {
   name: 'DetailProject',
   components: {
@@ -169,12 +196,12 @@ export default {
     ElFormItem,
     ElInput,
     ElSelect,
-    ElOption
+    ElOption,
+    ElPagination
   },
   data() {
     return {
-      project: [],
-      image: [],
+      project: {},
       members: [],
       sponsors: [],
       groups: [],
@@ -190,13 +217,19 @@ export default {
       otpForm: {
         otp: ''
       },
-      selectedGroup: '' // Add this line to manage the selected group
+      membersPerPage: 6,
+      currentPageMembers: 1,
+      totalMembersPages: 0,
+      selectedGroup: '',
+      sponsorsPerPage: 6,
+      currentPageSponsors: 1,
+      totalSponsorsPages: 0
     }
   },
   computed: {
     projectImages() {
       if (!this.project.images || this.project.images.length === 0) {
-        return ['../../../public/Images/doctor.jpg'] // Provide a default image
+        return [{ image_url: '../../../public/Images/doctor.jpg' }] // Provide a default image
       } else {
         return this.project.images
       }
@@ -204,11 +237,19 @@ export default {
     progress() {
       return this.project.budget ? (this.project.contributions / this.project.budget) * 100 : 0
     },
-    membersWithIndex() {
-      return this.members.map((member, index) => ({ ...member, index: index + 1 }))
+    indexedMembers() {
+      if (!this.members) return []
+      return this.members.map((member, index) => ({
+        ...member,
+        index: (this.currentPageMembers - 1) * this.membersPerPage + index + 1
+      }))
     },
-    sponsorsWithIndex() {
-      return this.sponsors.map((sponsor, index) => ({ ...sponsor, index: index + 1 }))
+    indexedSponsors() {
+      if (!this.sponsors) return [] // Handle undefined or null sponsors gracefully
+      return this.sponsors.map((sponsor, index) => ({
+        ...sponsor,
+        index: (this.currentPageSponsors - 1) * this.sponsorsPerPage + index + 1
+      }))
     }
   },
   mounted() {
@@ -228,40 +269,52 @@ export default {
           projectName: projectName
         })
         this.project = projectResponse.data
-        this.image = this.project.images
-
         console.log(this.project)
-        console.log(this.image)
       } catch (error) {
         console.error('Error fetching project details:', error)
       }
     },
     async fetchMember() {
       try {
-        const memberResponse = await axios.post(`api/Member/get_all_member`, {
-          projectId: this.project.project_id,
-          groupName: this.selectedGroup // Filter members by selected group
-        })
+        const memberResponse = await axios.post(
+          `https://localhost:7188/api/Member/get_all_member`,
+          {
+            projectId: this.project.project_id,
+            groupName: this.selectedGroup,
+            pageNumber: this.currentPageMembers
+          }
+        )
 
-        this.members = memberResponse.data
-
+        this.members = memberResponse.data.mems
         console.log(this.members)
+        this.totalSponsorsPages = memberResponse.data.totalPages
       } catch (error) {
         console.error('Error fetching members:', error)
       }
     },
+    handleMembersCurrentChange(val) {
+      this.currentPageMembers = val
+      this.fetchMember()
+    },
     async fetchSponsor() {
       try {
-        const SponsorResponse = await axios.post(`api/Sponsor/get_all_sponsor`, {
-          projectId: this.project.project_id
-        })
-
-        this.sponsors = SponsorResponse.data
-
+        const sponsorResponse = await axios.post(
+          `https://localhost:7188/api/Sponsor/get_all_sponsor`,
+          {
+            projectId: this.project.project_id,
+            pageNumber: this.currentPageSponsors
+          }
+        )
+        this.sponsors = sponsorResponse.data.spons
         console.log(this.sponsors)
+        this.totalSponsorsPages = sponsorResponse.data.totalPages
       } catch (error) {
         console.error('Error fetching sponsors:', error)
       }
+    },
+    handleSponsorsCurrentChange(val) {
+      this.currentPageSponsors = val
+      this.fetchSponsor()
     },
     async fetchGroups() {
       try {
@@ -290,7 +343,9 @@ export default {
             type: 'error'
           })
         }
-      } else this.joinPopupVisible = true
+      } else {
+        this.joinPopupVisible = true
+      }
     },
     async submitJoin() {
       try {
@@ -381,13 +436,6 @@ export default {
         title: 'Thành công',
         message: message,
         type: 'success'
-      })
-    },
-    showInfoNotification(message) {
-      ElNotification({
-        title: 'Thông tin',
-        message: message,
-        type: 'info'
       })
     }
   }

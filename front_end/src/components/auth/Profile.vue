@@ -278,7 +278,7 @@ export default {
             .then((response) => {
               ElNotification({
                 title: 'Thành công',
-                message: response.data.messenger,
+                message: response.data.message,
                 type: 'success'
               })
               this.passwordForm.currentPassword = ''
@@ -288,7 +288,7 @@ export default {
             .catch((error) => {
               ElNotification({
                 title: 'Lỗi',
-                message: error.response.data.messenger,
+                message: error.response.data.message,
                 type: 'error'
               })
             })

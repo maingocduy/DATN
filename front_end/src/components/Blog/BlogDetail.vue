@@ -8,7 +8,7 @@
       </div>
     </header>
     <main class="bg-white p-6 shadow-lg rounded-lg">
-      <div v-html="blog.content" class="prose max-w-none"></div>
+      <div v-html="blog.content" class="prose max-w-none justify-center"></div>
     </main>
   </div>
 </template>
