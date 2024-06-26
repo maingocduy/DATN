@@ -7,47 +7,49 @@ import { ElNotification, ElLoading } from 'element-plus'
 // Cấu hình base URL mặc định cho axios
 axios.defaults.baseURL = 'https://localhost:7188/'
 
-// Hàm để cập nhật Authorization header với token mới từ Cookies
-
-// Intercept request để cập nhật header Authorization trước khi gửi request
-// Intercept response errors để xử lý lỗi 401 và 403
-
 // Tạo instance ElLoading
-let loadingService // Khai báo biến loadingService ở mức global
-// Hàm để khởi tạo loadingService
-const initLoadingService = () => {
-  loadingService = ElLoading.service({
-    fullscreen: true,
-    text: 'Loading...',
-    background: 'rgba(0, 0, 0, 0.7)'
-  })
+let loadingService = null // Khai báo biến loadingService ở mức global
+let requestCount = 0 // Biến đếm số lượng yêu cầu đang chờ phản hồi
+
+const showLoading = () => {
+  if (requestCount === 0 && !loadingService) {
+    loadingService = ElLoading.service({
+      fullscreen: true,
+      text: 'Loading...',
+      background: 'rgba(0, 0, 0, 0.7)'
+    })
+  }
+  requestCount++
 }
+
+const hideLoading = () => {
+  requestCount--
+  if (requestCount === 0 && loadingService) {
+    loadingService.close()
+    loadingService = null
+  }
+}
+
 axios.interceptors.request.use(
   (config) => {
-    if (!loadingService) {
-      // Kiểm tra nếu loadingService chưa được khởi tạo
-      initLoadingService() // Khởi tạo loadingService nếu chưa tồn tại
-    } // Hiển thị loading trước khi gửi yêu cầu
+    showLoading() // Hiển thị loading trước khi gửi yêu cầu
     config.headers.Authorization = `Bearer ` + Cookies.get('token') // Cập nhật Authorization header
     return config
   },
   (error) => {
-    if (loadingService) {
-      loadingService.close() // Ẩn loading nếu gặp lỗi request
-    }
+    hideLoading() // Ẩn loading nếu gặp lỗi request
     return Promise.reject(error)
   }
 )
+
 axios.interceptors.response.use(
   (response) => {
-    if (loadingService) {
-      loadingService.close() // Ẩn loading sau khi nhận phản hồi
-    }
+    hideLoading() // Ẩn loading sau khi nhận phản hồi
     return response
   },
   (error) => {
+    hideLoading() // Ẩn loading nếu gặp lỗi phản hồi
     if (error.response) {
-      loadingService.close()
       if (error.response.status === 401) {
         const token = Cookies.get('token')
         if (!token) {

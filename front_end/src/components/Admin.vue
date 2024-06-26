@@ -62,7 +62,8 @@
         @current-change="handleCurrentChange"
         :current-page="pageNumber"
         layout="prev, pager, next"
-        :total="totalPages"
+        :page-count="totalPages"
+        :page-size="6"
         style="margin-top: 10px"
       ></el-pagination>
     </el-main>

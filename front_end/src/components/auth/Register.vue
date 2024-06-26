@@ -77,7 +77,7 @@
           />
         </div>
         <div class="mb-5">
-          <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Họ và tên</label>
+          <label for="name" class="block mb-2 text-sm font-medium text-gray-900">Họ và tên *</label>
           <input
             type="text"
             v-model="name"
@@ -132,12 +132,13 @@
         </div>
         <button type="submit" class="btn-submit">Đăng ký</button>
       </form>
+      <el-loading :fullscreen="true" v-if="loading"></el-loading>
     </div>
   </div>
 </template>
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
-import { ElNotification } from 'element-plus'
+import { ElNotification, ElLoading } from 'element-plus'
 export default {
   data() {
     return {
@@ -147,7 +148,8 @@ export default {
       name: '',
       email: '',
       phone: '',
-      groupName: ''
+      groupName: '',
+      loading: false
     }
   },
   computed: {
@@ -175,6 +177,7 @@ export default {
           })
           return
         }
+        this.loading = true
         await this.register({
           username: this.username,
           password: this.password,
@@ -197,6 +200,7 @@ export default {
             title: 'Thông báo',
             message: this.response.message
           })
+          this.loading = false
         }
       } catch (error) {
         console.error('Error registering:', error)

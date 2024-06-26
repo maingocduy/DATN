@@ -26,7 +26,7 @@ namespace WebApplication3.Controllers
         {
             try
             {
-                var result = await IBlogService.GetAllBlog(request.pageNumber,request.keyword,request.approved);
+                var result = await IBlogService.GetAllBlog(request.pageSize, request.pageNumber,request.keyword,request.approved);
                 return Ok(new { blogs = result.Data, totalPages = result.TotalPages });
             }
             catch (Exception ex)
@@ -119,6 +119,23 @@ namespace WebApplication3.Controllers
             catch (KeyNotFoundException ex)
             {
                 return NotFound(new {message = ex.Message});
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message
+                    );
+            }
+        }
+        [HttpGet("get_blog_by_id")]
+        public async Task<IActionResult> GetBlogById(int id)
+        {
+            try
+            {
+                return Ok(await IBlogService.GetBlogsAsync(id));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
             }
             catch (Exception ex)
             {

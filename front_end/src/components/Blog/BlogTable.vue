@@ -27,7 +27,7 @@
           <p class="text-gray-600">
             <strong>Thời gian tạo:</strong> {{ formatDate(blog.createdAt) }}
           </p>
-          <button class="mt-4 text-blue-500 hover:underline" @click="showBlogDetail(blog.title)">
+          <button class="mt-4 text-blue-500 hover:underline" @click="showBlogDetail(blog.blog_id)">
             Xem chi tiết
           </button>
           <el-dialog
@@ -49,7 +49,7 @@
           :current-page="pageNumber"
           :page-size="pageSize"
           layout="prev, pager, next"
-          :total="totalBlogs"
+          :page-count="totalBlogs"
         />
       </div>
       <button
@@ -89,7 +89,7 @@ export default {
           }
         })
         this.blogs = response.data.blogs
-        this.totalBlogs = response.data.totalPages * this.pageSize
+        this.totalBlogs = response.data.totalPages
       } catch (error) {
         console.error('Failed to fetch blogs:', error)
       }

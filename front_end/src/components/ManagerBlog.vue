@@ -30,7 +30,11 @@
         <el-option label="Chưa duyệt" :value="false"></el-option>
       </el-select>
       <el-table :data="blogs" :table-layout="auto" stripe>
-        <el-table-column label="STT" width="60" type="index" :index="indexMethod"></el-table-column>
+        <el-table-column label="STT" width="60">
+          <template #default="{ $index }">
+            {{ $index + 1 }}
+          </template>
+        </el-table-column>
         <el-table-column prop="title" label="Tiêu đề"></el-table-column>
 
         <el-table-column prop="account.username" label="Người tạo"></el-table-column>
@@ -48,7 +52,7 @@
           <template #default="{ row }">
             <el-tooltip
               effect="light"
-              :content="row.approved ? 'Hủy duyệt blog' : 'Duyệt blog'"
+              :content="row.approved ? 'Ẩn blog' : 'Duyệt blog'"
               placement="top-start"
             >
               <el-button
@@ -86,9 +90,11 @@
       <el-pagination
         @current-change="handleCurrentChange"
         :current-page="pageNumber"
+        :page-size="pageSize"
+        :page-count="totalPages"
         layout="prev, pager, next"
-        :total="totalPages"
         style="margin-top: 10px"
+        :disabled="false"
       ></el-pagination>
     </el-main>
   </div>
@@ -138,6 +144,7 @@ export default {
       keyword: null,
       status: null,
       pageNumber: 1,
+      pageSize: 6,
       totalPages: 0,
       Delete: Delete,
       Document: Document,
@@ -193,7 +200,7 @@ export default {
         })
     },
     async handleApprove(row) {
-      ElMessageBox.confirm('Bạn có chắc muốn duyệt bài viết này không ?', 'Xác nhận', {
+      ElMessageBox.confirm('Bạn có chắc muốn đổi trạng thái của bài viết này không ?', 'Xác nhận', {
         confirmButtonText: 'Chấp nhận',
         cancelButtonText: 'Hủy',
         type: 'warning'
@@ -207,7 +214,7 @@ export default {
               this.showSuccessNotification(response.data.message)
               this.fetchBlogs() // Refresh blogs list after approval
             } else {
-              this.showErrorNotification('Duyệt bài viết thất bại.')
+              this.showErrorNotification('Đổi trạng thái bài viết thất bại.')
             }
           } catch (error) {
             if (error.response && error.response.status === 404) {
@@ -223,7 +230,7 @@ export default {
     },
     handleDetail(row) {
       // Implement your detail view logic here, for example, navigate to a detailed blog page
-      this.$router.push('/BlogDetail/' + row.title)
+      this.$router.push('/BlogDetail/' + row.blog_id)
     },
     handleCurrentChange(val) {
       this.pageNumber = val

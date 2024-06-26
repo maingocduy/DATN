@@ -90,9 +90,19 @@
     <!-- Editor cho phần mô tả -->
     <div v-if="projectCreated" class="max-w-3xl mx-auto">
       <h2 class="text-3xl font-bold mb-8 text-center">Mô tả dự án</h2>
-      <TinyMCEEditor v-model="description" />
       <div class="flex justify-end mt-4">
-        <el-button @click="saveProject" type="primary" round size="medium"> Lưu dự án </el-button>
+        <el-button
+          @click="saveProject"
+          style="margin-top: 5px; margin-bottom: 5px"
+          type="primary"
+          round
+          size="medium"
+        >
+          Lưu dự án
+        </el-button>
+      </div>
+      <div class="mb-5">
+        <TinyMCEEditor v-model="description" />
       </div>
     </div>
   </div>
@@ -151,19 +161,23 @@ export default {
     },
     checkStartDate() {
       // Kiểm tra nếu ngày bắt đầu không hợp lệ (nhỏ hơn ngày hiện tại)
-      if (new Date(this.startDate) <= this.getTodayWithoutTime()) {
+      if (new Date(this.startDate) <= this.getDateFourDays()) {
         ElNotification({
           type: 'error',
           title: 'Thông báo',
-          message: 'Ngày bắt đầu phải lớn hơn hoặc bằng ngày hôm nay'
+          message: 'Ngày bắt đầu phải cách ít nhất 7 ngày so với ngày hôm nay'
         })
         this.startDate = ''
       }
     },
     getTodayWithoutTime() {
-      // Hàm lấy ngày hôm nay bỏ qua thời gian (chỉ lấy ngày/tháng/năm)
       const today = new Date()
       today.setHours(0, 0, 0, 0) // Đặt giờ, phút, giây, millisecond về 0
+      return today
+    },
+    getDateFourDays() {
+      const today = this.getTodayWithoutTime()
+      today.setDate(today.getDate() + 7)
       return today
     },
     async saveProject() {
@@ -205,6 +219,7 @@ export default {
           title: 'Thông báo',
           message: response.data.message
         })
+        this.$router.push('/project')
       } catch (error) {
         ElNotification({
           type: 'warning',

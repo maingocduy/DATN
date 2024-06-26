@@ -6,5 +6,6 @@
         public string? keyword { get; set; } = null;
 
         public bool? approved { get; set; } = null;
+        public int pageSize { get; set; } = 6;
     }
 }

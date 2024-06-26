@@ -18,8 +18,8 @@ namespace WebApplication3.Service.BlogService
 {
     public interface IBlogService
     {
-        Task<PagedResult<BlogDTO>> GetAllBlog(int pageNumber, string? keyword = null, bool? approved = null);
-        Task<AccountDTO> GetBlogsAsync(int id);
+        Task<PagedResult<BlogDTO>> GetAllBlog(int pageSize, int pageNumber, string? keyword = null, bool? approved = null);
+        Task<BlogDTO> GetBlogsAsync(int id);
 
         Task<BlogDTO> GetBlogsByTitle(string title);
 
@@ -96,18 +96,23 @@ namespace WebApplication3.Service.BlogService
             await IBlogRepository.DeleteBlog(blog);
         }
 
-        public async Task<PagedResult<BlogDTO>> GetAllBlog(int pageNumber, string? keyword = null, bool? approved = null)
+        public async Task<PagedResult<BlogDTO>> GetAllBlog(int pageSize, int pageNumber, string? keyword = null, bool? approved = null)
         {
-            return await IBlogRepository.GetAllBlogs(pageNumber,keyword,approved);
+            return await IBlogRepository.GetAllBlogs(pageSize,pageNumber,keyword,approved);
         }
 
         public async Task<PagedResult<BlogDTO>> GetAllBlogTrue(int pageNumber)
         {
             return await IBlogRepository.GetAllBlogsTrue(pageNumber);
         }
-        public Task<AccountDTO> GetBlogsAsync(int id)
+        public async Task<BlogDTO> GetBlogsAsync(int id)
         {
-            throw new NotImplementedException();
+            var blog = await IBlogRepository.GetBlog(id);
+
+            if (blog == null)
+                throw new KeyNotFoundException("Không tìm thấy Blog");
+
+            return blog;
         }
 
         public async Task<BlogDTO> GetBlogsByTitle(string title)

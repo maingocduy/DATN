@@ -49,6 +49,7 @@
     "primevue": "^4.0.0-rc.1",
     "remixicon": "^4.2.0",
     "vue": "^3.4.21",
+    "vue-lazyload": "^3.0.0",
     "vue-router": "^4.3.0",
     "vue-toasted": "^1.1.28",
     "vuelidate": "^0.7.7",

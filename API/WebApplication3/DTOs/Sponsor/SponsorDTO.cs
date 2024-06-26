@@ -13,5 +13,7 @@ namespace WebApplication3.DTOs.Sponsor
         public string address { get; set; }
 
         public int contributionAmount { get; set; }
+
+        public DateTime time_create { get; set; }
     }
 }

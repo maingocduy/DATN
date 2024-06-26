@@ -32,6 +32,7 @@
             </button>
           </div>
         </form>
+        <el-loading :fullscreen="true" v-if="loading"></el-loading>
       </div>
     </div>
 
@@ -114,7 +115,7 @@
 
 <script>
 import { mapState, mapActions } from 'vuex'
-import { ElNotification } from 'element-plus'
+import { ElNotification, ElLoading } from 'element-plus'
 
 export default {
   data() {
@@ -126,7 +127,8 @@ export default {
       newPass: '',
       confirmPass: '',
       countdownTimer: 60,
-      showResendButton: false
+      showResendButton: false,
+      loading: false
     }
   },
   computed: {
@@ -167,6 +169,7 @@ export default {
       'reSendOtp'
     ]),
     async loginAsync() {
+      this.loading = true
       try {
         await this.login({
           username: this.username,

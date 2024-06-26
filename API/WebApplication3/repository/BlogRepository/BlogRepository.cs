@@ -17,7 +17,7 @@ namespace WebApplication3.repository.BlogRepository
 {
     public interface IBlogRepository
     {
-        Task<PagedResult<BlogDTO>> GetAllBlogs(int pageNumber, string? keyword = null, bool? approved = null);
+        Task<PagedResult<BlogDTO>> GetAllBlogs(int pageSize, int pageNumber, string? keyword = null, bool? approved = null);
         Task<BlogDTO> GetBlog(int id);
         Task<BlogDTO> GetBlogsByTitle(string title);
         Task UpdateBlog(BlogDTO blog);
@@ -67,10 +67,10 @@ namespace WebApplication3.repository.BlogRepository
                 id = id
             });
         }
-        public async Task<PagedResult<BlogDTO>> GetAllBlogs(int pageNumber, string? keyword = null, bool? approved = null)
+        public async Task<PagedResult<BlogDTO>> GetAllBlogs(int pageSize, int pageNumber, string? keyword = null, bool? approved = null)
         {
             using var connection = _context.CreateConnection();
-            var pageSize = 6;
+
             var offset = (pageNumber - 1) * pageSize;
             var sqlBuilder = new StringBuilder();
             sqlBuilder.Append(@"
@@ -90,6 +90,7 @@ WHERE 1=1 "); // Add a default condition to simplify appending additional condit
             }
 
             sqlBuilder.Append("LIMIT @pageSize OFFSET @offset;");
+
             var queryResult = await connection.QueryAsync<BlogDTO, AccountDTO, BlogDTO>(
                 sqlBuilder.ToString(),
                 (blog, account) =>
@@ -101,8 +102,21 @@ WHERE 1=1 "); // Add a default condition to simplify appending additional condit
                 splitOn: "Account_id"
             );
 
-            var countSql = "SELECT COUNT(*) FROM Blog";
-            var totalCount = await connection.ExecuteScalarAsync<int>(countSql);
+            var countSqlBuilder = new StringBuilder();
+            countSqlBuilder.Append("SELECT COUNT(*) FROM Blog WHERE 1=1 ");
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                countSqlBuilder.Append("AND title LIKE @keyword ");
+            }
+
+            if (approved.HasValue)
+            {
+                countSqlBuilder.Append("AND Approved = @approved ");
+            }
+
+            var totalCount = await connection.ExecuteScalarAsync<int>(countSqlBuilder.ToString(),
+                new { keyword = $"%{keyword}%", approved = approved.HasValue ? (approved.Value ? 1 : 0) : (int?)null });
 
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
@@ -112,6 +126,7 @@ WHERE 1=1 "); // Add a default condition to simplify appending additional condit
                 TotalPages = totalPages
             };
         }
+
 
 
 
@@ -161,21 +176,21 @@ LIMIT @pageSize OFFSET @offset";
         LEFT JOIN account AS a ON b.Account_id = a.Account_id
         WHERE Blog_id = @id;
         """;
-            var blog = await connection.QueryAsync<BlogDTO,AccountDTO, BlogDTO>(
+            var blog = await connection.QueryAsync<BlogDTO, AccountDTO, BlogDTO>(
         sql,
         (blog, account) =>
         {
             blog.account = account;
-           
+
             return blog;
-        },new { id },
+        }, new { id },
         splitOn: "Account_id"
     );
             return blog.FirstOrDefault();
         }
 
 
-    public async Task<BlogDTO> GetBlogsByTitle(string title)
+        public async Task<BlogDTO> GetBlogsByTitle(string title)
         {
             using var connection = _context.CreateConnection();
             var sql = """

@@ -33,11 +33,23 @@
           </p>
           <p><strong>Số tiền đích:</strong> {{ formatCurrencyToVND(project.budget) }}</p>
         </div>
-        <div class="flex space-x-4">
-          <el-button type="primary" round @click="showJoinPopup">Tham gia</el-button>
-          <el-button type="success" round @click="handleDonate">Đóng góp</el-button>
-          <el-button type="danger" round @click="handleDelete">Xóa dự án</el-button>
+        <div v-if="!isProjectExpired" class="project-actions">
+          <!-- Kiểm tra nếu tiến độ dự án đạt 100% -->
+          <div class="flex space-x-4">
+            <div v-if="isRegisterToProjectExpired">
+              <el-button type="primary" round @click="showJoinPopup">Tham gia</el-button>
+            </div>
+            <div v-if="progress < 100">
+              <el-button type="success" round @click="handleDonate">Đóng góp</el-button>
+              <el-button v-if="role === 'Manager'" type="danger" round @click="handleDelete"
+                >Xóa dự án</el-button
+              >
+            </div>
+            <div v-else class="completion-message">🎉 Đã hoàn thành mục tiêu</div>
+          </div>
         </div>
+        <!-- Nếu dự án đã hết hạn -->
+        <div v-else class="expired-message">Dự án đã kết thúc</div>
       </div>
     </div>
 
@@ -68,7 +80,11 @@
             </el-select>
           </div>
           <el-table :data="indexedMembers" style="width: 100%">
-            <el-table-column prop="index" label="STT" width="60"></el-table-column>
+            <el-table-column label="STT" width="60">
+              <template #default="{ $index }">
+                {{ $index + 1 }}
+              </template>
+            </el-table-column>
             <el-table-column prop="name" label="Tên" width="180"></el-table-column>
             <el-table-column prop="email" label="Email"></el-table-column>
             <el-table-column prop="phone" label="Số điện thoại"></el-table-column>
@@ -80,7 +96,7 @@
               :current-page="currentPageMembers"
               :page-size="membersPerPage"
               layout="prev, pager, next"
-              :total="totalMembersPages"
+              :page-count="totalMembersPages"
             ></el-pagination>
           </div>
         </div>
@@ -88,7 +104,11 @@
       <el-tab-pane label="Người đóng góp" name="sponsors">
         <div class="p-4 bg-white rounded-lg shadow-md">
           <el-table :data="indexedSponsors" style="width: 100%">
-            <el-table-column prop="index" label="STT" width="60"></el-table-column>
+            <el-table-column label="STT" width="60">
+              <template #default="{ $index }">
+                {{ $index + 1 }}
+              </template>
+            </el-table-column>
             <el-table-column prop="name" label="Tên" width="180"></el-table-column>
             <el-table-column prop="contact" label="Email"></el-table-column>
             <el-table-column prop="contributionAmount" label="Số tiền đóng góp">
@@ -97,15 +117,20 @@
               </template>
             </el-table-column>
             <el-table-column prop="address" label="Địa chỉ"></el-table-column>
+            <el-table-column prop="time_create" label="Thời gian">
+              <template #default="{ row }">
+                <span>{{ formatDate(row.time_create) }}</span>
+              </template>
+            </el-table-column>
           </el-table>
           <div class="flex justify-center mt-4">
             <el-pagination
               @current-change="handleSponsorsCurrentChange"
               :current-page="currentPageSponsors"
-              :pager-count="5"
+              :page-count="totalSponsorsPages"
               :page-size="sponsorsPerPage"
               layout="prev, pager, next"
-              :total="totalSponsorsPages"
+              :disabled="false"
             ></el-pagination>
           </div>
         </div>
@@ -223,7 +248,8 @@ export default {
       selectedGroup: '',
       sponsorsPerPage: 6,
       currentPageSponsors: 1,
-      totalSponsorsPages: 0
+      totalSponsorsPages: 0,
+      role: Cookies.get('role')
     }
   },
   computed: {
@@ -250,6 +276,19 @@ export default {
         ...sponsor,
         index: (this.currentPageSponsors - 1) * this.sponsorsPerPage + index + 1
       }))
+    },
+    isProjectExpired() {
+      const endDate = new Date(this.project.endDate)
+      const currentDate = new Date()
+      return endDate < currentDate
+    },
+    isRegisterToProjectExpired() {
+      const threeDaysBeforeStartDate = new Date(this.project.startDate)
+      threeDaysBeforeStartDate.setDate(threeDaysBeforeStartDate.getDate() - 3) // Lấy ngày cách 3 ngày trước ngày startDate
+
+      const currentDate = new Date()
+
+      return threeDaysBeforeStartDate >= currentDate
     }
   },
   mounted() {
@@ -286,8 +325,8 @@ export default {
         )
 
         this.members = memberResponse.data.mems
-        console.log(this.members)
-        this.totalSponsorsPages = memberResponse.data.totalPages
+        console.log(memberResponse.data)
+        this.totalMembersPages = memberResponse.data.totalPages
       } catch (error) {
         console.error('Error fetching members:', error)
       }
@@ -306,7 +345,7 @@ export default {
           }
         )
         this.sponsors = sponsorResponse.data.spons
-        console.log(this.sponsors)
+        console.log(sponsorResponse.data)
         this.totalSponsorsPages = sponsorResponse.data.totalPages
       } catch (error) {
         console.error('Error fetching sponsors:', error)
@@ -421,8 +460,8 @@ export default {
       return amount
         ? Math.round(amount)
             .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ₫'
-        : '0 ₫'
+            .replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' VND'
+        : '0 VND'
     },
     showErrorNotification(message) {
       ElNotification({
@@ -437,6 +476,18 @@ export default {
         message: message,
         type: 'success'
       })
+    },
+    formatDate(dateString) {
+      const options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+      }
+      const formattedDate = new Date(dateString).toLocaleString('vi-VN', options)
+      return formattedDate
     }
   }
 }

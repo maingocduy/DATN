@@ -164,13 +164,18 @@ WHERE Member_id IN (
                 splitOn: "Member_id,Group_id"
             );
 
-            // Lấy tổng số bản ghi
-            var countSql = "SELECT COUNT(*) FROM account";
+            // Tạo câu truy vấn để tính tổng số lượng bản ghi
+            var countSqlBuilder = new StringBuilder();
+            countSqlBuilder.Append("SELECT COUNT(*) FROM account");
+
+            // Nếu có từ khóa tìm kiếm, thêm điều kiện WHERE
             if (!string.IsNullOrEmpty(keyword))
             {
-                countSql += " WHERE username LIKE @keyword";
+                countSqlBuilder.Append(" WHERE username LIKE @keyword");
             }
-            var totalCount = await connection.ExecuteScalarAsync<int>(countSql, new { keyword = $"%{keyword}%" });
+
+            // Thực hiện truy vấn để lấy tổng số bản ghi
+            var totalCount = await connection.ExecuteScalarAsync<int>(countSqlBuilder.ToString(), new { keyword = $"%{keyword}%" });
 
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 

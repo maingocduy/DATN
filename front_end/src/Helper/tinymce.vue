@@ -17,9 +17,9 @@ export default {
           height: 900,
           toolbar_sticky: true,
           plugins:
-            'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+            'anchor autolink charmap codesample code advlist nonbreaking emoticons image link lists media searchreplace table visualblocks wordcount',
           toolbar:
-            'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image table | addcomment showcomments | a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            'undo redo | blocks fontfamily fontsize code nonbreaking | bold italic underline strikethrough | link image table | addcomment showcomments | a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
           images_upload_url: 'https://localhost:7188/api/Cloud/uploadTinySingle'
         })
       }

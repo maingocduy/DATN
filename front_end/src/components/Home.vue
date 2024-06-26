@@ -15,28 +15,31 @@
     </el-carousel>
 
     <!-- Slide dự án -->
-    <div class="projects-section">
-      <h2>Các dự án đang chuẩn bị triển khai</h2>
-      <el-carousel
-        ref="projectCarousel"
-        :interval="3000"
-        arrow="always"
-        @change="resetInterval"
-        autoplay
-        class="project-carousel"
-      >
-        <el-carousel-item v-for="(project, index) in projects" :key="index">
-          <el-card class="project-card slide-animation" style="height: 280px">
-            <template #header>
-              <div class="project-title">{{ project.name }}</div>
-            </template>
-            <div class="descProject" v-html="project.description"></div>
-          </el-card>
-        </el-carousel-item>
-      </el-carousel>
-      <el-button @click="viewAllProjects" class="view-all-button" round>
-        Xem tất cả dự án
-      </el-button>
+    <div class="projects-section py-8 px-4 md:px-0">
+      <h2 class="text-4xl font-sans mb-4">Dự án đang triển khai</h2>
+      <p class="text-base text-gray-700 mb-6">Hãy lựa chọn đồng hành cùng dự án mà bạn quan tâm</p>
+
+      <div class="relative">
+        <el-carousel
+          ref="projectCarousel"
+          :interval="3000"
+          arrow="always"
+          @change="resetInterval"
+          autoplay
+          class="project-carousel"
+        >
+          <el-carousel-item v-for="(project, index) in projects" :key="index">
+            <el-card class="project-card slide-animation" style="height: 280px">
+              <template #header>
+                <div class="project-title">{{ project.name }}</div>
+              </template>
+              <div class="descProject" v-html="project.description"></div>
+            </el-card>
+          </el-carousel-item>
+        </el-carousel>
+
+        <el-button @click="goToProject" class="view-all-button" round> Xem tất cả dự án </el-button>
+      </div>
     </div>
 
     <!-- Thống kê -->
@@ -126,8 +129,11 @@ export default {
       return amount
         ? Math.round(amount)
             .toString()
-            .replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' ₫'
-        : '0 ₫'
+            .replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' VND'
+        : '0 VND'
+    },
+    goToProject() {
+      this.$router.push('/project')
     }
   }
 }

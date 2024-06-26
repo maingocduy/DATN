@@ -5,7 +5,7 @@
 
       <!-- Nút Thêm dự án -->
       <div v-if="roleManager" class="text-center mb-8">
-        <el-button type="success" href="newProject" round> Thêm dự án mới </el-button>
+        <el-button type="success" @click="gotoCreateProject()" round> Thêm dự án mới </el-button>
       </div>
       <!-- Kết thúc Nút Thêm dự án -->
 
@@ -26,7 +26,7 @@
             @click="setTab('expired')"
             round
           >
-            Các dự án đã hết hạn
+            Các dự án đã kết thúc
           </el-button>
         </el-button-group>
       </div>
@@ -82,8 +82,8 @@
                 </template>
               </el-progress>
               <div class="text-sm text-gray-600">
-                <p>Đã đóng góp: {{ project.contributions }} VNĐ</p>
-                <p>Mục tiêu: {{ project.budget }} VNĐ</p>
+                <p>Đã đóng góp: {{ formatCurrencyToVND(project.contributions) }}</p>
+                <p>Mục tiêu: {{ formatCurrencyToVND(project.budget) }}</p>
               </div>
               <a
                 :href="'/project/' + project.name"
@@ -121,7 +121,7 @@
           layout="prev, pager, next"
           :current-page="pageNumber"
           :page-size="pageSize"
-          :total="totalProjects"
+          :page-count="totalProjects"
           @current-change="handlePageChange"
         >
         </el-pagination>
@@ -168,6 +168,9 @@ export default {
     }
   },
   methods: {
+    gotoCreateProject() {
+      this.$router.push('/newProject')
+    },
     setTab(tab) {
       this.currentTab = tab
       this.pageNumber = 1 // Reset lại trang khi chuyển tab
@@ -190,7 +193,7 @@ export default {
             image: project.images.length > 0 ? project.images[0] : null
           }
         })
-        this.totalProjects = response.data.totalPages * this.pageSize // Adjust this line as needed
+        this.totalProjects = response.data.totalPages // Adjust this line as needed
       } catch (error) {
         this.error = 'Không thể tải dữ liệu dự án.'
         console.error('Lỗi khi tải dữ liệu dự án:', error)
@@ -223,6 +226,13 @@ export default {
         this.pageNumber = page
         await this.fetchProjects()
       }
+    },
+    formatCurrencyToVND(amount) {
+      return amount
+        ? Math.round(amount)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' VND'
+        : '0 VND'
     }
   }
 }

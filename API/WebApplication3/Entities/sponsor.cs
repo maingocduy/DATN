@@ -15,6 +15,6 @@ namespace WebApplication3.Entities
 
         public int contributionAmount { get; set; }
 
-
+        public DateTime time_create { get; set; }
     }
 }

@@ -27,9 +27,9 @@ export default {
   },
   methods: {
     async fetchBlog() {
-      const title = this.$route.params.title
+      const id = this.$route.params.id
       try {
-        const response = await axios.get(`/api/Blog/get_blog?title=${title}`)
+        const response = await axios.get(`/api/Blog/get_blog_by_id?id=${id}`)
         this.blog = response.data
       } catch (error) {
         console.error('Error fetching blog:', error)
