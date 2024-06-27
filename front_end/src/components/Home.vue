@@ -27,47 +27,59 @@
           @change="resetInterval"
           autoplay
           class="project-carousel"
-          style="width: 500px; height: 900px"
+          style="width: 100%"
         >
-          <el-carousel-item style="height: 500px" v-for="(project, index) in projects" :key="index">
-            <el-card shadow="hover" style="height: 500px" class="project-card">
-              <a :href="'/project/' + project.name">
-                <img
-                  v-if="!project.images || project.images.length === 0"
-                  class="rounded-t-lg w-36 h-30"
-                  src="../../../public/Images/doctor.jpg"
-                  alt="Placeholder"
-                />
-                <img
-                  v-else
-                  class="rounded-t-lg w-60 h-30"
-                  :src="project.images[0].image_url"
-                  alt=""
-                />
-              </a>
-              <div class="p-6">
-                <a :href="'/project/' + project.name">
-                  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
-                    {{ project.name }}
-                  </h5>
-                </a>
-                <el-progress
-                  :percentage="calculatePercentage(project.contributions, project.budget)"
-                  status="success"
-                  :text-inside="true"
-                  :stroke-width="20"
-                  class="my-4"
-                >
-                  <template #text>
-                    <span>{{ calculatePercentage(project.contributions, project.budget) }}%</span>
-                  </template>
-                </el-progress>
-                <div class="text-sm text-gray-600">
-                  <p>Đã đóng góp: {{ formatCurrencyToVND(project.contributions) }}</p>
-                  <p>Mục tiêu: {{ formatCurrencyToVND(project.budget) }}</p>
-                </div>
+          <el-carousel-item v-for="(chunk, chunkIndex) in chunkedProjects" :key="chunkIndex">
+            <div class="flex-container">
+              <div v-for="(project, index) in chunk" :key="index" class="flex-item">
+                <el-card shadow="hover" class="project-card">
+                  <a
+                    :href="'/project/' + project.name"
+                    style="
+                      display: flex;
+                      flex-direction: column;
+                      align-items: center;
+                      justify-content: center;
+                    "
+                  >
+                    <img
+                      v-if="!project.images || project.images.length === 0"
+                      class="rounded-t-lg w-40 h-20"
+                      src="../../../public/Images/doctor.jpg"
+                      alt="Placeholder"
+                    />
+                    <img
+                      v-else
+                      class="rounded-t-lg w-40 h-20"
+                      :src="project.images[0].image_url"
+                      alt=""
+                    />
+                  </a>
+                  <div class="p-6">
+                    <a :href="'/project/' + project.name">
+                      <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                        {{ project.name }}
+                      </h5>
+                    </a>
+                    <el-progress
+                      :percentage="calculatePercentage(project.contributions, project.budget)"
+                      :stroke-width="10"
+                      class="my-4"
+                    >
+                      <template #text>
+                        <span
+                          >{{ calculatePercentage(project.contributions, project.budget) }}%</span
+                        >
+                      </template>
+                    </el-progress>
+                    <div class="text-sm text-gray-600">
+                      <p>Đã đóng góp: {{ formatCurrencyToVND(project.contributions) }}</p>
+                      <p>Mục tiêu: {{ formatCurrencyToVND(project.budget) }}</p>
+                    </div>
+                  </div>
+                </el-card>
               </div>
-            </el-card>
+            </div>
           </el-carousel-item>
         </el-carousel>
 
@@ -103,7 +115,7 @@
 
 <script>
 import axios from 'axios'
-import { ElCarousel, ElCarouselItem, ElCard, ElButton } from 'element-plus'
+import { ElCarousel, ElCarouselItem, ElCard, ElButton, ElProgress } from 'element-plus'
 import 'element-plus/dist/index.css'
 
 export default {
@@ -112,28 +124,34 @@ export default {
     ElCarousel,
     ElCarouselItem,
     ElCard,
-    ElButton
+    ElButton,
+    ElProgress
   },
   data() {
     return {
       products: [
-        {
-          image: '../../public/Images/anhbia5.jpg'
-        },
-        {
-          image: '../../public/Images/anhslide.jpg'
-        },
-        {
-          image: '../../public/Images/anhbia4.jpg'
-        }
+        { image: '../../public/Images/anhbia5.jpg' },
+        { image: '../../public/Images/anhslide.jpg' },
+        { image: '../../public/Images/anhbia4.jpg' }
       ],
       projects: [],
       overview: [],
       stats: {}
     }
   },
+  computed: {
+    chunkedProjects() {
+      const chunkSize = 3
+      const chunks = []
+      for (let i = 0; i < this.projects.length; i += chunkSize) {
+        chunks.push(this.projects.slice(i, i + chunkSize))
+      }
+      return chunks
+    }
+  },
   mounted() {
-    this.viewAllProjects(), this.Overview()
+    this.viewAllProjects()
+    this.Overview()
   },
   methods: {
     calculatePercentage(contributions, budget) {
@@ -209,6 +227,7 @@ export default {
   padding: 1rem;
   text-align: center;
   background-color: #fff;
+  width: 100%;
 }
 
 .project-title {
@@ -216,17 +235,30 @@ export default {
   font-weight: bold;
   color: #333;
 }
+
 .carousel-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   height: auto;
-  /* Adjust the height as needed */
 }
 
 .project-carousel {
-  margin-bottom: 20px; /* Adjust the spacing between carousel and button as needed */
+  margin-bottom: 20px;
+}
+
+.flex-container {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+.flex-item {
+  flex: 1;
+  max-width: 300px;
+  box-sizing: border-box;
 }
 
 .view-all-button {
@@ -266,7 +298,7 @@ export default {
   flex: 1;
   min-width: 150px;
   margin: 0.5rem;
-  color: #fff; /* Ensure text color is white for readability */
+  color: #fff;
 }
 
 .introduction {
