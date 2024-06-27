@@ -19,7 +19,7 @@
       <h2 class="text-4xl font-sans mb-4">Dự án đang triển khai</h2>
       <p class="text-base text-gray-700 mb-6">Hãy lựa chọn đồng hành cùng dự án mà bạn quan tâm</p>
 
-      <div class="relative">
+      <div class="carousel-container">
         <el-carousel
           ref="projectCarousel"
           :interval="3000"
@@ -27,13 +27,46 @@
           @change="resetInterval"
           autoplay
           class="project-carousel"
+          style="width: 500px; height: 900px"
         >
-          <el-carousel-item v-for="(project, index) in projects" :key="index">
-            <el-card class="project-card slide-animation" style="height: 280px">
-              <template #header>
-                <div class="project-title">{{ project.name }}</div>
-              </template>
-              <div class="descProject" v-html="project.description"></div>
+          <el-carousel-item style="height: 500px" v-for="(project, index) in projects" :key="index">
+            <el-card shadow="hover" style="height: 500px" class="project-card">
+              <a :href="'/project/' + project.name">
+                <img
+                  v-if="!project.images || project.images.length === 0"
+                  class="rounded-t-lg w-36 h-30"
+                  src="../../../public/Images/doctor.jpg"
+                  alt="Placeholder"
+                />
+                <img
+                  v-else
+                  class="rounded-t-lg w-60 h-30"
+                  :src="project.images[0].image_url"
+                  alt=""
+                />
+              </a>
+              <div class="p-6">
+                <a :href="'/project/' + project.name">
+                  <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                    {{ project.name }}
+                  </h5>
+                </a>
+                <el-progress
+                  :percentage="calculatePercentage(project.contributions, project.budget)"
+                  status="success"
+                  :text-inside="true"
+                  :stroke-width="20"
+                  class="my-4"
+                >
+                  <template #text>
+                    <span>{{ calculatePercentage(project.contributions, project.budget) }}%</span>
+                  </template>
+                </el-progress>
+                <div class="text-sm text-gray-600">
+                  <p>Đã đóng góp: {{ formatCurrencyToVND(project.contributions) }}</p>
+                  <p>Mục tiêu: {{ formatCurrencyToVND(project.budget) }}</p>
+                </div>
+              </div>
             </el-card>
           </el-carousel-item>
         </el-carousel>
@@ -44,11 +77,11 @@
 
     <!-- Thống kê -->
     <div class="statistics">
-      <h2 class="text-5xl">Những con số biết nói</h2>
+      <h2 class="text-5xl font-mono">Những con số biết nói</h2>
       <div class="stat-container">
         <div class="stat" v-for="(value, key) in stats" :key="key">
-          <p class="text-lg font-sans">{{ key }}</p>
-          <h3 class="text-4xl font-bold font-sans">{{ value }}</h3>
+          <p class="text-lg font-mono">{{ key }}</p>
+          <h3 class="text-4xl font-bold font-mono">{{ value }}</h3>
         </div>
       </div>
     </div>
@@ -103,6 +136,10 @@ export default {
     this.viewAllProjects(), this.Overview()
   },
   methods: {
+    calculatePercentage(contributions, budget) {
+      if (!budget) return 0
+      return Math.min(((contributions / budget) * 100).toFixed(2), 100)
+    },
     async viewAllProjects() {
       try {
         const response = await axios.get('https://localhost:7188/api/Project/get_all_project')
@@ -179,9 +216,21 @@ export default {
   font-weight: bold;
   color: #333;
 }
+.carousel-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: auto;
+  /* Adjust the height as needed */
+}
+
+.project-carousel {
+  margin-bottom: 20px; /* Adjust the spacing between carousel and button as needed */
+}
 
 .view-all-button {
-  margin-top: 1rem;
+  margin-top: 20px;
   background-color: #007bff;
   color: #fff;
   border: none;

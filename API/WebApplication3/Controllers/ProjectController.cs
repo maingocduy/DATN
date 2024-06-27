@@ -62,6 +62,12 @@ namespace WebApplication3.Controllers
             var pro = await IProjectService.GetProjectsByName(request.ProjectName);
             return Ok(pro);
         }
+        [HttpPost("get_project_by_id")]
+        public async Task<ActionResult<Project>> GetProjectByID([FromBody] GetProjectRequest request)
+        {
+            var pro = await IProjectService.GetProject(request.ProjectId);
+            return Ok(pro);
+        }
         [HttpDelete("{name}")]
         public async Task<IActionResult> Delete(string name)
         {

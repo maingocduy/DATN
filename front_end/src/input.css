@@ -4,3 +4,47 @@
 /* main {
   min-height: 100%;
 } */
+
+#htmlContainer {
+  ol,
+  ul,
+  menu {
+    list-style: revert-layer !important;
+    margin: revert-layer !important;
+    padding: revert-layer !important;
+  }
+
+  blockquote,
+  dl,
+  dd,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  hr,
+  figure,
+  p,
+  pre {
+    margin: revert-layer !important;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-size: revert-layer !important;
+    font-weight: revert-layer !important;
+  }
+  a {
+    color: revert-layer !important;
+    text-decoration: revert-layer !important;
+  }
+  table,
+  th,
+  td {
+    border: 1px solid black;
+  }
+}

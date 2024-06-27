@@ -25,7 +25,11 @@
       <div class="w-full lg:w-1/2 lg:pl-8">
         <h2 class="text-3xl font-bold mb-4">{{ project.name }}</h2>
         <div class="mb-4">
-          <el-progress :percentage="progress" status="success"></el-progress>
+          <el-progress
+            :percentage="progress"
+            :stroke-width="6"
+            :format="customFormat"
+          ></el-progress>
         </div>
         <div class="mb-4 text-lg">
           <p>
@@ -58,7 +62,7 @@
       <el-tab-pane label="Chi tiết" name="details">
         <div class="p-4 bg-white rounded-lg shadow-md">
           <h3 class="text-2xl font-bold mb-4">Chi tiết dự án</h3>
-          <div v-html="project.description"></div>
+          <div id="htmlContainer" v-html="project.description"></div>
         </div>
       </el-tab-pane>
       <el-tab-pane label="Thành viên tham gia" name="members">
@@ -263,6 +267,13 @@ export default {
     progress() {
       return this.project.budget ? (this.project.contributions / this.project.budget) * 100 : 0
     },
+    format() {
+      if (this.progress < 100) {
+        return `${this.progress.toFixed(2)}%` // Format percentage to two decimal places
+      } else {
+        return 'Đã đạt 100%' // Display when progress reaches 100%
+      }
+    },
     indexedMembers() {
       if (!this.members) return []
       return this.members.map((member, index) => ({
@@ -295,6 +306,9 @@ export default {
     this.initialize()
   },
   methods: {
+    customFormat(percentage) {
+      return `${percentage.toFixed(0)}%`
+    },
     async initialize() {
       await this.fetchProjectDetails()
       await this.fetchGroups()

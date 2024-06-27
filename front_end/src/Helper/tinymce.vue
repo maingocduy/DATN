@@ -17,10 +17,13 @@ export default {
           height: 900,
           toolbar_sticky: true,
           plugins:
-            'anchor autolink charmap codesample code advlist nonbreaking emoticons image link lists media searchreplace table visualblocks wordcount',
+            'advlist anchor autolink charmap code codesample emoticons image link lists media nonbreaking searchreplace table visualblocks wordcount',
           toolbar:
             'undo redo | blocks fontfamily fontsize code nonbreaking | bold italic underline strikethrough | link image table | addcomment showcomments | a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
-          images_upload_url: 'https://localhost:7188/api/Cloud/uploadTinySingle'
+          images_upload_url: 'https://localhost:7188/api/Cloud/uploadTinySingle',
+          advlist_bullet_styles: 'default,circle,disc,square',
+          advlist_number_styles:
+            'default,lower-alpha,lower-greek,lower-roman,upper-alpha,upper-roman'
         })
       }
       script.onerror = () => {

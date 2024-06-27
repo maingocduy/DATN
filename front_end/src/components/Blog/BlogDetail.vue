@@ -8,7 +8,7 @@
       </div>
     </header>
     <main class="bg-white p-6 shadow-lg rounded-lg">
-      <div v-html="blog.content" class="prose max-w-none justify-center"></div>
+      <div id="htmlContainer" className="htmlContainer" v-html="this.blog.content" class=""></div>
     </main>
   </div>
 </template>
@@ -23,7 +23,7 @@ export default {
     }
   },
   created() {
-    this.fetchBlog()
+    this.fetchBlog() // Gọi fetchBlog khi component được tạo
   },
   methods: {
     async fetchBlog() {
@@ -31,6 +31,7 @@ export default {
       try {
         const response = await axios.get(`/api/Blog/get_blog_by_id?id=${id}`)
         this.blog = response.data
+        this.updateHtmlContent() // Sau khi nhận dữ liệu từ backend, gọi updateHtmlContent
       } catch (error) {
         console.error('Error fetching blog:', error)
       }
@@ -45,6 +46,13 @@ export default {
       }
       const formattedDate = new Date(dateString).toLocaleDateString('vi-VN', options)
       return formattedDate
+    },
+    updateHtmlContent() {
+      // Cập nhật nội dung HTML từ dữ liệu blog
+      const htmlContainer = document.getElementById('htmlContainer')
+      if (htmlContainer) {
+        htmlContainer.innerHTML = this.blog.content // Giả sử 'content' là nội dung HTML được lấy từ backend
+      }
     }
   }
 }
@@ -52,4 +60,7 @@ export default {
 
 <style scoped>
 /* Add custom loader styles or other necessary styles */
+#htmlContainer {
+  all: revert-layer !important;
+}
 </style>

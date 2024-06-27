@@ -24,10 +24,12 @@ namespace WebApplication3.repository.ProjectReposiotry
         Task UpdateStatus(sbyte status, int id);
         Task<int> GetTotalSponsorCount();
         Task<int> GetTotalProjectCount();
+        Task<int> SumContribution(int project_id);
         Task<decimal> GetTotalContributionAmount();
         Task<PagedResult<ProjectDTO>> GetAllProjectAprove(int pageNumber = 1);
         Task<PagedResult<ProjectDTO>> GetAllProjectNotExpired(int pageNumber = 1);
         Task<PagedResult<ProjectDTO>> GetAllProjectEndDate(int pageNumber = 1);
+        Task<ProjectDTO> GetProjectByID(int Project_id);
     }
     public class ProjectRepository : IProjectRepository
     {
@@ -210,6 +212,15 @@ LIMIT @pageSize OFFSET @offset ;
                 Data = projects,
                 TotalPages = totalPages
             };
+        }
+        public async Task<int> SumContribution(int project_id)
+        {
+            var dtosqlproject = @"SELECT SUM(s.ContributionAmount) AS TotalContribution
+FROM sponsor s
+RIGHT JOIN projectsponsor sp ON s.sponsor_id = sp.sponsor_id
+WHERE sp.project_id = @projectId;";
+            using var connection = _context.CreateConnection();
+            return await connection.ExecuteScalarAsync<int>(dtosqlproject,new { projectId = project_id });
         }
         public async Task<PagedResult<ProjectDTO>> GetAllProjectNotExpired(int pageNumber = 1)
         {
@@ -400,6 +411,56 @@ WHERE
             return project;
         },
         new { ProjectName = name }, // Đối tượng ẩn danh với tên dự án
+        splitOn: "Member_id,Group_id,Sponsor_id,image_id");
+
+            // Lấy dự án đầu tiên hoặc trả về null nếu không có kết quả
+            var project = projectQuery.GroupBy(p => p.Project_id).Select(group =>
+            {
+                var groupedProject = group.First();
+
+                if (groupedProject.images != null && groupedProject.images.Any())
+                {
+                    groupedProject.images = group.Select(p => p.images.FirstOrDefault()).ToList();
+                }
+                return groupedProject;
+            }).FirstOrDefault();
+
+            // Trả về dự án hoặc null nếu không tìm thấy
+            return project;
+        }
+
+        public async Task<ProjectDTO> GetProjectByID(int Project_id)
+        {
+            using var connection = _context.CreateConnection();
+
+            // Câu lệnh SQL để lấy dự án theo tên và lọc theo Group_id nếu có
+            var dtoSql = @"
+SELECT p.*,i.*
+FROM Projects AS p
+LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id
+WHERE 
+    p.Project_id = @Project_id";
+
+            // Nếu có GroupId, thêm điều kiện lọc cho Members
+            // Thực hiện truy vấn
+            var projectQuery = await connection.QueryAsync<ProjectDTO, ImageDtos, ProjectDTO>(
+        dtoSql,
+        (project, image) =>
+        {
+            // Kiểm tra và khởi tạo danh sách thành viên, nhóm, nhà tài trợ và ảnh nếu cần
+
+            project.images ??= new List<ImageDtos>();
+
+            // Thêm thành viên, nhóm, nhà tài trợ và ảnh nếu không null
+
+            if (image != null)
+            {
+                project.images.Add(image);
+            }
+
+            return project;
+        },
+        new { Project_id = Project_id }, // Đối tượng ẩn danh với tên dự án
         splitOn: "Member_id,Group_id,Sponsor_id,image_id");
 
             // Lấy dự án đầu tiên hoặc trả về null nếu không có kết quả

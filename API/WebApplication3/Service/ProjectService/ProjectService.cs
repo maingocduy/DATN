@@ -5,6 +5,7 @@ using WebApplication3.DTOs;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Blog;
 using WebApplication3.DTOs.Project;
+using WebApplication3.Entities;
 using WebApplication3.repository.AccountRepository;
 using WebApplication3.repository.BlogRepository;
 using WebApplication3.repository.CloudRepository;
@@ -18,6 +19,7 @@ namespace WebApplication3.Service.ProjectService
     {
         Task<PagedResult<ProjectDTO>> GetAllProject(int pageNumber);
         Task<ProjectDTO> GetProject(int id);
+       
         Task AddProject(CreateProjectRequest createProjectRequest);
         Task<ProjectDTO> GetProjectsByName(string name);
 
@@ -56,6 +58,9 @@ namespace WebApplication3.Service.ProjectService
             // Sử dụng IProjectRepository để lấy dự án từ cơ sở dữ liệu
             var projects = await IProjectRepository.GetAllProject(pageNumber);
 
+            foreach(var project in projects.Data) {
+                project.Contributions = await IProjectRepository.SumContribution(project.Project_id); 
+            }
             // Trả về kết quả dưới dạng tranginated (phân trang)
             return projects;
         }
@@ -64,7 +69,10 @@ namespace WebApplication3.Service.ProjectService
 
             // Sử dụng IProjectRepository để lấy dự án từ cơ sở dữ liệu
             var projects = await IProjectRepository.GetAllProjectNotExpired(pageNumber);
-
+            foreach (var project in projects.Data)
+            {
+                project.Contributions = await IProjectRepository.SumContribution(project.Project_id);
+            }
             // Trả về kết quả dưới dạng tranginated (phân trang)
             return projects;
         }
@@ -73,7 +81,10 @@ namespace WebApplication3.Service.ProjectService
 
             // Sử dụng IProjectRepository để lấy dự án từ cơ sở dữ liệu
             var projects = await IProjectRepository.GetAllProjectEndDate(pageNumber);
-
+            foreach (var project in projects.Data)
+            {
+                project.Contributions = await IProjectRepository.SumContribution(project.Project_id);
+            }
             // Trả về kết quả dưới dạng tranginated (phân trang)
             return projects;
         }
@@ -82,14 +93,19 @@ namespace WebApplication3.Service.ProjectService
 
             // Sử dụng IProjectRepository để lấy dự án từ cơ sở dữ liệu
             var projects = await IProjectRepository.GetAllProjectAprove(pageNumber);
-
+            foreach (var project in projects.Data)
+            {
+                project.Contributions = await IProjectRepository.SumContribution(project.Project_id);
+            }
             // Trả về kết quả dưới dạng tranginated (phân trang)
             return projects;
         }
 
-        public Task<ProjectDTO> GetProject(int id)
+        public async Task<ProjectDTO> GetProject(int id)
         {
-            throw new NotImplementedException();
+            var project = await IProjectRepository.GetProjectByID(id);
+            project.Contributions = await IProjectRepository.SumContribution(id);
+            return project;
         }
         public async Task UpdateStatus(updateStatusRequest request)
         {
@@ -156,7 +172,9 @@ namespace WebApplication3.Service.ProjectService
         {
             var project = await IProjectRepository.GetProject(name);
 
-
+           
+               project.Contributions = await IProjectRepository.SumContribution(project.Project_id);
+            
             return project;
         }
 

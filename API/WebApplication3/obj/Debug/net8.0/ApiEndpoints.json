@@ -898,6 +898,32 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.ProjectController",
+    "Method": "GetProjectByID",
+    "RelativePath": "api/Project/get_project_by_id",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Project.GetProjectRequest",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebApplication3.Entities.Project",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.ProjectController",
     "Method": "GetOverView",
     "RelativePath": "api/Project/overview",
     "HttpMethod": "GET",

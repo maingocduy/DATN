@@ -15,6 +15,7 @@ namespace WebApplication3.repository.SponsorRepository
         Task DeleteSponsor(string name);
         Task<SponsorDTO> GetSponsor(string name);
         Task UpdateSponsors(SponsorDTO sponsor);
+
     }
     public class SponsorRepository : ISponsorRepository
     {
