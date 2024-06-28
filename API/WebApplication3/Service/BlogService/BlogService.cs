@@ -19,6 +19,7 @@ namespace WebApplication3.Service.BlogService
 {
     public interface IBlogService
     {
+        Task<PagedResult<BlogDTO>> GetAllBlogByAcc_id(int acc_id, int pageNumber);
         Task<PagedResult<BlogDTO>> GetAllBlog(int pageSize, int pageNumber, string? keyword = null, bool? approved = null);
         Task<BlogDTO> GetBlogsAsync(int id);
 
@@ -106,6 +107,11 @@ namespace WebApplication3.Service.BlogService
         {
             return await IBlogRepository.GetAllBlogsTrue(pageNumber);
         }
+        public async Task<PagedResult<BlogDTO>> GetAllBlogByAcc_id(int acc_id, int pageNumber)
+        {
+            return await IBlogRepository.GetAllBlogsByAccId(acc_id, pageNumber);
+        }
+       
         public async Task<BlogDTO> GetBlogsAsync(int id)
         {
             var blog = await IBlogRepository.GetBlog(id);

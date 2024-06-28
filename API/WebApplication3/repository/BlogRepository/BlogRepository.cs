@@ -26,6 +26,8 @@ namespace WebApplication3.repository.BlogRepository
         Task<PagedResult<BlogDTO>> GetAllBlogsTrue(int pageNumber);
         Task UpdateStatus(bool Approved, int id);
         Task AddBlog(int id, BlogDTO blog);
+
+        Task<PagedResult<BlogDTO>> GetAllBlogsByAccId(int acc_id, int pageNumber);
     }
     public class BlogRepository : IBlogRepository
     {
@@ -166,6 +168,31 @@ LIMIT @pageSize OFFSET @offset";
                 TotalPages = totalPages
             };
         }
+        public async Task<PagedResult<BlogDTO>> GetAllBlogsByAccId(int acc_id, int pageNumber)
+        {
+            using var connection = _context.CreateConnection();
+            const int pageSize = 6;
+            var offset = (pageNumber - 1) * pageSize;
+
+            var sql = @"
+SELECT b.*
+FROM Blog AS b
+WHERE Account_id = @acc_id
+LIMIT @pageSize OFFSET @offset";
+
+            var queryResult = await connection.QueryAsync<BlogDTO>(sql, new { pageSize, offset, acc_id });
+
+            var countSql = "SELECT COUNT(*) FROM Blog WHERE Account_id = @acc_id";
+            var totalCount = await connection.ExecuteScalarAsync<int>(countSql, new { acc_id });
+
+            var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            return new PagedResult<BlogDTO>
+            {
+                Data = queryResult.ToList(),
+                TotalPages = totalPages
+            };
+        }
 
         public async Task<BlogDTO> GetBlog(int id)
         {
@@ -213,7 +240,7 @@ LIMIT @pageSize OFFSET @offset";
             return blog.FirstOrDefault();
         }
 
-        public async Task UpdateBlog(int blog_id,BlogDTO blog)
+        public async Task UpdateBlog(int blog_id, BlogDTO blog)
         {
             using var connection = _context.CreateConnection();
             var sql = """
@@ -224,7 +251,7 @@ LIMIT @pageSize OFFSET @offset";
                 Blog_id = blog_id,
                 title = blog.Title,
                 content = blog.Content,
-              
+
             });
         }
     }

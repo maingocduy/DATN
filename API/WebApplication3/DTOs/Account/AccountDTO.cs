@@ -7,6 +7,8 @@ namespace WebApplication3.DTOs.Account
 {
     public class AccountDTO
     {
+
+        public int Account_id { get; set; }
         public string Username { get; set; }
         [JsonIgnore]        
         public string Password { get; set; }

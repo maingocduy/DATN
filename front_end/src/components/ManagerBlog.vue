@@ -262,7 +262,13 @@ export default {
       })
     },
     formatDate(dateString) {
-      const options = { year: 'numeric', month: 'numeric', day: 'numeric' }
+      const options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      }
       const formattedDate = new Date(dateString).toLocaleDateString('vi-VN', options)
       return formattedDate
     },

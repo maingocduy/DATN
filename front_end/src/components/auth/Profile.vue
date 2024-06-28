@@ -7,6 +7,9 @@
         <el-button type="primary" @click="openEditDialog" :icon="Edit"
           >Thay đổi thông tin</el-button
         >
+        <el-button type="primary" @click="openBlogListDialog" :icon="Edit"
+          >Danh sách Blog đã tạo</el-button
+        >
       </div>
     </div>
 
@@ -32,7 +35,6 @@
         <strong class="mr-2 text-lg">Nhóm:</strong>
         <span>{{ user.member.groups.group_name }}</span>
       </div>
-      <!-- Password Section -->
     </div>
 
     <!-- Edit User Info Popup -->
@@ -84,10 +86,73 @@
           </el-select>
         </el-form-item>
       </el-form>
-
       <div class="flex justify-end mt-6">
         <el-button @click="closeEditDialog">Hủy</el-button>
         <el-button type="primary" @click="saveUserInfo">Lưu</el-button>
+      </div>
+    </el-dialog>
+
+    <!-- Blog List Popup -->
+    <el-dialog title="Danh sách Blog đã tạo" v-model="showBlogListDialog" width="80%">
+      <el-table :data="blogs" style="width: 100%">
+        <el-table-column prop="index" label="STT" width="80">
+          <template #default="{ $index }">
+            {{ $index + 1 }}
+          </template>
+        </el-table-column>
+
+        <el-table-column prop="title" label="Title"></el-table-column>
+        <el-table-column prop="created_at" label="Ngày tạo">
+          <template #default="{ row }">
+            <span>{{ formatDate(row.createdAt) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column prop="status" label="Trạng thái">
+          <template #default="{ row }">
+            <span>{{ row.approved === true ? 'Đã duyệt' : 'Chưa duyệt' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="Hành động">
+          <template #default="scope">
+            <el-tooltip effect="light" content="Xem chi tiết" placement="top-start">
+              <el-button
+                @click="handleDetail(scope.row)"
+                :icon="Document"
+                type="primary"
+                size="small"
+                circle
+              ></el-button
+            ></el-tooltip>
+            <el-tooltip effect="light" content="Sửa Blog" placement="top-start">
+              <el-button
+                @click="editBlog(scope.row)"
+                type="warning"
+                :icon="Edit"
+                size="small"
+                circle
+              ></el-button>
+            </el-tooltip>
+            <el-tooltip effect="light" content="Xóa Blog" placement="top-start">
+              <el-button
+                @click="deleteBlog(scope.row)"
+                type="danger"
+                :icon="Delete"
+                size="small"
+                circle
+              ></el-button>
+            </el-tooltip>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="flex justify-center mt-4">
+        <el-pagination
+          @current-change="handlePageChange"
+          :current-page="currentPage"
+          :page-size="6"
+          layout="prev, pager, next"
+          :total="totalPages * 6"
+        >
+        </el-pagination>
       </div>
     </el-dialog>
 
@@ -140,18 +205,16 @@
           </el-button>
         </el-form-item>
       </el-form>
-
       <div class="flex justify-end mt-6">
         <el-button type="primary" @click="savePassword">Đổi mật khẩu</el-button>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import axios from 'axios'
-import { ElMessage, ElMessageBox, ElNotification } from 'element-plus'
-import { View, Edit, Hide } from '@element-plus/icons-vue'
+import { ElMessage, ElNotification } from 'element-plus'
+import { View, Edit, Hide, Delete, Document } from '@element-plus/icons-vue'
 
 export default {
   data() {
@@ -159,6 +222,7 @@ export default {
       user: {},
       groups: [],
       showEditDialog: false,
+      showBlogListDialog: false,
       showCurrentPassword: true,
       showNewPassword: true,
       showConfirmPassword: true,
@@ -173,6 +237,9 @@ export default {
         password: '',
         confirmPassword: ''
       },
+      blogs: [],
+      currentPage: 1,
+      totalPages: 0,
       editFormRules: {
         name: [{ required: true, message: 'Họ và tên không được để trống', trigger: 'blur' }],
         email: [{ required: true, message: 'Email không được để trống', trigger: 'blur' }],
@@ -193,12 +260,15 @@ export default {
       },
       Edit: Edit,
       Hide: Hide,
-      View: View
+      View: View,
+      Delete: Delete,
+      Document: Document
     }
   },
-  created() {
-    this.fetchUserData()
+  async created() {
+    await this.fetchUserData()
     this.fetchGroups()
+    this.fetchBlogs()
   },
   methods: {
     async fetchUserData() {
@@ -230,11 +300,33 @@ export default {
           console.error('Error fetching groups:', error)
         })
     },
+    fetchBlogs() {
+      axios
+        .post('api/Blog/all_blog_by_id', {
+          acc_id: this.user.account_id,
+          pageNumber: this.currentPage
+        })
+        .then((response) => {
+          this.blogs = response.data.blogs
+          this.totalPages = response.data.totalPages
+          console.log(this.blogs)
+        })
+        .catch((error) => {
+          console.error('Error fetching blogs:', error)
+        })
+    },
+    handlePageChange(page) {
+      this.currentPage = page
+      this.fetchBlogs()
+    },
     openEditDialog() {
       this.showEditDialog = true
     },
     closeEditDialog() {
       this.showEditDialog = false
+    },
+    openBlogListDialog() {
+      this.showBlogListDialog = true
     },
     saveUserInfo() {
       this.$refs.editForm.validate((valid) => {
@@ -252,7 +344,6 @@ export default {
                 message: response.data.messenger,
                 type: 'success'
               })
-
               this.closeEditDialog()
               this.fetchUserData()
             })
@@ -265,6 +356,17 @@ export default {
             })
         }
       })
+    },
+    formatDate(dateString) {
+      const options = {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+      }
+      const formattedDate = new Date(dateString).toLocaleDateString('vi-VN', options)
+      return formattedDate
     },
     savePassword() {
       this.$refs.passwordForm.validate((valid) => {
@@ -295,6 +397,10 @@ export default {
         }
       })
     },
+    handleDetail(row) {
+      // Implement your detail view logic here, for example, navigate to a detailed blog page
+      this.$router.push('/BlogDetail/' + row.blog_id)
+    },
     validatePasswordConfirm(rule, value, callback) {
       if (value !== this.passwordForm.password) {
         callback(new Error('Xác nhận mật khẩu không khớp'))
@@ -321,6 +427,40 @@ export default {
     },
     toggleShowConfirmPassword() {
       this.showConfirmPassword = !this.showConfirmPassword
+    },
+    editBlog(blog) {
+      this.$router.push('/Blog/Update/' + blog.blog_id)
+    },
+    deleteBlog(row) {
+      ElMessageBox.confirm('Bạn có chắc muốn xóa bài viết này không ?', 'Xác nhận', {
+        confirmButtonText: 'Chấp nhận',
+        cancelButtonText: 'Hủy',
+        type: 'warning'
+      })
+        .then(async () => {
+          try {
+            const response = await axios.delete('api/blog/delete_blog', {
+              params: {
+                title: row.title
+              }
+            })
+            if (response.status === 200) {
+              this.showSuccessNotification(response.data.message)
+              this.fetchBlogs() // Refresh blogs list after deletion
+            } else {
+              this.showErrorNotification('Xóa bài viết thất bại.')
+            }
+          } catch (error) {
+            if (error.response && error.response.status === 404) {
+              this.showErrorNotification(error.response.data)
+            } else {
+              this.showErrorNotification('Đã xảy ra lỗi. Vui lòng thử lại sau.')
+            }
+          }
+        })
+        .catch(() => {
+          this.showErrorNotification('Xóa bài viết thất bại!')
+        })
     }
   }
 }

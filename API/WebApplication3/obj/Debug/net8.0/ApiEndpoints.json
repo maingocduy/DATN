@@ -339,6 +339,22 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.BlogController",
+    "Method": "GetAllBlogById",
+    "RelativePath": "api/Blog/all_blog_by_id",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Blog.GetAllAccountByIdRequestDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.BlogController",
     "Method": "Delete",
     "RelativePath": "api/Blog/delete_blog",
     "HttpMethod": "DELETE",

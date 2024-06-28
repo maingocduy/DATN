@@ -65,6 +65,20 @@ namespace WebApplication3.Controllers
             }
         }
 
+        [HttpPost("all_blog_by_id"),Authorize]
+        public async Task<ActionResult> GetAllBlogById(GetAllAccountByIdRequestDto request)
+        {
+            try
+            {
+                var result = await IBlogService.GetAllBlogByAcc_id(request.acc_id,request.pageNumber);
+                return Ok(new { blogs = result.Data, totalPages = result.TotalPages });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+
         [HttpPost, Authorize]
         public async Task<IActionResult> AddBlog(CreateRequestBLogDTO createBlog)
         {

@@ -13,8 +13,8 @@
         />
       </div>
       <!-- Kết thúc phần nhập title -->
-      <label for="title" class="block text-gray-700 font-bold mb-2">Nội dung:</label>
-      <TinyMCEEditor />
+      <label for="content" class="block text-gray-700 font-bold mb-2">Nội dung:</label>
+      <TinyMCEEditor v-model="editorContent" />
       <button
         type="submit"
         class="mt-4 px-4 py-2 bg-blue-500 text-white font-bold rounded hover:bg-blue-700"
@@ -27,26 +27,38 @@
 
 <script>
 import axios from 'axios'
-import TinyMCEEditor from '../../Helper/tinymce.vue'
 import { ElNotification } from 'element-plus'
+import TinyMCEEditor from '../../Helper/tinymce.vue'
+
 export default {
+  components: {
+    TinyMCEEditor
+  },
   data() {
     return {
-      editor: null, // Lưu trữ instance của TinyMCE
-      postData: '', // Lưu trữ dữ liệu từ editor
-      title: '' // Lưu trữ tiêu đề nhập vào
+      title: '',
+      editorContent: ''
     }
   },
-  mounted() {},
+  async created() {
+    await this.fetchBlog()
+  },
   methods: {
-    async fetchBlog(){
-        
-    }
+    async fetchBlog() {
+      try {
+        const response = await axios.get('api/Blog/get_blog_by_id', {
+          params: {
+            id: this.$route.params.id
+          }
+        })
+        this.title = response.data.title
+        this.editorContent = response.data.content
+      } catch (error) {
+        console.log(error)
+      }
+    },
     async handleSubmit() {
-      var myContent = tinymce.get('editor').getContent()
-      // console.log('Title:', this.title) // Log tiêu đề
-      // console.log('Form submitted:', myContent)
-      if (!this.title || !myContent) {
+      if (!this.title || !this.editorContent) {
         ElNotification({
           type: 'error',
           title: 'Thông báo',
@@ -54,40 +66,27 @@ export default {
         })
         return
       }
-      await axios
-        .post('api/Blog/update_blog', {
+      try {
+        var myContent = tinymce.get('editor').getContent()
+        const response = await axios.post('api/Blog/update_blog', {
           blog_id: this.$route.params.id,
           title: this.title,
           content: myContent
         })
-        .then(
-          (response) => {
-            console.log(response)
-            ElNotification({
-              type: 'success',
-              title: 'Thông báo',
-              message: response.data.message
-            })
-            this.$router.push('/blog/' + this.$route.params.id)
-          },
-          (error) => {
-            ElNotification({
-              type: 'error',
-              title: 'Thông báo',
-              message: error.response.data.message
-            })
-          }
-        )
-      // Tại đây bạn có thể thực hiện gửi dữ liệu đến server hoặc xử lý khác
+        ElNotification({
+          type: 'success',
+          title: 'Thông báo',
+          message: response.data.message
+        })
+        this.$router.push('/BlogDetail/' + this.$route.params.id)
+      } catch (error) {
+        ElNotification({
+          type: 'error',
+          title: 'Thông báo',
+          message: error.response.data.message
+        })
+      }
     }
-  },
-  beforeDestroy() {
-    if (this.editor) {
-      this.editor.remove()
-    }
-  },
-  components: {
-    TinyMCEEditor
   }
 }
 </script>

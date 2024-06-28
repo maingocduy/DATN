@@ -1,8 +1,32 @@
+<template>
+  <div class="shadow-lg rounded-lg overflow-hidden">
+    <textarea id="editor" ref="editor"></textarea>
+  </div>
+</template>
+
 <script>
 export default {
   name: 'TinyMCEEditor',
+  props: {
+    modelValue: {
+      type: String,
+      default: ''
+    }
+  },
+  watch: {
+    modelValue(val) {
+      if (this.editor) {
+        this.editor.setContent(val)
+      }
+    }
+  },
   mounted() {
     this.loadTinyMCE()
+  },
+  beforeDestroy() {
+    if (this.editor) {
+      this.editor.destroy()
+    }
   },
   methods: {
     async loadTinyMCE() {
@@ -23,7 +47,16 @@ export default {
           images_upload_url: 'https://localhost:7188/api/Cloud/uploadTinySingle',
           advlist_bullet_styles: 'default,circle,disc,square',
           advlist_number_styles:
-            'default,lower-alpha,lower-greek,lower-roman,upper-alpha,upper-roman'
+            'default,lower-alpha,lower-greek,lower-roman,upper-alpha,upper-roman',
+          setup: (editor) => {
+            this.editor = editor
+            editor.on('init', () => {
+              editor.setContent(this.modelValue)
+            })
+            editor.on('Change KeyUp', () => {
+              this.$emit('update:modelValue', editor.getContent())
+            })
+          }
         })
       }
       script.onerror = () => {
@@ -34,12 +67,6 @@ export default {
   }
 }
 </script>
-
-<template>
-  <div class="shadow-lg rounded-lg overflow-hidden">
-    <textarea id="editor" ref="editor"></textarea>
-  </div>
-</template>
 
 <style scoped>
 @media (min-width: 1024px) {

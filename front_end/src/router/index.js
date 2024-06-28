@@ -89,6 +89,11 @@ const mainRoutes = [
         path: 'Profile/:username',
         name: 'Profile',
         component: () => import('../views/ProfileView.vue')
+      },
+      {
+        path: 'Blog/Update/:id',
+        name: 'UpdateBlog',
+        component: () => import('../views/UpdateBlogView.vue')
       }
     ]
   }
