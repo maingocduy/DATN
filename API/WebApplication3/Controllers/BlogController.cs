@@ -34,7 +34,7 @@ namespace WebApplication3.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpDelete("delete_blog")]
+        [HttpDelete("delete_blog"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> Delete(string title)
         {
             try
@@ -92,7 +92,7 @@ namespace WebApplication3.Controllers
           
         }
 
-        [HttpPost("update_status"), Authorize]
+        [HttpPost("update_status"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateStatus(updateApprovedRequest request)
         {
             try
@@ -143,5 +143,23 @@ namespace WebApplication3.Controllers
                     );
             }
         }
+        [HttpPost("update_blog")]
+        public async Task<IActionResult> UpdateBlog(updateBlogRequestDTO request)
+        {
+            try
+            {
+                await IBlogService.UpdateBlog(request);
+                return Ok(new { Message = "Sửa thành công! Hãy chờ để Manager duyệt blog" });  
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message
+                    );
+            }
+        } 
     }
 }

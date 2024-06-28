@@ -3,7 +3,7 @@
     class="bg-gradient-to-r from-blue-500 to-green-500 min-h-screen flex items-center justify-center py-12 px-6"
   >
     <div class="max-w-lg w-full bg-white rounded-lg shadow-lg p-8">
-      <h2 class="text-center text-3xl font-extrabold text-gray-900 mb-6">Đặt hàng</h2>
+      <h2 class="text-center text-3xl font-extrabold text-gray-900 mb-6">Quyên góp</h2>
       <form @submit.prevent="submitForm">
         <div class="mb-5">
           <label for="fullName" class="block mb-2 text-sm font-medium text-gray-900"
@@ -29,7 +29,7 @@
         </div>
         <div class="mb-5">
           <label for="address" class="block mb-2 text-sm font-medium text-gray-900"
-            >Địa chỉ *</label
+            >Địa chỉ</label
           >
           <input
             type="text"

@@ -9,8 +9,6 @@
       </div>
       <!-- Kết thúc Nút Thêm dự án -->
 
-      <!-- No Projects Message -->
-
       <!-- Tabs -->
       <div class="mb-8 text-center">
         <el-button-group>
@@ -52,9 +50,9 @@
           >
             <a :href="'/project/' + project.name">
               <img
-                v-if="project.image"
+                v-if="!!project?.images"
                 class="rounded-t-lg w-full h-48 object-cover"
-                :src="project.image.image_url"
+                :src="project.images.image_url"
                 alt=""
               />
               <img
@@ -109,11 +107,14 @@
             </div>
           </el-card>
         </div>
+
+        <!-- No Projects Message -->
+        <div v-if="projects.length === 0 && !loading && !error" class="flex flex-col items-center">
+          <img src="../../../public/Images/Empty.jpg" alt="Hình ảnh rỗng" class="max-w-xs mb-4" />
+          <p class="italic">Không có dự án nào.</p>
+        </div>
       </div>
-      <div v-if="projects.length === 0 && !loading && !error" class="flex flex-col items-center">
-        <img src="../../../public/Images/Empty.jpg" alt="Hình ảnh rỗng" class="max-w-xs mb-4" />
-        <p class="italic">Không có dự án nào.</p>
-      </div>
+
       <!-- Pagination -->
       <div class="flex justify-center mt-12 mb-8">
         <el-pagination
@@ -153,7 +154,7 @@ export default {
       pageSize: 6,
       totalProjects: 0,
       roleManager: false,
-      currentTab: 'funding' // Tab mặc định
+      currentTab: 'funding'
     }
   },
   computed: {
@@ -163,7 +164,7 @@ export default {
   },
   mounted() {
     this.fetchProjects()
-    if (Cookies.get('role') == 'Manager') {
+    if (Cookies.get('role') === 'Manager') {
       this.roleManager = true
     }
   },
@@ -176,6 +177,19 @@ export default {
       this.pageNumber = 1 // Reset lại trang khi chuyển tab
       this.fetchProjects()
     },
+    async fetchImages(projectId) {
+      try {
+        const response = await axios.get('api/Project/get_image', {
+          params: {
+            project_id: projectId
+          }
+        })
+        return response.data // Trả về danh sách ảnh từ API
+      } catch (error) {
+        console.error('Lỗi khi tải ảnh dự án:', error)
+        return [] // Trả về mảng rỗng nếu có lỗi
+      }
+    },
     async fetchProjects() {
       this.loading = true
       this.error = null
@@ -187,13 +201,17 @@ export default {
       }
       try {
         const response = await axios.get(apiUrl)
-        this.projects = response.data.projects.map((project) => {
-          return {
-            ...project,
-            image: project.images.length > 0 ? project.images[0] : null
-          }
-        })
-        this.totalProjects = response.data.totalPages // Adjust this line as needed
+        this.projects = await Promise.all(
+          response.data.projects.map(async (project) => {
+            const images = await this.fetchImages(project.project_id)
+            return {
+              ...project,
+              images: images.length > 0 ? images[0] : null
+            }
+          })
+        )
+        console.log(this.projects)
+        this.totalProjects = response.data.totalPages
       } catch (error) {
         this.error = 'Không thể tải dữ liệu dự án.'
         console.error('Lỗi khi tải dữ liệu dự án:', error)

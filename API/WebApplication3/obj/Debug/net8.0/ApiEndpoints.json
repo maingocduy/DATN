@@ -387,6 +387,22 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.BlogController",
+    "Method": "UpdateBlog",
+    "RelativePath": "api/Blog/update_blog",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Blog.updateBlogRequestDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.BlogController",
     "Method": "UpdateStatus",
     "RelativePath": "api/Blog/update_status",
     "HttpMethod": "POST",
@@ -869,6 +885,32 @@
       }
     ],
     "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.ProjectController",
+    "Method": "getImage",
+    "RelativePath": "api/Project/get_image",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "project_id",
+        "Type": "System.Int32",
+        "IsRequired": false
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "WebApplication3.DTOs.ImageDto.ImageDtos",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
   },
   {
     "ContainingType": "WebApplication3.Controllers.ProjectController",

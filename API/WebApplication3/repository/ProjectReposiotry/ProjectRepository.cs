@@ -30,6 +30,7 @@ namespace WebApplication3.repository.ProjectReposiotry
         Task<PagedResult<ProjectDTO>> GetAllProjectNotExpired(int pageNumber = 1);
         Task<PagedResult<ProjectDTO>> GetAllProjectEndDate(int pageNumber = 1);
         Task<ProjectDTO> GetProjectByID(int Project_id);
+        Task<List<ImageDtos>> GetImagesAsync(int project_id);
     }
     public class ProjectRepository : IProjectRepository
     {
@@ -110,40 +111,16 @@ WHERE Name = @ProjectName;";
 
             // Câu lệnh SQL mới
             var dtoSql = @"
-SELECT p.*, i.*
-FROM Projects AS p
-LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id
-LIMIT @pageSize OFFSET @offset;
-";
+        SELECT p.*
+        FROM Projects AS p
+        LIMIT @pageSize OFFSET @offset;
+    ";
 
             // Thực hiện truy vấn
-            var projectsQuery = await connection.QueryAsync<ProjectDTO,  ImageDtos, ProjectDTO>(
+            var projects = await connection.QueryAsync<ProjectDTO>(
                 dtoSql,
-                (project, image) =>
-                {
-                   
-                    project.images ??= new List<ImageDtos>();
-
-                    
-                    if (image != null)
-                    {
-                        project.images.Add(image);
-                    }
-                    return project;
-                },
-                new { pageSize, offset },
-                splitOn: "image_id");
-
-            var projects = projectsQuery.GroupBy(p => p.Project_id).Select(group =>
-            {
-                var groupedProject = group.First();
-
-                if (groupedProject.images != null && groupedProject.images.Any())
-                {
-                    groupedProject.images = group.Select(p => p.images.FirstOrDefault()).ToList();
-                }
-                return groupedProject;
-            }).ToList();
+                new { pageSize, offset }
+            );
 
             // Lấy tổng số dự án
             var countSql = "SELECT COUNT(*) FROM Projects";
@@ -153,10 +130,11 @@ LIMIT @pageSize OFFSET @offset;
 
             return new PagedResult<ProjectDTO>
             {
-                Data = projects,
+                Data = projects.ToList(),
                 TotalPages = totalPages
             };
         }
+
         public async Task<PagedResult<ProjectDTO>> GetAllProjectEndDate(int pageNumber = 1)
         {
             using var connection = _context.CreateConnection();
@@ -166,40 +144,17 @@ LIMIT @pageSize OFFSET @offset;
 
             // Câu lệnh SQL mới
             var dtoSql = @"
-SELECT p.*, i.*
+SELECT p.*
 FROM Projects AS p
-LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id WHERE EndDate < CURDATE()
+ WHERE EndDate < CURDATE()
 LIMIT @pageSize OFFSET @offset ;
 ";
 
             // Thực hiện truy vấn
-            var projectsQuery = await connection.QueryAsync<ProjectDTO, ImageDtos, ProjectDTO>(
+            var projects = await connection.QueryAsync<ProjectDTO>(
                 dtoSql,
-                (project, image) =>
-                {
-
-                    project.images ??= new List<ImageDtos>();
-
-
-                    if (image != null)
-                    {
-                        project.images.Add(image);
-                    }
-                    return project;
-                },
-                new { pageSize, offset },
-                splitOn: "image_id");
-
-            var projects = projectsQuery.GroupBy(p => p.Project_id).Select(group =>
-            {
-                var groupedProject = group.First();
-
-                if (groupedProject.images != null && groupedProject.images.Any())
-                {
-                    groupedProject.images = group.Select(p => p.images.FirstOrDefault()).ToList();
-                }
-                return groupedProject;
-            }).ToList();
+                new { pageSize, offset }
+            );
 
             // Lấy tổng số dự án
             var countSql = "SELECT COUNT(*) FROM Projects";
@@ -209,10 +164,11 @@ LIMIT @pageSize OFFSET @offset ;
 
             return new PagedResult<ProjectDTO>
             {
-                Data = projects,
+                Data = projects.ToList(),
                 TotalPages = totalPages
             };
         }
+
         public async Task<int> SumContribution(int project_id)
         {
             var dtosqlproject = @"SELECT SUM(s.ContributionAmount) AS TotalContribution
@@ -220,7 +176,7 @@ FROM sponsor s
 RIGHT JOIN projectsponsor sp ON s.sponsor_id = sp.sponsor_id
 WHERE sp.project_id = @projectId;";
             using var connection = _context.CreateConnection();
-            return await connection.ExecuteScalarAsync<int>(dtosqlproject,new { projectId = project_id });
+            return await connection.ExecuteScalarAsync<int>(dtosqlproject, new { projectId = project_id });
         }
         public async Task<PagedResult<ProjectDTO>> GetAllProjectNotExpired(int pageNumber = 1)
         {
@@ -231,40 +187,18 @@ WHERE sp.project_id = @projectId;";
 
             // Câu lệnh SQL mới
             var dtoSql = @"
-SELECT p.*, i.*
-FROM Projects AS p
-LEFT JOIN Project_image AS i ON i.Project_id = p.Project_id WHERE EndDate >= CURDATE()
-LIMIT @pageSize OFFSET @offset ;
-";
+        SELECT p.*
+        FROM Projects AS p
+        
+        WHERE EndDate >= CURDATE()
+        LIMIT @pageSize OFFSET @offset
+    ";
 
             // Thực hiện truy vấn
-            var projectsQuery = await connection.QueryAsync<ProjectDTO, ImageDtos, ProjectDTO>(
+            var projects = await connection.QueryAsync<ProjectDTO>(
                 dtoSql,
-                (project, image) =>
-                {
-
-                    project.images ??= new List<ImageDtos>();
-
-
-                    if (image != null)
-                    {
-                        project.images.Add(image);
-                    }
-                    return project;
-                },
-                new { pageSize, offset },
-                splitOn: "image_id");
-
-            var projects = projectsQuery.GroupBy(p => p.Project_id).Select(group =>
-            {
-                var groupedProject = group.First();
-
-                if (groupedProject.images != null && groupedProject.images.Any())
-                {
-                    groupedProject.images = group.Select(p => p.images.FirstOrDefault()).ToList();
-                }
-                return groupedProject;
-            }).ToList();
+                new { pageSize, offset }
+            );
 
             // Lấy tổng số dự án
             var countSql = "SELECT COUNT(*) FROM Projects";
@@ -274,9 +208,21 @@ LIMIT @pageSize OFFSET @offset ;
 
             return new PagedResult<ProjectDTO>
             {
-                Data = projects,
+                Data = projects.ToList(),
                 TotalPages = totalPages
             };
+
+
+        }
+        public async Task<List<ImageDtos>> GetImagesAsync(int project_id)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = @"SELECT * from project_image where Project_id = @project_id";
+            var lst = await connection.QueryAsync<ImageDtos>(sql, new
+            {
+                project_id = project_id
+            });
+            return lst.ToList();
         }
         public async Task<PagedResult<ProjectDTO>> GetAllProjectAprove(int pageNumber = 1)
         {
@@ -398,11 +344,11 @@ WHERE
         (project, image) =>
         {
             // Kiểm tra và khởi tạo danh sách thành viên, nhóm, nhà tài trợ và ảnh nếu cần
-            
+
             project.images ??= new List<ImageDtos>();
 
             // Thêm thành viên, nhóm, nhà tài trợ và ảnh nếu không null
-           
+
             if (image != null)
             {
                 project.images.Add(image);

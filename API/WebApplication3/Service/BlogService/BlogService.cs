@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using K4os.Compression.LZ4.Internal;
+using Microsoft.Extensions.Logging;
 using Org.BouncyCastle.Asn1.Ocsp;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -23,7 +24,7 @@ namespace WebApplication3.Service.BlogService
 
         Task<BlogDTO> GetBlogsByTitle(string title);
 
-        Task UpdateBlog(string title, UpdatePasswordRequestDTO acc);
+        Task UpdateBlog(updateBlogRequestDTO Blog);
         Task DeleteBlog(string title);
         Task UpdateStatus(updateApprovedRequest request);
         Task AddBlog(string jwt, CreateRequestBLogDTO create);
@@ -31,7 +32,7 @@ namespace WebApplication3.Service.BlogService
     }
     public class BlogService : IBlogService
     {
-        private readonly IBlogRepository IBlogRepository;
+        private readonly repository.BlogRepository.IBlogRepository IBlogRepository;
         private readonly IMapper _mapper;
         private readonly IAccountRepository IAccountRepository;
         public BlogService(IBlogRepository IBlogRepository, IAccountRepository IAccountRepository, IMapper mapper)
@@ -125,9 +126,28 @@ namespace WebApplication3.Service.BlogService
             return blog;
         }
 
-        public Task UpdateBlog(string title, UpdatePasswordRequestDTO acc)
+        public async Task UpdateBlog(updateBlogRequestDTO Blog)
         {
-            throw new NotImplementedException();
+            var existingBlog = await IBlogRepository.GetBlog(Blog.Blog_id);
+            if (existingBlog == null)
+            {
+                throw new Exception($"Không tìm thấy blog!");
+            }
+
+            // Kiểm tra xem dự án có bị trùng tên không
+
+            // Validate update request
+
+
+            // Cập nhật dữ liệu dự án
+            existingBlog.Content = Blog.Content;
+            existingBlog.Title = Blog.Title;
+            // Assume other necessary fields are set accordingly
+
+            // Gọi repository để cập nhật dự án
+            await IBlogRepository.UpdateBlog(Blog.Blog_id, existingBlog);
+
+            
         }
     }
 }

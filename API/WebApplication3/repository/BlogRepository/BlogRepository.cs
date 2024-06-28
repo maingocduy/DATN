@@ -1,5 +1,6 @@
 ﻿using CloudinaryDotNet;
 using Dapper;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using System.Text;
 using WebApplication3.DTOs;
@@ -20,7 +21,7 @@ namespace WebApplication3.repository.BlogRepository
         Task<PagedResult<BlogDTO>> GetAllBlogs(int pageSize, int pageNumber, string? keyword = null, bool? approved = null);
         Task<BlogDTO> GetBlog(int id);
         Task<BlogDTO> GetBlogsByTitle(string title);
-        Task UpdateBlog(BlogDTO blog);
+        Task UpdateBlog(int blog_id, BlogDTO blog);
         Task DeleteBlog(BlogDTO blog);
         Task<PagedResult<BlogDTO>> GetAllBlogsTrue(int pageNumber);
         Task UpdateStatus(bool Approved, int id);
@@ -212,9 +213,19 @@ LIMIT @pageSize OFFSET @offset";
             return blog.FirstOrDefault();
         }
 
-        public Task UpdateBlog(BlogDTO blog)
+        public async Task UpdateBlog(int blog_id,BlogDTO blog)
         {
-            throw new NotImplementedException();
+            using var connection = _context.CreateConnection();
+            var sql = """
+                update Blog Set Title= @title , Content = @content  , CreatedAt = CURRENT_TIMESTAMP() , Approved = 0 WHERE Blog_id = @Blog_id
+                """;
+            await connection.ExecuteAsync(sql, new
+            {
+                Blog_id = blog_id,
+                title = blog.Title,
+                content = blog.Content,
+              
+            });
         }
     }
 }

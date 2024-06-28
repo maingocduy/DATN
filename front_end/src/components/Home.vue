@@ -22,14 +22,18 @@
       <div class="carousel-container">
         <el-carousel
           ref="projectCarousel"
-          :interval="3000"
+          :interval="5000"
           arrow="always"
           @change="resetInterval"
           autoplay
           class="project-carousel"
-          style="width: 100%"
+          style="width: 90%; height: 100%"
         >
-          <el-carousel-item v-for="(chunk, chunkIndex) in chunkedProjects" :key="chunkIndex">
+          <el-carousel-item
+            v-for="(chunk, chunkIndex) in chunkedProjects"
+            :key="chunkIndex"
+            style="height: auto"
+          >
             <div class="flex-container">
               <div v-for="(project, index) in chunk" :key="index" class="flex-item">
                 <el-card shadow="hover" class="project-card">
@@ -43,16 +47,16 @@
                     "
                   >
                     <img
-                      v-if="!project.images || project.images.length === 0"
+                      v-if="!!project?.images"
                       class="rounded-t-lg w-40 h-20"
-                      src="../../../public/Images/doctor.jpg"
-                      alt="Placeholder"
+                      :src="project.images.image_url"
+                      alt=""
                     />
                     <img
                       v-else
                       class="rounded-t-lg w-40 h-20"
-                      :src="project.images[0].image_url"
-                      alt=""
+                      src="../../../public/Images/doctor.jpg"
+                      alt="Placeholder"
                     />
                   </a>
                   <div class="p-6">
@@ -61,18 +65,15 @@
                         {{ project.name }}
                       </h5>
                     </a>
+
                     <el-progress
                       :percentage="calculatePercentage(project.contributions, project.budget)"
                       :stroke-width="10"
-                      class="my-4"
+                      style="width: 170px; display: block"
                     >
-                      <template #text>
-                        <span
-                          >{{ calculatePercentage(project.contributions, project.budget) }}%</span
-                        >
-                      </template>
                     </el-progress>
-                    <div class="text-sm text-gray-600">
+
+                    <div class="text-sm mt-2 text-gray-600">
                       <p>Đã đóng góp: {{ formatCurrencyToVND(project.contributions) }}</p>
                       <p>Mục tiêu: {{ formatCurrencyToVND(project.budget) }}</p>
                     </div>
@@ -83,31 +84,45 @@
           </el-carousel-item>
         </el-carousel>
 
-        <el-button @click="goToProject" class="view-all-button" round> Xem tất cả dự án </el-button>
+        <el-button v-if="projects.length > 3" @click="goToProject" class="view-all-button" round>
+          Xem tất cả dự án
+        </el-button>
       </div>
     </div>
 
     <!-- Thống kê -->
     <div class="statistics">
-      <h2 class="text-5xl font-mono">Những con số biết nói</h2>
-      <div class="stat-container">
-        <div class="stat" v-for="(value, key) in stats" :key="key">
-          <p class="text-lg font-mono">{{ key }}</p>
-          <h3 class="text-4xl font-bold font-mono">{{ value }}</h3>
+      <h2 class="text-5xl">Những con số biết nói</h2>
+      <div class="stat-container mt-8 flex flex-wrap justify-around">
+        <div class="stat p-4" v-for="(value, key) in stats" :key="key">
+          <p class="text-lg">{{ key }}</p>
+          <h3 class="text-4xl font-bold">{{ value }}</h3>
         </div>
       </div>
     </div>
 
     <!-- Giới thiệu -->
     <div class="introduction">
-      <img
-        src="../../public/Images/309043961_434949368736287_4246824704006557099_n.jpg"
-        alt="Introduction Image"
-        class="intro-image"
-      />
       <div class="intro-text">
-        <h2>Giới thiệu</h2>
-        <p>Đây là đoạn giới thiệu về dự án...</p>
+        <div style="margin-bottom: 10px">
+          <h2 style="line-height: 1">Web Hội Bác Sĩ Tình Nguyện Là Gì?</h2>
+        </div>
+        <p>
+          Trang web của chúng tôi là nơi kết nối những trái tim nhân ái với sứ mệnh chăm sóc sức
+          khỏe cộng đồng. Tại đây, bạn có thể quyên góp cho các dự án y tế từ thiện, đồng thời khám
+          phá kho tàng kiến thức y tế qua các bài viết blog do các bác sĩ và chuyên gia y tế chia
+          sẻ.
+        </p>
+        <p>
+          Hội Bác Sĩ Tình Nguyện không chỉ kêu gọi quyên góp tài chính, mà còn cho phép bạn đăng ký
+          tham gia trực tiếp vào các dự án khám bệnh từ thiện. Chúng tôi luôn chào đón mọi sự đóng
+          góp và tham gia của bạn, để cùng nhau xây dựng một cộng đồng khỏe mạnh và tràn đầy tình
+          thương.
+        </p>
+        <p>
+          Hãy cùng chúng tôi lan tỏa những giá trị nhân văn và mang lại nụ cười cho những mảnh đời
+          khó khăn. Tham gia ngay hôm nay và trở thành một phần của sự thay đổi tích cực!
+        </p>
       </div>
     </div>
   </div>
@@ -143,9 +158,34 @@ export default {
     chunkedProjects() {
       const chunkSize = 3
       const chunks = []
-      for (let i = 0; i < this.projects.length; i += chunkSize) {
-        chunks.push(this.projects.slice(i, i + chunkSize))
+
+      for (let i = 0; i < this.projects.length; i++) {
+        // Tạo một chunk mới với kích thước chunkSize
+        const chunk = []
+        for (let j = 0; j < chunkSize; j++) {
+          const index = i + j
+          if (index < this.projects.length) {
+            chunk.push(this.projects[index])
+          }
+        }
+
+        // Kiểm tra nếu phần tử cuối cùng của chunk hiện tại là phần tử cuối cùng của danh sách gốc
+        if (chunk[chunk.length - 1] === this.projects[this.projects.length - 1]) {
+          chunks.push(chunk)
+          break
+        }
+
+        // Nếu không đủ phần tử để tạo một chunk hoàn chỉnh, bỏ qua
+        if (chunk.length === chunkSize) {
+          chunks.push(chunk)
+        }
+
+        // Bỏ qua bước nhảy là chunkSize - 1
+        if (i + chunkSize >= this.projects.length) {
+          break
+        }
       }
+
       return chunks
     }
   },
@@ -158,10 +198,31 @@ export default {
       if (!budget) return 0
       return Math.min(((contributions / budget) * 100).toFixed(2), 100)
     },
+    async fetchImages(projectId) {
+      try {
+        const response = await axios.get('api/Project/get_image', {
+          params: {
+            project_id: projectId
+          }
+        })
+        return response.data // Trả về danh sách ảnh từ API
+      } catch (error) {
+        console.error('Lỗi khi tải ảnh dự án:', error)
+        return [] // Trả về mảng rỗng nếu có lỗi
+      }
+    },
     async viewAllProjects() {
       try {
         const response = await axios.get('https://localhost:7188/api/Project/get_all_project')
-        this.projects = response.data.projects
+        this.projects = await Promise.all(
+          response.data.projects.map(async (project) => {
+            const images = await this.fetchImages(project.project_id)
+            return {
+              ...project,
+              images: images.length > 0 ? images[0] : null
+            }
+          })
+        )
         console.log(this.projects)
       } catch (error) {
         console.error('Error fetching projects:', error)
@@ -197,11 +258,23 @@ export default {
 <style scoped>
 #home-page {
   text-align: center;
-  padding: 1rem 1rem;
+  padding: 0.5rem 0.5rem;
   background-color: #f4f4f9;
   font-family: 'Arial', sans-serif;
 }
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Roboto+Mono:wght@400;700&family=Merriweather:wght@400;700&display=swap');
 
+.statistics h2 {
+  font-family: 'Roboto', Sans-serif;
+}
+
+.statistics p {
+  font-family: 'Roboto', sans-serif;
+}
+
+.statistics h3 {
+  font-family: 'Roboto', Sans-serif;
+}
 .carousel-item {
   display: flex;
   align-items: center;
@@ -216,18 +289,31 @@ export default {
 }
 
 .projects-section {
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   background-color: #fff;
   padding: 2rem;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-position: top left;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-image: url('../../public/Images/groupProject.png');
 }
 
 .project-card {
-  padding: 1rem;
   text-align: center;
   background-color: #fff;
   width: 100%;
+  height: 100%;
+}
+
+.project-card img {
+  height: 200px;
+  width: 100%;
+}
+
+.el-card__body {
+  padding: unset;
 }
 
 .project-title {
@@ -241,24 +327,29 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: auto;
+  height: 450px;
 }
 
 .project-carousel {
   margin-bottom: 20px;
+  height: 100%;
 }
 
 .flex-container {
   display: flex;
-  justify-content: center;
+  justify-content: center; /* Center the items */
   gap: 20px;
   width: 100%;
+  flex-wrap: wrap;
 }
 
 .flex-item {
-  flex: 1;
-  max-width: 300px;
+  flex: 1 1 calc(25% - 20px); /* Adjusted for smaller items */
+  max-width: calc(25% - 20px); /* Adjusted for smaller items */
   box-sizing: border-box;
+  display: flex; /* Added to center the card content */
+  flex-direction: column; /* Added to center the card content */
+  align-items: center; /* Added to center the card content */
 }
 
 .view-all-button {
@@ -283,7 +374,7 @@ export default {
   background-repeat: no-repeat;
   background-size: cover;
   color: #fff;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
   height: 302px;
 }
 
@@ -304,25 +395,42 @@ export default {
 .introduction {
   display: flex;
   align-items: center;
-  padding: 2rem 0;
+  text-align: center;
   background-color: #fff;
-  margin-top: 2rem;
+  margin-top: 0.5rem;
   border-radius: 8px;
   animation: slideUp 1s ease-out;
-}
-
-.intro-image {
-  width: 200px;
-  height: auto;
-  margin-right: 2rem;
-  border-radius: 8px;
+  gap: 20px;
+  padding: 50px 0px 30px 0px;
+  justify-content: center;
+  background-image: url('../../public/Images/groupProject.png');
 }
 
 .intro-text {
   flex: 1;
   text-align: left;
+  font-weight: 400;
+  max-width: 600px; /* Giới hạn chiều rộng của phần giới thiệu */
+  text-align: justify;
 }
-
+.intro-text h2 {
+  color: #2e3c4b;
+  font-family: 'Roboto', sans-serif;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 700;
+  text-align: center;
+}
+.intro-text p {
+  margin-bottom: 28px;
+  text-align: justify;
+  color: #7a7a7a;
+  font-family: 'Roboto', Sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 24px;
+  margin-bottom: 10px;
+}
 .descProject {
   display: -webkit-box;
   -webkit-line-clamp: 1;
@@ -364,6 +472,45 @@ export default {
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .flex-item {
+    flex: 1 1 calc(33.333% - 20px); /* 3 items per row */
+    max-width: calc(33.333% - 20px); /* 3 items per row */
+  }
+}
+
+@media (max-width: 768px) {
+  .flex-item {
+    flex: 1 1 calc(50% - 20px); /* 2 items per row */
+    max-width: calc(50% - 20px); /* 2 items per row */
+  }
+}
+
+@media (max-width: 480px) {
+  .flex-item {
+    flex: 1 1 100%; /* 1 item per row */
+    max-width: 100%; /* 1 item per row */
+  }
+
+  .project-card img {
+    height: 150px; /* Adjust image height for smaller screens */
+  }
+
+  .project-title {
+    font-size: 1.2rem; /* Adjust font size for smaller screens */
+  }
+
+  .view-all-button {
+    padding: 0.5rem 1rem; /* Adjust button padding for smaller screens */
+  }
+
+  .statistics {
+    padding: 30px 0; /* Adjust padding for smaller screens */
+    height: auto; /* Adjust height for smaller screens */
   }
 }
 </style>

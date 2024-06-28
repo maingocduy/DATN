@@ -3,11 +3,7 @@
     <!-- Thêm class flex-shrink-0 để footer không bị co lại khi nội dung ít -->
     <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
       <div class="md:flex md:justify-between">
-        <div class="mb-6 md:mb-0">
-          <a href="#" class="flex items-center">
-            <img src="../../public/Images/logo.jpg" class="h-20 me-3" alt="Flowbite Logo" />
-          </a>
-        </div>
+        <div class="mb-6 md:mb-0"></div>
         <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
           <!-- Các phần tử của footer -->
           <div>

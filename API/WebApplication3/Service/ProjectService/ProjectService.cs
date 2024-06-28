@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using K4os.Compression.LZ4.Internal;
+using Microsoft.AspNetCore.Http.HttpResults;
 using System.ComponentModel.DataAnnotations;
 using WebApplication3.DTOs;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Blog;
+using WebApplication3.DTOs.ImageDto;
 using WebApplication3.DTOs.Project;
 using WebApplication3.Entities;
 using WebApplication3.repository.AccountRepository;
@@ -25,7 +27,7 @@ namespace WebApplication3.Service.ProjectService
 
         Task UpdateProject(string name, UpdateProjectRequest project);
         Task DeleteProject(string name);
-
+        Task<List<ImageDtos>> GetImagesAsync(int project_id);
         Task<PagedResult<ProjectDTO>> GetAllProjectAprove(int pageNumber);
         Task<OverViewDTO> GetOverView();
         Task UpdateStatus(updateStatusRequest request);
@@ -51,6 +53,15 @@ namespace WebApplication3.Service.ProjectService
                 TotalSponsor = totalSponsor,
                 TotalContribution = totalContribution
             };
+        }
+        public async Task<List<ImageDtos>> GetImagesAsync(int project_id)
+        {
+            var project = await IProjectRepository.GetProjectByID(project_id);
+            if(project == null)
+            {
+                throw new KeyNotFoundException("Không tìm thấy dự án ");
+            }
+            return await IProjectRepository.GetImagesAsync(project_id);
         }
         public async Task<PagedResult<ProjectDTO>> GetAllProject(int pageNumber)
         {

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Xml.Linq;
 using WebApplication3.DTOs;
 using WebApplication3.DTOs.Blog;
+using WebApplication3.DTOs.ImageDto;
 using WebApplication3.DTOs.Project;
 using WebApplication3.DTOs.Sponsor;
 using WebApplication3.Entities;
@@ -62,6 +63,23 @@ namespace WebApplication3.Controllers
             var pro = await IProjectService.GetProjectsByName(request.ProjectName);
             return Ok(pro);
         }
+        [HttpGet("get_image")]
+        public async Task<ActionResult<ImageDtos>> getImage(int project_id)
+        {
+            try
+            {
+                var images = await IProjectService.GetImagesAsync(project_id);
+                return Ok(images);
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         [HttpPost("get_project_by_id")]
         public async Task<ActionResult<Project>> GetProjectByID([FromBody] GetProjectRequest request)
         {
@@ -72,7 +90,7 @@ namespace WebApplication3.Controllers
         public async Task<IActionResult> Delete(string name)
         {
             await IProjectService.DeleteProject(name);
-            return Ok(new { message = "Project deleted" });
+            return Ok(new { message = $"Xóa dự án thành công!" });
         }
         [HttpPost("add_project")]
         public async Task<IActionResult> AddProject(CreateProjectRequest createProject)
