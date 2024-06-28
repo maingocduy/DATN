@@ -45,7 +45,7 @@ namespace WebApplication3.Service.AccountService
         Task EnterOtp(string otp);
         Task SendEmailAsync(string email, string subject, string messager);
 
-        Task changeForgetPass(string email, string newPass, string otp);
+        Task ChangeForgetPass(string email, string newPass, string otp);
         Task ReSendOtp(string email);
 
         Task ChangeRole(string username);
@@ -166,21 +166,22 @@ namespace WebApplication3.Service.AccountService
 
         public async Task UpdatePasswordAcc(UpdatePasswordRequestDTO acc)
         {
-            var user = await _AccountRepository.GetAccountsByUserName(acc.username);
+            var user = await userManager.FindByNameAsync(acc.username);
 
             if (user == null)
                 throw new KeyNotFoundException("User not found");
-            if(acc.OldPassword != user.Password)
+            if(!await userManager.CheckPasswordAsync(user, acc.OldPassword))
             {
                 throw new Exception("Mật khẩu cũ sai");
             }
             // copy model props to user
-         
-            var getUser = await userManager.FindByNameAsync(acc.username);
-            var a = await userManager.ChangePasswordAsync(getUser, user.Password, acc.Password);
-            _mapper.Map(acc, user);
+            var account = await _AccountRepository.GetAccountsByUserName(acc.username);
+            
+            var a = await userManager.ChangePasswordAsync(user, acc.OldPassword, acc.Password);
+            acc.Password = user.PasswordHash;
+            _mapper.Map(acc, account);
             // save user
-            _AccountRepository.UpdatePasswordAcc(user);
+            _AccountRepository.UpdatePasswordAcc(account);
         }
 
         public async Task ForgotPassword(string email)
@@ -241,11 +242,12 @@ namespace WebApplication3.Service.AccountService
         {
             await _AccountRepository.SaveOtp(otp, email);
         }
-        public async Task changeForgetPass(string email,string newPass, string otp)
+        public async Task ChangeForgetPass(string email, string newPass, string otp)
         {
             var vnTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time"); // Mã này tương ứng với GMT+7
             var vnTime = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, vnTimeZone);
             var OTP = await _AccountRepository.GetOtp(otp);
+
             if (OTP == null)
             {
                 throw new KeyNotFoundException("Otp bị sai, mời nhập lại");
@@ -257,27 +259,41 @@ namespace WebApplication3.Service.AccountService
             else if (OTP.IsVerified == true)
             {
                 throw new Exception("OTP đã được xác nhận");
-            }    
+            }
             else
             {
-            
                 var getUserIdentity = await userManager.FindByEmailAsync(email);
- 
+
                 if (getUserIdentity == null)
                 {
                     throw new KeyNotFoundException("Email này không tồn tại");
                 }
-                if(string.IsNullOrEmpty(newPass))
+
+                if (string.IsNullOrEmpty(newPass))
                 {
                     throw new Exception("Nhập thiếu mật khẩu");
                 }
-                var getUserDb = await _AccountRepository.GetAccountsByUserName(getUserIdentity.UserName);
-                var a =await userManager.ChangePasswordAsync(getUserIdentity, getUserDb.Password, newPass);
-                OTP.IsVerified = true;
-                _AccountRepository.UpdateOtp(OTP);
-                _AccountRepository.UpdatePasswordAccByEmail(email, newPass);
+
+                // Generate password reset token
+                var resetToken = await userManager.GeneratePasswordResetTokenAsync(getUserIdentity);
+
+                // Reset the password using the reset token
+                var result = await userManager.ResetPasswordAsync(getUserIdentity, resetToken, newPass);
+                
+                if (result.Succeeded)
+                {
+                    
+                    OTP.IsVerified = true;
+                    _AccountRepository.UpdateOtp(OTP);
+                    _AccountRepository.UpdatePasswordAccByEmail(email, getUserIdentity.PasswordHash);
+                }
+                else
+                {
+                    throw new Exception("Đặt lại mật khẩu không thành công: " + string.Join(", ", result.Errors.Select(e => e.Description)));
+                }
             }
         }
+
 
         public async Task ChangeRole(string username)
         {

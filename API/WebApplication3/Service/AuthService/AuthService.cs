@@ -82,7 +82,7 @@ namespace WebApplication3.Service.AuthService
             var getUser = await userManager.FindByEmailAsync(email);
             if (getUser != null)
             {
-                throw new Exception("User with the email '" + email + "' already exists");
+                throw new Exception("Email này đã được đăng ký");
             }
             // Map model to new user object
             var user = _mapper.Map<AccountDTO>(acc);

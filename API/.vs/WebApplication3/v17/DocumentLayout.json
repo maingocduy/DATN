@@ -3,6 +3,30 @@
   "WorkspaceRootPath": "D:\\fronten\\DATN\\API\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\service\\accountservice\\accountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\service\\accountservice\\accountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\dtos\\account\\updatepasswordrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\dtos\\account\\updatepasswordrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\service\\authservice\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\service\\authservice\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\dtos\\auth\\createaccountrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\dtos\\auth\\createaccountrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\dtos\\blog\\getallaccountbyidrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\dtos\\blog\\getallaccountbyidrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -75,14 +99,6 @@
       "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\repository\\accountrepository\\accountrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\controllers\\accountcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\service\\accountservice\\accountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\service\\accountservice\\accountservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\dtos\\blog\\getallaccountrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\dtos\\blog\\getallaccountrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -115,10 +131,6 @@
       "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\service\\sponsorservice\\sponsorservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\controllers\\authcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\dtos\\member\\updaterequestmember.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\dtos\\member\\updaterequestmember.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -131,16 +143,8 @@
       "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\controllers\\cloudcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\dtos\\account\\updatepasswordrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\dtos\\account\\updatepasswordrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\dtos\\member\\enterotpmemberrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\dtos\\member\\enterotpmemberrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\service\\authservice\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\service\\authservice\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\entities\\project.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -251,10 +255,6 @@
       "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\dtos\\auth\\confirmemailrequest.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\dtos\\auth\\createaccountrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\dtos\\auth\\createaccountrequestdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|d:\\fronten\\datn\\api\\webapplication3\\dtos\\auth\\refreshtoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FFACB0AB-08B1-4144-BA6F-40B3148E3F73}|WebApplication3\\WebApplication3.csproj|solutionrelative:webapplication3\\dtos\\auth\\refreshtoken.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
@@ -353,7 +353,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 267,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -365,19 +365,83 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "BlogController.cs",
-              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\BlogController.cs",
-              "RelativeDocumentMoniker": "WebApplication3\\Controllers\\BlogController.cs",
-              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\BlogController.cs",
-              "RelativeToolTip": "WebApplication3\\Controllers\\BlogController.cs",
-              "ViewState": "AQIAADQAAAAAAAAAAAAAwEQAAABSAAAA",
+              "DocumentIndex": 4,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\AuthService\\AuthService.cs",
+              "RelativeDocumentMoniker": "WebApplication3\\Service\\AuthService\\AuthService.cs",
+              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\AuthService\\AuthService.cs",
+              "RelativeToolTip": "WebApplication3\\Service\\AuthService\\AuthService.cs",
+              "ViewState": "AQIAAB4AAAAAAAAAAAD4vyoAAABkAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-28T10:15:23.986Z"
+              "WhenOpened": "2024-05-13T05:01:36.23Z",
+              "IsPinned": true
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AccountService.cs",
+              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\AccountService\\AccountService.cs",
+              "RelativeDocumentMoniker": "WebApplication3\\Service\\AccountService\\AccountService.cs",
+              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\AccountService\\AccountService.cs",
+              "RelativeToolTip": "WebApplication3\\Service\\AccountService\\AccountService.cs",
+              "ViewState": "AQIAAAEBAAAAAAAAAAAWwCYBAAAIAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-24T03:07:08.886Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CreateAccountRequestDTO.cs",
+              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Auth\\CreateAccountRequestDTO.cs",
+              "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Auth\\CreateAccountRequestDTO.cs",
+              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Auth\\CreateAccountRequestDTO.cs",
+              "RelativeToolTip": "WebApplication3\\DTOs\\Auth\\CreateAccountRequestDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAoAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-09T12:35:55.661Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "UpdatePasswordRequestDTO.cs",
+              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Account\\UpdatePasswordRequestDTO.cs",
+              "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Account\\UpdatePasswordRequestDTO.cs",
+              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Account\\UpdatePasswordRequestDTO.cs",
+              "RelativeToolTip": "WebApplication3\\DTOs\\Account\\UpdatePasswordRequestDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAuwA4AAAAeAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-19T06:48:26.161Z"
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "AccountController.cs",
+              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\AccountController.cs",
+              "RelativeDocumentMoniker": "WebApplication3\\Controllers\\AccountController.cs",
+              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\AccountController.cs",
+              "RelativeToolTip": "WebApplication3\\Controllers\\AccountController.cs",
+              "ViewState": "AQIAAJAAAAAAAAAAAAAMwKQAAAAQAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-22T06:59:13.52Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AuthController.cs",
+              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\AuthController.cs",
+              "RelativeDocumentMoniker": "WebApplication3\\Controllers\\AuthController.cs",
+              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\AuthController.cs",
+              "RelativeToolTip": "WebApplication3\\Controllers\\AuthController.cs",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAYwBcAAAArAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-13T04:43:12.247Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
               "Title": "GetAllAccountByIdRequestDto.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Blog\\GetAllAccountByIdRequestDto.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Blog\\GetAllAccountByIdRequestDto.cs",
@@ -385,48 +449,11 @@
               "RelativeToolTip": "WebApplication3\\DTOs\\Blog\\GetAllAccountByIdRequestDto.cs",
               "ViewState": "AQIAAAAAAAAAAAAAAAAuwAIAAAAsAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-28T15:03:30.744Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-06-28T15:03:30.744Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "BlogService.cs",
-              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\BlogService\\BlogService.cs",
-              "RelativeDocumentMoniker": "WebApplication3\\Service\\BlogService\\BlogService.cs",
-              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\BlogService\\BlogService.cs",
-              "RelativeToolTip": "WebApplication3\\Service\\BlogService\\BlogService.cs",
-              "ViewState": "AQIAABUAAAAAAAAAAAAAABUAAABSAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-13T07:01:22.216Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "BlogRepository.cs",
-              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\repository\\BlogRepository\\BlogRepository.cs",
-              "RelativeDocumentMoniker": "WebApplication3\\repository\\BlogRepository\\BlogRepository.cs",
-              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\repository\\BlogRepository\\BlogRepository.cs",
-              "RelativeToolTip": "WebApplication3\\repository\\BlogRepository\\BlogRepository.cs",
-              "ViewState": "AQIAAB0AAAAAAAAAAAAAAB0AAABSAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-19T17:30:16.611Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "AccountDTO.cs",
-              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Account\\AccountDTO.cs",
-              "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Account\\AccountDTO.cs",
-              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Account\\AccountDTO.cs",
-              "RelativeToolTip": "WebApplication3\\DTOs\\Account\\AccountDTO.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAuwAkAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-16T16:57:23.218Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 11,
               "Title": "account.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Entities\\account.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Entities\\account.cs",
@@ -438,7 +465,56 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AccountDTO.cs",
+              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Account\\AccountDTO.cs",
+              "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Account\\AccountDTO.cs",
+              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Account\\AccountDTO.cs",
+              "RelativeToolTip": "WebApplication3\\DTOs\\Account\\AccountDTO.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAuwAkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-16T16:57:23.218Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "BlogRepository.cs",
+              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\repository\\BlogRepository\\BlogRepository.cs",
+              "RelativeDocumentMoniker": "WebApplication3\\repository\\BlogRepository\\BlogRepository.cs",
+              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\repository\\BlogRepository\\BlogRepository.cs",
+              "RelativeToolTip": "WebApplication3\\repository\\BlogRepository\\BlogRepository.cs",
+              "ViewState": "AQIAAB0AAAAAAAAAAAAAAB0AAABSAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-19T17:30:16.611Z"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 9,
+              "Title": "BlogService.cs",
+              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\BlogService\\BlogService.cs",
+              "RelativeDocumentMoniker": "WebApplication3\\Service\\BlogService\\BlogService.cs",
+              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\BlogService\\BlogService.cs",
+              "RelativeToolTip": "WebApplication3\\Service\\BlogService\\BlogService.cs",
+              "ViewState": "AQIAABUAAAAAAAAAAAAAABUAAABSAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-13T07:01:22.216Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "BlogController.cs",
+              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\BlogController.cs",
+              "RelativeDocumentMoniker": "WebApplication3\\Controllers\\BlogController.cs",
+              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\BlogController.cs",
+              "RelativeToolTip": "WebApplication3\\Controllers\\BlogController.cs",
+              "ViewState": "AQIAADQAAAAAAAAAAAAAwEQAAABSAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-06-28T10:15:23.986Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
               "Title": "ProjectController.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\ProjectController.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Controllers\\ProjectController.cs",
@@ -450,7 +526,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 12,
               "Title": "BlogDTO.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Blog\\BlogDTO.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Blog\\BlogDTO.cs",
@@ -462,7 +538,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 14,
               "Title": "ProjectRepository.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\repository\\ProjectReposiotry\\ProjectRepository.cs",
               "RelativeDocumentMoniker": "WebApplication3\\repository\\ProjectReposiotry\\ProjectRepository.cs",
@@ -470,11 +546,12 @@
               "RelativeToolTip": "WebApplication3\\repository\\ProjectReposiotry\\ProjectRepository.cs",
               "ViewState": "AQIAAJoAAAAAAAAAAAAkwKwAAAAIAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-28T10:21:31.498Z"
+              "WhenOpened": "2024-06-28T10:21:31.498Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 13,
               "Title": "ProjectService.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\ProjectService\\ProjectService.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Service\\ProjectService\\ProjectService.cs",
@@ -486,7 +563,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 16,
               "Title": "GetProjectRequest.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Project\\GetProjectRequest.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Project\\GetProjectRequest.cs",
@@ -498,7 +575,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 17,
               "Title": "MemberController.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\MemberController.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Controllers\\MemberController.cs",
@@ -510,7 +587,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 18,
               "Title": "SponsorRepository.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\repository\\SponsorRepository\\SponsorRepository.cs",
               "RelativeDocumentMoniker": "WebApplication3\\repository\\SponsorRepository\\SponsorRepository.cs",
@@ -522,7 +599,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 19,
               "Title": "SponsorController.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\SponsorController.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Controllers\\SponsorController.cs",
@@ -530,11 +607,12 @@
               "RelativeToolTip": "WebApplication3\\Controllers\\SponsorController.cs",
               "ViewState": "AQIAAAcAAAAAAAAAAAAAAB4AAAA9AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-25T06:50:45.232Z"
+              "WhenOpened": "2024-06-25T06:50:45.232Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 21,
               "Title": "MemberDTO.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Member\\MemberDTO.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Member\\MemberDTO.cs",
@@ -546,7 +624,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 20,
               "Title": "SponsorDTO.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Sponsor\\SponsorDTO.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Sponsor\\SponsorDTO.cs",
@@ -558,7 +636,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 22,
               "Title": "MemberRepository.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\repository\\MemberRepository\\MemberRepository.cs",
               "RelativeDocumentMoniker": "WebApplication3\\repository\\MemberRepository\\MemberRepository.cs",
@@ -570,7 +648,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 23,
               "Title": "AccountRepository.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\repository\\AccountRepository\\AccountRepository.cs",
               "RelativeDocumentMoniker": "WebApplication3\\repository\\AccountRepository\\AccountRepository.cs",
@@ -582,31 +660,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
-              "Title": "AccountController.cs",
-              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\AccountController.cs",
-              "RelativeDocumentMoniker": "WebApplication3\\Controllers\\AccountController.cs",
-              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\AccountController.cs",
-              "RelativeToolTip": "WebApplication3\\Controllers\\AccountController.cs",
-              "ViewState": "AQIAAA4AAAAAAAAAAAArwB0AAAA7AAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-22T06:59:13.52Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 19,
-              "Title": "AccountService.cs",
-              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\AccountService\\AccountService.cs",
-              "RelativeDocumentMoniker": "WebApplication3\\Service\\AccountService\\AccountService.cs",
-              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\AccountService\\AccountService.cs",
-              "RelativeToolTip": "WebApplication3\\Service\\AccountService\\AccountService.cs",
-              "ViewState": "AQIAAGMAAAAAAAAAAAAewHQAAABFAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-24T03:07:08.886Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 24,
               "Title": "GetAllAccountRequest.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Blog\\GetAllAccountRequest.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Blog\\GetAllAccountRequest.cs",
@@ -618,7 +672,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 25,
               "Title": "AuthRepository.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\repository\\AuthRepository\\AuthRepository.cs",
               "RelativeDocumentMoniker": "WebApplication3\\repository\\AuthRepository\\AuthRepository.cs",
@@ -630,7 +684,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 26,
               "Title": "sponsor.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Entities\\sponsor.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Entities\\sponsor.cs",
@@ -642,7 +696,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 27,
               "Title": "Dockerfile",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Dockerfile",
               "RelativeDocumentMoniker": "WebApplication3\\Dockerfile",
@@ -654,7 +708,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 28,
               "Title": ".dockerignore",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\.dockerignore",
               "RelativeDocumentMoniker": ".dockerignore",
@@ -666,7 +720,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 29,
               "Title": "GetAllSponsorRequest.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Sponsor\\GetAllSponsorRequest.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Sponsor\\GetAllSponsorRequest.cs",
@@ -678,7 +732,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 30,
               "Title": "GetlAllMemberRequest.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Member\\GetlAllMemberRequest.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Member\\GetlAllMemberRequest.cs",
@@ -690,7 +744,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 31,
               "Title": "SponsorService.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\SponsorService\\SponsorService.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Service\\SponsorService\\SponsorService.cs",
@@ -702,19 +756,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
-              "Title": "AuthController.cs",
-              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\AuthController.cs",
-              "RelativeDocumentMoniker": "WebApplication3\\Controllers\\AuthController.cs",
-              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\AuthController.cs",
-              "RelativeToolTip": "WebApplication3\\Controllers\\AuthController.cs",
-              "ViewState": "AQIAABsAAAAAAAAAAAAYwBwAAAAJAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-13T04:43:12.247Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 32,
               "Title": "UpdateRequestMember.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Member\\UpdateRequestMember.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Member\\UpdateRequestMember.cs",
@@ -726,7 +768,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 33,
               "Title": "GroupsRepository.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\repository\\GroupsRepository\\GroupsRepository.cs",
               "RelativeDocumentMoniker": "WebApplication3\\repository\\GroupsRepository\\GroupsRepository.cs",
@@ -738,7 +780,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 34,
               "Title": "CloudController.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Controllers\\CloudController.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Controllers\\CloudController.cs",
@@ -750,19 +792,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
-              "Title": "UpdatePasswordRequestDTO.cs",
-              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Account\\UpdatePasswordRequestDTO.cs",
-              "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Account\\UpdatePasswordRequestDTO.cs",
-              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Account\\UpdatePasswordRequestDTO.cs",
-              "RelativeToolTip": "WebApplication3\\DTOs\\Account\\UpdatePasswordRequestDTO.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-19T06:48:26.161Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 33,
+              "DocumentIndex": 35,
               "Title": "EnterOtpMemberRequest.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Member\\EnterOtpMemberRequest.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Member\\EnterOtpMemberRequest.cs",
@@ -774,19 +804,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 34,
-              "Title": "AuthService.cs",
-              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\AuthService\\AuthService.cs",
-              "RelativeDocumentMoniker": "WebApplication3\\Service\\AuthService\\AuthService.cs",
-              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\AuthService\\AuthService.cs",
-              "RelativeToolTip": "WebApplication3\\Service\\AuthService\\AuthService.cs",
-              "ViewState": "AQIAADsAAAAAAAAAAAAewBYAAAAhAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-13T05:01:36.23Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 35,
+              "DocumentIndex": 36,
               "Title": "Project.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Entities\\Project.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Entities\\Project.cs",
@@ -798,7 +816,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 36,
+              "DocumentIndex": 37,
               "Title": "ProjectDTO.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Project\\ProjectDTO.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Project\\ProjectDTO.cs",
@@ -810,7 +828,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 37,
+              "DocumentIndex": 38,
               "Title": "OverViewDTO.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\OverViewDTO.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\OverViewDTO.cs",
@@ -822,7 +840,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 38,
+              "DocumentIndex": 39,
               "Title": "GetAllAccountRequest.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Account\\GetAllAccountRequest.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Account\\GetAllAccountRequest.cs",
@@ -834,7 +852,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 39,
+              "DocumentIndex": 40,
               "Title": "blog.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Entities\\blog.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Entities\\blog.cs",
@@ -846,7 +864,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 40,
+              "DocumentIndex": 41,
               "Title": "OTP.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Entities\\OTP.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Entities\\OTP.cs",
@@ -858,7 +876,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 41,
+              "DocumentIndex": 42,
               "Title": "Member.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Entities\\Member.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Entities\\Member.cs",
@@ -870,7 +888,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 42,
+              "DocumentIndex": 43,
               "Title": "Group.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Entities\\Group.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Entities\\Group.cs",
@@ -882,7 +900,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 43,
+              "DocumentIndex": 44,
               "Title": "PagedResult.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\PagedResult.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\PagedResult.cs",
@@ -894,7 +912,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 44,
+              "DocumentIndex": 45,
               "Title": "Program.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Program.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Program.cs",
@@ -906,7 +924,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 45,
+              "DocumentIndex": 46,
               "Title": "ForgetPassDTO.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Account\\ForgetPassDTO.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Account\\ForgetPassDTO.cs",
@@ -918,7 +936,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 46,
+              "DocumentIndex": 47,
               "Title": "CloudinaryService.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Service\\Cloudinary_image\\CloudinaryService.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Service\\Cloudinary_image\\CloudinaryService.cs",
@@ -930,7 +948,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 47,
+              "DocumentIndex": 48,
               "Title": "CreateProjectImageRequest.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\ImageDto\\CreateProjectImageRequest.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\ImageDto\\CreateProjectImageRequest.cs",
@@ -942,7 +960,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 48,
+              "DocumentIndex": 49,
               "Title": "CloudRepository.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\repository\\CloudRepository\\CloudRepository.cs",
               "RelativeDocumentMoniker": "WebApplication3\\repository\\CloudRepository\\CloudRepository.cs",
@@ -954,7 +972,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 51,
+              "DocumentIndex": 52,
               "Title": "CustomAuthorizeAttribute .cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Helper\\CustomAuthorizeAttribute .cs",
               "RelativeDocumentMoniker": "WebApplication3\\Helper\\CustomAuthorizeAttribute .cs",
@@ -966,7 +984,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 50,
+              "DocumentIndex": 51,
               "Title": "ApiAccessRequirement .cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Helper\\Data\\ApiAccessRequirement .cs",
               "RelativeDocumentMoniker": "WebApplication3\\Helper\\Data\\ApiAccessRequirement .cs",
@@ -978,7 +996,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 49,
+              "DocumentIndex": 50,
               "Title": "ApiAccessHandler .cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Helper\\ApiAccessHandler .cs",
               "RelativeDocumentMoniker": "WebApplication3\\Helper\\ApiAccessHandler .cs",
@@ -990,7 +1008,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 52,
+              "DocumentIndex": 53,
               "Title": "ForbiddenAccessException.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Helper\\Data\\ForbiddenAccessException.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Helper\\Data\\ForbiddenAccessException.cs",
@@ -1002,7 +1020,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 54,
+              "DocumentIndex": 55,
               "Title": "Excep.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Helper\\Excep.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Helper\\Excep.cs",
@@ -1014,7 +1032,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 53,
+              "DocumentIndex": 54,
               "Title": "UnauthorizedAccessException.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Helper\\Data\\UnauthorizedAccessException.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Helper\\Data\\UnauthorizedAccessException.cs",
@@ -1026,7 +1044,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 55,
+              "DocumentIndex": 56,
               "Title": "ImageDtos.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\ImageDto\\ImageDtos.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\ImageDto\\ImageDtos.cs",
@@ -1038,7 +1056,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 56,
+              "DocumentIndex": 57,
               "Title": "imageUpload.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\Helper\\imageUpload.cs",
               "RelativeDocumentMoniker": "WebApplication3\\Helper\\imageUpload.cs",
@@ -1050,7 +1068,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 57,
+              "DocumentIndex": 58,
               "Title": "updateStatusRequest.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Project\\updateStatusRequest.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Project\\updateStatusRequest.cs",
@@ -1062,7 +1080,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 58,
+              "DocumentIndex": 59,
               "Title": "CreateRequestBLogDTO.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Blog\\CreateRequestBLogDTO.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Blog\\CreateRequestBLogDTO.cs",
@@ -1074,7 +1092,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 59,
+              "DocumentIndex": 60,
               "Title": "ServiceResponses.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Auth\\ServiceResponses.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Auth\\ServiceResponses.cs",
@@ -1086,7 +1104,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 60,
+              "DocumentIndex": 61,
               "Title": "LoginDTO.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Auth\\LoginDTO.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Auth\\LoginDTO.cs",
@@ -1098,7 +1116,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 61,
+              "DocumentIndex": 62,
               "Title": "confirmEmailRequest.cs",
               "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Auth\\confirmEmailRequest.cs",
               "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Auth\\confirmEmailRequest.cs",
@@ -1107,18 +1125,6 @@
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAgAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-06-09T17:08:12.591Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 62,
-              "Title": "CreateAccountRequestDTO.cs",
-              "DocumentMoniker": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Auth\\CreateAccountRequestDTO.cs",
-              "RelativeDocumentMoniker": "WebApplication3\\DTOs\\Auth\\CreateAccountRequestDTO.cs",
-              "ToolTip": "D:\\fronten\\DATN\\API\\WebApplication3\\DTOs\\Auth\\CreateAccountRequestDTO.cs",
-              "RelativeToolTip": "WebApplication3\\DTOs\\Auth\\CreateAccountRequestDTO.cs",
-              "ViewState": "AQIAAAoAAAAAAAAAAAAQwBgAAAAXAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-06-09T12:35:55.661Z"
             },
             {
               "$type": "Document",
