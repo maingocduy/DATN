@@ -136,7 +136,7 @@ export default {
         message: 'Đăng xuất thành công!'
       })
 
-      countdown.value = 2
+      countdown.value = 1
       const interval = setInterval(() => {
         if (countdown.value > 0) {
           countdown.value--

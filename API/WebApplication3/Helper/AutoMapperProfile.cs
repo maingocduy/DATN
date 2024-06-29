@@ -36,10 +36,11 @@ namespace WebApplication3.Helper
                 }
             ));
             CreateMap<CreateRequestMemberDTO, MemberDTO>()
-           .ForMember(dest => dest.name, opt => opt.MapFrom(src => src.Name))
-           .ForMember(dest => dest.email, opt => opt.MapFrom(src => src.Email))
-           .ForMember(dest => dest.phone, opt => opt.MapFrom(src => src.Phone))
-           .ForMember(dest => dest.groups, opt => opt.MapFrom(src => new GroupsDTOs { group_name = src.Group_name }));
+     .ForMember(dest => dest.name, opt => opt.MapFrom(src => src.Name))
+     .ForMember(dest => dest.email, opt => opt.MapFrom(src => src.Email))
+     .ForMember(dest => dest.phone, opt => opt.MapFrom(src => src.Phone))
+     .ForMember(dest => dest.groups, opt => opt.MapFrom(src => new Group { group_name = src.Group_name }));
+
             CreateMap<CreateAccountRequestDTO, MemberDTO>()
            .ForMember(dest => dest.name, opt => opt.MapFrom(src => src.Name))
           .ForMember(dest => dest.email, opt => opt.MapFrom(src => src.Email))

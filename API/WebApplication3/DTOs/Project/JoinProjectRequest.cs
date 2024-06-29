@@ -2,7 +2,7 @@
 {
     public class JoinProjectRequest
     {
-        public string ProjectName { get; set; }
+        public int Project_id{ get; set; }
         public string username { get; set; }
     }
 }

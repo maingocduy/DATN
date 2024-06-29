@@ -3,6 +3,8 @@ using CloudinaryDotNet.Core;
 using Dapper;
 using Microsoft.EntityFrameworkCore;
 using Mysqlx.Crud;
+using MySqlX.XDevAPI.Common;
+using Org.BouncyCastle.Crypto;
 using System.Linq;
 using WebApplication3.DTOs;
 using WebApplication3.DTOs.Account;
@@ -35,6 +37,8 @@ namespace WebApplication3.repository.MemberRepository
         Task<bool> CheckIsInProject(int Member_id, int Project_id);
 
         Task<int> GetMemberIDByUsername(string username);
+        Task<bool> CheckIsVerified(string email);
+        Task UpdateRole(string email, string group_name);
     }
     public class MemberRepository : IMemberRepository
     {
@@ -48,26 +52,25 @@ namespace WebApplication3.repository.MemberRepository
             using var connection = _context.CreateConnection();
 
             var sqlAddMember = @"
-INSERT INTO Members (name, email, phone, Group_id)
-VALUES (@Name, @Email, @Phone, (SELECT * FROM `groups` WHERE group_name = @group_name));
-SELECT LAST_INSERT_ID();";
+        INSERT INTO Members (name, email, phone, Group_id)
+        SELECT @Name, @Email, @Phone, Group_id
+        FROM `groups`
+        WHERE group_name = @group_name;
+";
 
             // Thực hiện thêm thành viên và lấy member_id của thành viên mới thêm vào
-            var member_id = await connection.ExecuteScalarAsync<int>(sqlAddMember, new
+            await connection.ExecuteAsync(sqlAddMember, new
             {
                 Name = memberDTO.name,
                 Email = memberDTO.email,
                 Phone = memberDTO.phone,
                 group_name = memberDTO.groups.group_name
             });
+
             // Thêm vào bảng MemberProjects
-            var sqlAddToProject = @"INSERT INTO MemberProjects (Member_id, Project_id) VALUES (@member_id, @project_id);";
-            await connection.ExecuteAsync(sqlAddToProject, new
-            {
-                member_id = member_id,
-                project_id = project_id
-            });
+          
         }
+
         public async Task AddToNewProject(int project_id, int member_id)
         {
             using var connection = _context.CreateConnection();
@@ -275,6 +278,21 @@ SELECT LAST_INSERT_ID();";
                 group_name = group_name,
             });
         }
+        public async Task UpdateRole(string email, string group_name)
+        {
+            using var connection = _context.CreateConnection();
+
+            var sql = @"
+    UPDATE Members
+    SET Group_id = (SELECT g.Group_id FROM `groups` g WHERE g.Group_name = @group_name)
+    WHERE Email = @Email;";
+
+            await connection.ExecuteAsync(sql, new
+            {
+                Email = email,
+                group_name = group_name,
+            });
+        }
 
         public async Task JoinProject(int project_id,int member_id)
         {
@@ -365,6 +383,26 @@ SELECT LAST_INSERT_ID();";
             // Thực thi câu truy vấn và lấy kết quả
             bool exists = await connection.ExecuteScalarAsync<bool>(sqlQuery, new { MemberId = Member_id, ProjectId = Project_id });
             return exists;
+        }
+
+        public async Task<bool> CheckIsVerified(string email)
+        {
+            using var connection = _context.CreateConnection();
+            string sqlQuery = @"
+SELECT 
+ CASE 
+     WHEN EXISTS (
+         SELECT 1 
+         FROM otp_member 
+         WHERE IsVerified = 1 AND Member_id = (SELECT Member_id from members WHERE email = @email)
+     ) 
+     THEN True
+     ELSE False
+ END AS result;";
+
+            // Thực thi câu truy vấn và lấy kết quả
+            bool result = await connection.ExecuteScalarAsync<bool>(sqlQuery, new { email = email });
+            return result;
         }
 
 

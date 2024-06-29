@@ -28,8 +28,8 @@ namespace WebApplication3.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateRequestMemberDTO mem)
         {
-            await IMemberService.AddMember(mem.nameProject,mem);
-            return Ok(new { message = "Mã OTP đã được gửi vào email của bạn" });
+            await IMemberService.AddMember(mem.Project_id, mem);
+            return Ok(new { message = "Thành công" });
         }
         [HttpPost("get_all_member")]
         public async Task<ActionResult<List<MemberDTO>>> GetAllMember(GetlAllMemberRequest request)
@@ -68,7 +68,7 @@ namespace WebApplication3.Controllers
         {
             try
             {
-                await IMemberService.JoinProject(request.ProjectName, request.username);
+                await IMemberService.JoinProject(request.Project_id, request.username);
                 return Ok(new {messenger =  $"Đăng ký tham gia thành công" });
             }
             catch (Exception ex)
@@ -81,12 +81,12 @@ namespace WebApplication3.Controllers
         {
             try
             {
-                await IMemberService.EnterOtp(request.Otp,request.ProjectName,request.Email);
+                await IMemberService.EnterOtp(request.Otp,request.Project_id, request.Email);
                 return Ok(new { messenger = "Tạo thành Công"});
             }
             catch (Exception ex)
             {
-                return Ok(ex.Message);
+                return BadRequest(new { messenger = ex.Message});
             }
         }
        

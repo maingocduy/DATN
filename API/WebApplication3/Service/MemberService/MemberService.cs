@@ -23,13 +23,13 @@ namespace WebApplication3.Service.MemberService
         Task<MemberDTO> GetMemberAsync(int id);
 
         Task<MemberDTO> GetMember(string member);
-        Task AddMember(string name, CreateRequestMemberDTO acc);
+        Task AddMember(int project_id, CreateRequestMemberDTO acc);
         Task UpdateMember(UpdateRequestMember update);
         Task DeleteMember(string member);
 
-        Task JoinProject(string project_name, string username);
+        Task JoinProject(int project_id, string username);
 
-        Task EnterOtp(string otp, string ProjectName, string email);
+        Task EnterOtp(string otp, int project_id, string email);
     }
     public class MemberService : IMemberService
     {
@@ -44,20 +44,35 @@ namespace WebApplication3.Service.MemberService
             this.projectRepository = projectRepository;
 
         }
-        public async Task AddMember(string name, CreateRequestMemberDTO mem)
+        public async Task AddMember(int project_id, CreateRequestMemberDTO mem)
         {
             // Kiểm tra xem dự án có tồn tại không
-            var project = await projectRepository.GetProjectID(name);
+            var project = await projectRepository.GetProjectByID(project_id);
             var member = await IMemberRepository.GetMemberByEmail(mem.Email);
             if (project == null)
             {
-                throw new KeyNotFoundException("Project not found");
+                throw new KeyNotFoundException("Không tìm thấy dự án !");
             }
-            if(member != null)
+            var check = await IMemberRepository.CheckIsVerified(mem.Email);
+            if (!check && member != null)
             {
-                
-                await IMemberRepository.JoinProject(project.Project_id,member.Member_id );
-            }  
+                var otp = GenerateOTP();
+                IMemberRepository.SaveOtp(otp, mem.Email);
+
+                SendEmailAsync(mem.Email, "Xác Nhận Email", $"Để xác nhận Email vui lòng dùng OTP này: {otp}");
+            }
+            else if (member != null)
+            {
+                await IMemberRepository.UpdateRole(mem.Email, mem.Group_name);
+                var otp = GenerateOTP();
+                IMemberRepository.SaveOtp(otp, mem.Email);
+
+                SendEmailAsync(mem.Email, "Xác Nhận Tham gia dự án", $"Để xác nhận tham gia dự án với vai trò là {mem.Group_name} vui lòng dùng OTP này: {otp}");
+            }
+            else if (await IMemberRepository.CheckIsInProject(member.Member_id, project.Project_id))
+            {
+                throw new Exception("Email này đã đăng ký tham gia dự án này");
+            }
             else
             {
                 var memberDTO = _mapper.Map<MemberDTO>(mem);
@@ -70,7 +85,7 @@ namespace WebApplication3.Service.MemberService
             };
             
         }
-        public async Task EnterOtp(string otp, string ProjectName, string email)
+        public async Task EnterOtp(string otp, int Project_id, string email)
         {
             try
             {
@@ -100,14 +115,13 @@ namespace WebApplication3.Service.MemberService
 
                     // Thêm thành viên vào dự án
                     var member = await IMemberRepository.GetMemberByEmail(email);
-                        var project = await projectRepository.GetProject(ProjectName);
-                       await IMemberRepository.JoinProject(project.Project_id, member.Member_id);
+                    await IMemberRepository.JoinProject(Project_id, member.Member_id);
                     
                 }
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error while entering OTP: {ex.Message}");
+                throw new Exception($"{ex.Message}");
             }
         }
 
@@ -170,11 +184,11 @@ namespace WebApplication3.Service.MemberService
             throw new NotImplementedException();
         }
 
-        public async Task JoinProject(string project_name, string username)
+        public async Task JoinProject(int project_id, string username)
         {
            
 
-            var project = await projectRepository.GetProject(project_name);
+            var project = await projectRepository.GetProjectByID(project_id);
 
             if (project == null)
             {

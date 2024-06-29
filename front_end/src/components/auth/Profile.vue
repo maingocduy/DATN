@@ -213,7 +213,7 @@
 </template>
 <script>
 import axios from 'axios'
-import { ElMessage, ElNotification } from 'element-plus'
+import { ElMessageBox, ElNotification } from 'element-plus'
 import { View, Edit, Hide, Delete, Document } from '@element-plus/icons-vue'
 
 export default {
@@ -427,6 +427,20 @@ export default {
     },
     toggleShowConfirmPassword() {
       this.showConfirmPassword = !this.showConfirmPassword
+    },
+    showErrorNotification(messenger) {
+      ElNotification({
+        title: 'Lỗi',
+        message: messenger,
+        type: 'error'
+      })
+    },
+    showSuccessNotification(messenger) {
+      ElNotification({
+        title: 'Thành công',
+        message: messenger,
+        type: 'success'
+      })
     },
     editBlog(blog) {
       this.$router.push('/Blog/Update/' + blog.blog_id)

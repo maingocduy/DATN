@@ -108,6 +108,7 @@ namespace WebApplication3.Service.AuthService
 
             // Create the user
             var createUser = await userManager.CreateAsync(newUser, user.Password);
+            user.Password = newUser.PasswordHash;
             await AuthRepository.AddAcount(user, MemberId);
             if (!createUser.Succeeded)
                 return new GeneralResponse(false, "Error occurred.. please try again");

@@ -120,7 +120,11 @@
                 <span>{{ formatCurrencyToVND(row.contributionAmount) }}</span>
               </template>
             </el-table-column>
-            <el-table-column prop="address" label="Địa chỉ"></el-table-column>
+            <el-table-column prop="address" label="Địa chỉ">
+              <template #default="{ row }">
+                {{ row.address === '' ? '--' : row.address }}
+              </template></el-table-column
+            >
             <el-table-column prop="time_create" label="Thời gian">
               <template #default="{ row }">
                 <span>{{ formatDate(row.time_create) }}</span>
@@ -154,7 +158,7 @@
           <el-input v-model="joinForm.phone"></el-input>
         </el-form-item>
         <el-form-item label="Nhóm">
-          <el-select v-model="joinForm.group" clearable placeholder="Chọn nhóm">
+          <el-select v-model="joinForm.group_name" clearable placeholder="Chọn nhóm">
             <el-option label="Tất cả" :value="null"></el-option>
             <el-option
               v-for="group in groups"
@@ -173,15 +177,14 @@
 
     <!-- OTP Popup -->
     <el-dialog title="Nhập mã OTP" v-model="otpPopupVisible" width="400px">
-      <el-form :model="otpForm" label-width="120px">
-        <el-form-item label="Mã OTP">
-          <el-input v-model="otpForm.otp"></el-input>
-        </el-form-item>
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="otpPopupVisible = false">Hủy</el-button>
-        <el-button type="primary" @click="submitOtp">Gửi</el-button>
+      <div class="card flex justify-center mb-2">
+        <InputOtp v-model="otps" :length="6">
+          <template #default="{ attrs, events }">
+            <input type="text" v-bind="attrs" v-on="events" class="custom-otp-input rounded" />
+          </template>
+        </InputOtp>
       </div>
+      <button @click="submitOtp" class="btn-submit w-full">Xác thực OTP</button>
     </el-dialog>
   </div>
 </template>
@@ -241,11 +244,10 @@ export default {
         name: '',
         email: '',
         phone: '',
-        group: ''
+        group_name: ''
       },
-      otpForm: {
-        otp: ''
-      },
+
+      otps: '',
       membersPerPage: 6,
       currentPageMembers: 1,
       totalMembersPages: 0,
@@ -381,7 +383,7 @@ export default {
       if (Cookies.get('username') && Cookies.get('token') && Cookies.get('role')) {
         try {
           const response = await axios.post('https://localhost:7188/api/Member/JoinProject', {
-            projectName: this.project.name,
+            project_id: this.project.project_id,
             username: Cookies.get('username')
           })
           ElNotification({
@@ -402,8 +404,8 @@ export default {
     },
     async submitJoin() {
       try {
-        const response = await axios.post(`https://localhost:7188/api/Member/create`, {
-          nameProject: this.project.name,
+        const response = await axios.post(`https://localhost:7188/api/Member`, {
+          project_id: this.project.project_id,
           ...this.joinForm
         })
         if (response.status === 200) {
@@ -422,20 +424,25 @@ export default {
     async submitOtp() {
       try {
         const response = await axios.post(`https://localhost:7188/api/Member/enter_otp`, {
-          Otp: this.otpForm.otp,
-          ProjectName: this.project.name,
+          Otp: this.otps,
+          project_id: this.project.project_id,
           Email: this.joinForm.email
         })
         if (response.status === 200) {
           this.otpPopupVisible = false
           ElNotification({
             title: 'Thành công',
-            message: response.data.message,
+            message: response.data.messenger,
             type: 'success'
           })
         }
       } catch (error) {
         console.error('Error submitting OTP:', error)
+        ElNotification({
+          title: 'Lỗi',
+          message: error?.response.data.messenger,
+          type: 'error'
+        })
       }
     },
     handleDonate() {
@@ -512,10 +519,35 @@ export default {
   width: 100%;
 }
 
+.el-input__wrapper input[type='text']:focus {
+  box-shadow: unset !important;
+}
 .el-dialog__wrapper {
   backdrop-filter: blur(5px);
 }
-
+.custom-otp-input {
+  width: 53px;
+  font-size: 36px;
+  text-align: center;
+  transition: all 0.2s;
+  background: transparent;
+  padding: 10px;
+  margin-right: 8px;
+}
+.btn-submit {
+  background-color: #3b82f6;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition:
+    background-color 0.3s,
+    transform 0.3s;
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
 .el-dialog {
   border-radius: 10px;
 }

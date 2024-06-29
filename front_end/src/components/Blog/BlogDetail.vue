@@ -2,6 +2,20 @@
   <div v-if="blog.account" class="container mx-auto p-4">
     <header class="bg-gray-100 p-6 mb-6 shadow-md rounded-lg">
       <h1 class="text-4xl font-bold text-gray-800 mb-2">{{ blog.title }}</h1>
+      <div v-if="UsernameCookie == blog.account.username">
+        <el-tooltip effect="light" content="Sửa Blog" placement="top-start">
+          <el-button @click="editBlog" type="warning" :icon="Edit" size="small" circle></el-button>
+        </el-tooltip>
+        <el-tooltip effect="light" content="Xóa Blog" placement="top-start">
+          <el-button
+            @click="deleteBlog"
+            type="danger"
+            :icon="Delete"
+            size="small"
+            circle
+          ></el-button>
+        </el-tooltip>
+      </div>
       <div class="flex justify-between text-gray-600">
         <p><strong>Người đăng:</strong> {{ blog.account.username }}</p>
         <p><strong>Ngày giờ đăng:</strong> {{ formatDate(blog.createdAt) }}</p>
@@ -15,17 +29,68 @@
 
 <script>
 import axios from 'axios'
-
+import { View, Edit, Hide, Delete, Document } from '@element-plus/icons-vue'
+import { ElMessageBox, ElNotification } from 'element-plus'
+import Cookies from 'js-cookie'
 export default {
   data() {
     return {
-      blog: {}
+      blog: {},
+      Delete: Delete,
+      Edit: Edit,
+      UsernameCookie: Cookies.get('username')
     }
   },
   created() {
     this.fetchBlog() // Gọi fetchBlog khi component được tạo
   },
   methods: {
+    editBlog() {
+      this.$router.push('/Blog/Update/' + this.$route.params.id)
+    },
+    showErrorNotification(messenger) {
+      ElNotification({
+        title: 'Lỗi',
+        message: messenger,
+        type: 'error'
+      })
+    },
+    showSuccessNotification(messenger) {
+      ElNotification({
+        title: 'Thành công',
+        message: messenger,
+        type: 'success'
+      })
+    },
+    deleteBlog() {
+      ElMessageBox.confirm('Bạn có chắc muốn xóa bài viết này không ?', 'Xác nhận', {
+        confirmButtonText: 'Chấp nhận',
+        cancelButtonText: 'Hủy',
+        type: 'warning'
+      })
+        .then(async () => {
+          try {
+            const response = await axios.delete('api/blog/delete_blog', {
+              params: {
+                title: this.blog.title
+              }
+            })
+            if (response.status === 200) {
+              this.showSuccessNotification(response.data.message)
+              this.$router.push('/blog') // Refresh blogs list after deletion
+            } else {
+              this.showErrorNotification('Xóa bài viết thất bại.')
+            }
+          } catch (error) {
+            if (error.response && error.response.status === 404) {
+              this.showErrorNotification(error.response.data)
+            } else {
+              this.showErrorNotification('Đã xảy ra lỗi. Vui lòng thử lại sau.')
+            }
+          }
+        })
+        .catch(() => {})
+    },
     async fetchBlog() {
       const id = this.$route.params.id
       try {

@@ -11,7 +11,7 @@ namespace WebApplication3.DTOs.Member
         public string name { get; set; }
         public string email { get; set; }
         public string phone { get; set; }
-
+     
         public Group groups { get; set;}
     }
 }

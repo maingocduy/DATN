@@ -15,6 +15,6 @@ namespace WebApplication3.DTOs.Member
         [Required(ErrorMessage = "Group_id is required")]
         public string Group_name { get; set; }
 
-        public string nameProject { get; set; }
+        public int Project_id { get; set; }
     }
 }
