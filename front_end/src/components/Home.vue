@@ -84,9 +84,7 @@
           </el-carousel-item>
         </el-carousel>
 
-        <el-button v-if="projects.length > 3" @click="goToProject" class="view-all-button" round>
-          Xem tất cả dự án
-        </el-button>
+        <el-button @click="goToProject" class="view-all-button" round> Xem tất cả dự án </el-button>
       </div>
     </div>
 
@@ -213,7 +211,7 @@ export default {
     },
     async viewAllProjects() {
       try {
-        const response = await axios.get('https://localhost:7188/api/Project/get_all_project')
+        const response = await axios.get('api/Project/get_all_project_in_date')
         this.projects = await Promise.all(
           response.data.projects.map(async (project) => {
             const images = await this.fetchImages(project.project_id)

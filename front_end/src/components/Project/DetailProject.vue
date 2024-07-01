@@ -246,7 +246,6 @@ export default {
         phone: '',
         group_name: ''
       },
-
       otps: '',
       membersPerPage: 6,
       currentPageMembers: 1,
@@ -404,6 +403,28 @@ export default {
     },
     async submitJoin() {
       try {
+        if (!this.joinForm) {
+          ElNotification({
+            title: 'Lỗi',
+            message: 'Nhập thiếu trường bắt buộc!',
+            type: 'error'
+          })
+          return
+        } else if (!this.isValidEmail(this.joinForm.email)) {
+          ElNotification({
+            title: 'Lỗi',
+            message: 'Email không hợp lệ!',
+            type: 'error'
+          })
+          return
+        } else if (!this.isValidPhone(this.joinForm.phone)) {
+          ElNotification({
+            title: 'Lỗi',
+            message: 'Số điện thoại không hợp lệ!',
+            type: 'error'
+          })
+          return
+        }
         const response = await axios.post(`https://localhost:7188/api/Member`, {
           project_id: this.project.project_id,
           ...this.joinForm
@@ -421,6 +442,7 @@ export default {
         console.error('Error submitting join:', error)
       }
     },
+
     async submitOtp() {
       try {
         const response = await axios.post(`https://localhost:7188/api/Member/enter_otp`, {
@@ -476,6 +498,15 @@ export default {
         .catch(() => {
           this.showErrorNotification('Xóa dự án thất bại!')
         })
+    },
+    isValidEmail(email) {
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+      return emailPattern.test(email)
+    },
+
+    isValidPhone(phone) {
+      const phonePattern = /^[0-9]{10,11}$/
+      return phonePattern.test(phone)
     },
     formatCurrencyToVND(amount) {
       return amount

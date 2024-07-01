@@ -61,7 +61,15 @@ namespace WebApplication3.Service.AuthService
         {
                 var user = _mapper.Map<MemberDTO>(registerDTO);
                 // 1. Thêm một bản ghi mới vào bảng Members
-                var memberId = await memberRepository.AddNewMember(user);
+                if(await memberRepository.GetMemberByEmail(registerDTO.Email) != null)
+            {
+                throw new Exception("Email đã đăng ký tài khoản. Vui lòng thử lại!");
+            }
+            if (await accountRepository.GetAccountsByUserName(registerDTO.username) != null)
+            {
+                throw new Exception("Tên đăng nhập đã có!");
+            }
+            var memberId = await memberRepository.AddNewMember(user);
                 
                 var member = await memberRepository.GetMemberById(memberId);
 

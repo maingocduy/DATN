@@ -28,9 +28,7 @@
           />
         </div>
         <div class="mb-5">
-          <label for="address" class="block mb-2 text-sm font-medium text-gray-900"
-            >Địa chỉ</label
-          >
+          <label for="address" class="block mb-2 text-sm font-medium text-gray-900">Địa chỉ</label>
           <input
             type="text"
             v-model="address"
@@ -98,6 +96,44 @@ export default {
       console.log('Nội dung thanh toán:', this.orderInfo)
 
       try {
+        if (this.fullname == null) {
+          ElNotification({
+            title: 'Lỗi',
+            message: 'Tên người dùng là bắt buộc không để trống',
+            type: 'error'
+          })
+          return
+        } else if (this.email == null) {
+          ElNotification({
+            title: 'Lỗi',
+            message: 'Email không được để trống !',
+            type: 'error'
+          })
+          return
+        } else if (!isValidEmail(email)) {
+          ElNotification({
+            title: 'Lỗi',
+            message: 'Email sai định dạng !',
+            type: 'error'
+          })
+          return
+        }
+        else if (this.amount == null) {
+          ElNotification({
+            title: 'Lỗi',
+            message: 'Số tiền quyên góp không được để trống !',
+            type: 'error'
+          })
+          return
+        }
+        else if (!isValidEmail(email)) {
+          ElNotification({
+            title: 'Lỗi',
+            message: 'Email sai định dạng !',
+            type: 'error'
+          })
+          return
+        }
         localStorage.setItem('email', this.email)
         localStorage.setItem('address', this.address)
         const response = await axios.post(`https://localhost:7188/api/Momo/momo`, {
@@ -110,6 +146,10 @@ export default {
       } catch (error) {
         console.error('Error submitting payment:', error)
       }
+    },
+    isValidEmail(email) {
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+      return emailPattern.test(email)
     },
     async GetAccInfor() {
       if (Cookies.get('username') && Cookies.get('token') && Cookies.get('role')) {

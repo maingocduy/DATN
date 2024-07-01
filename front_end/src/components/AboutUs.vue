@@ -117,6 +117,7 @@ export default {
 .about-us {
   padding: 60px 20px;
   background-color: #f5f5f5;
+  background-image: url("../../public/Images/groupProject.png");
 }
 
 .about-us-content {
@@ -148,7 +149,7 @@ export default {
 
 .card-content p {
   margin-top: 10px;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 @media (max-width: 768px) {

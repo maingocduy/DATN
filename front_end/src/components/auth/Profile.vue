@@ -369,6 +369,13 @@ export default {
       return formattedDate
     },
     savePassword() {
+      if (this.passwordForm.password.length < 6) {
+        ElNotification({
+          title: 'Lỗi',
+          message: 'Mật khẩu chứa ít nhất 6 ký tự',
+          type: 'error'
+        })
+      }
       this.$refs.passwordForm.validate((valid) => {
         if (valid) {
           axios

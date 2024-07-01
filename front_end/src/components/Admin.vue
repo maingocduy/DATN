@@ -29,32 +29,34 @@
         <el-table-column prop="member.groups.group_name" label="Vị trí"></el-table-column>
         <el-table-column prop="role" label="Quyền"></el-table-column>
         <el-table-column label="Trạng thái">
-          <template v-slot="scope">
+          <template #default="scope">
             <span>{{ scope.row.status === 1 ? 'Đã xác nhận' : 'Chưa xác nhận' }}</span>
           </template>
         </el-table-column>
         <el-table-column label="Hành động">
-          <template v-slot="scope">
-            <el-tooltip effect="light" content="Đổi vai trò" placement="top-start">
-              <el-button
-                @click="handleChangeRole(scope.row)"
-                type="primary"
-                :icon="UserFilled"
-                circle
-                size="mini"
-                class="tooltip-change-role"
-              ></el-button>
-            </el-tooltip>
-            <el-tooltip effect="light" content="Xóa tài khoản" placement="top-start">
-              <el-button
-                @click="handleDelete(scope.row)"
-                type="danger"
-                :icon="Delete"
-                circle
-                size="mini"
-                class="tooltip-delete"
-              ></el-button>
-            </el-tooltip>
+          <template #default="scope">
+            <template v-if="scope.row.role !== 'Admin'">
+              <el-tooltip effect="light" content="Đổi vai trò" placement="top-start">
+                <el-button
+                  @click="handleChangeRole(scope.row)"
+                  type="primary"
+                  :icon="UserFilled"
+                  circle
+                  size="mini"
+                  class="tooltip-change-role"
+                ></el-button>
+              </el-tooltip>
+              <el-tooltip effect="light" content="Xóa tài khoản" placement="top-start">
+                <el-button
+                  @click="handleDelete(scope.row)"
+                  type="danger"
+                  :icon="Delete"
+                  circle
+                  size="mini"
+                  class="tooltip-delete"
+                ></el-button>
+              </el-tooltip>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -69,8 +71,10 @@
     </el-main>
   </div>
 </template>
+
 <script>
 import axios from 'axios'
+import Cookies from 'js-cookie'
 import {
   ElButton,
   ElTable,
@@ -108,7 +112,8 @@ export default {
       totalPages: 0,
       Delete: Delete,
       Search: Search,
-      UserFilled: UserFilled
+      UserFilled: UserFilled,
+      role: Cookies.get('role')
     }
   },
   methods: {
@@ -120,6 +125,7 @@ export default {
         })
         this.totalPages = response.data.totalPages
         this.accounts = response.data.accounts
+        console.log(this.accounts)
       } catch (error) {
         console.error('Error fetching accounts:', error)
         this.showErrorNotification('Failed to fetch accounts.')

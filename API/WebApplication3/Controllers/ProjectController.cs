@@ -86,13 +86,13 @@ namespace WebApplication3.Controllers
             var pro = await IProjectService.GetProject(request.ProjectId);
             return Ok(pro);
         }
-        [HttpDelete("{name}")]
+        [HttpDelete("{name}"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> Delete(string name)
         {
             await IProjectService.DeleteProject(name);
             return Ok(new { message = $"Xóa dự án thành công!" });
         }
-        [HttpPost("add_project")]
+        [HttpPost("add_project"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> AddProject(CreateProjectRequest createProject)
         {
             try
@@ -118,7 +118,7 @@ namespace WebApplication3.Controllers
                 return StatusCode(500, $"Error updating project: {ex.Message}");
             };
         }
-        [HttpPost("update_status"), Authorize]
+        [HttpPost("update_status"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> UpdateStatus(updateStatusRequest request)
         {
             try

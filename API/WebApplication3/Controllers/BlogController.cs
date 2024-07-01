@@ -157,7 +157,7 @@ namespace WebApplication3.Controllers
                     );
             }
         }
-        [HttpPost("update_blog")]
+        [HttpPost("update_blog"), Authorize]
         public async Task<IActionResult> UpdateBlog(updateBlogRequestDTO request)
         {
             try

@@ -47,7 +47,7 @@ namespace WebApplication3.Controllers
             }
         }
 
-        [HttpPost("update_role")]
+        [HttpPost("update_role"), Authorize(Roles = "Admin")]
         public async Task<ActionResult> updateRole(string username)
         {
             try
@@ -79,7 +79,7 @@ namespace WebApplication3.Controllers
         }
    
 
-        [HttpDelete("delete_acc")]
+        [HttpDelete("delete_acc"), Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string username)
         {
             try
@@ -173,7 +173,7 @@ namespace WebApplication3.Controllers
                 return BadRequest(new { Message = ex.Message });
             }
         }
-        [HttpPost("change_pass")]
+        [HttpPost("change_pass"), Authorize]
         public async Task<IActionResult> ChangePass(UpdatePasswordRequestDTO request)
         {
             try

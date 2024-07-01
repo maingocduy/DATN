@@ -67,25 +67,36 @@ const registerModule = {
       { username, password, confirmPassword, name, email, phone, group_name }
     ) {
       if (!username || !password || !confirmPassword || !email || !phone || !group_name) {
-        commit('SET_REGISTRATION_MESSAGE', 'Vui lòng điền đầy đủ thông tin các trường bắt buộc')
+        commit('SET_REGISTRATION_MESSAGE', 'Vui lòng điền đầy đủ thông tin các trường bắt buộc!')
         commit('SET_SHOW_ERROR_MODAL', true)
         return
-      }
-
-      if (!isValidEmail(email)) {
-        commit('SET_REGISTRATION_MESSAGE', 'Định dạng email không hợp lệ')
+      } else if (!isValidEmail(email)) {
+        commit('SET_REGISTRATION_MESSAGE', 'Email không đúng định dạng. Vui lòng kiểm tra lại!')
         commit('SET_SHOW_ERROR_MODAL', true)
         return
-      }
-
-      if (!isValidPhone(phone)) {
-        commit('SET_REGISTRATION_MESSAGE', 'Định dạng số điện thoại không hợp lệ')
+      } else if (!isValidPhone(phone)) {
+        commit('SET_REGISTRATION_MESSAGE', 'Số điện thoại không hợp lệ!')
         commit('SET_SHOW_ERROR_MODAL', true)
         return
-      }
+      } else if (password.length < 6) {
+        commit('SET_REGISTRATION_MESSAGE', 'Mật khẩu chứa ít nhất 6 ký tự !')
+        commit('SET_PASSWORD', '')
+        commit('SET_CONFIRM_PASSWORD', '')
+        commit('SET_SHOW_ERROR_MODAL', true)
+        return
+      } else if (username.includes(' ')) {
+        commit('SET_REGISTRATION_MESSAGE', 'Tên đăng nhập không được có khoảng trắng!')
+        commit('SET_USERNAME', '')
+        commit('SET_SHOW_ERROR_MODAL', true)
 
-      if (password !== confirmPassword) {
-        commit('SET_REGISTRATION_MESSAGE', 'Mật khẩu không khớp')
+        return
+      } else if (username.length < 6) {
+        commit('SET_REGISTRATION_MESSAGE', 'Tên đăng nhập chứa ít nhất 6 ký tự!')
+        commit('SET_SHOW_ERROR_MODAL', true)
+        commit('SET_USERNAME', '')
+        return
+      } else if (password !== confirmPassword) {
+        commit('SET_REGISTRATION_MESSAGE', 'Mật khẩu không trùng khớp!')
         commit('SET_PASSWORD', '')
         commit('SET_CONFIRM_PASSWORD', '')
         commit('SET_SHOW_ERROR_MODAL', true)
@@ -110,6 +121,7 @@ const registerModule = {
         }, 3000)
       } catch (error) {
         console.error('Đăng ký thất bại:', error)
+        commit('SET_REGISTRATION_MESSAGE', error.response.data.message)
         commit('SET_SHOW_ERROR_MODAL', true)
       }
     }

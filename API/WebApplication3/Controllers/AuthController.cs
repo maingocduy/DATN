@@ -27,7 +27,14 @@ namespace WebApplication3.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Create(CreateAccountRequestDTO acc)
         {
-            return Ok(await authService.RegisterNewAccount(acc));
+            try
+            {
+                return Ok(await authService.RegisterNewAccount(acc));
+            }
+            catch(Exception ex)
+            {
+                return BadRequest(new { message = "Email này đã được đăng ký." });
+            }
         }
         [HttpPost("logout")]
         public async Task<IActionResult> Logout()

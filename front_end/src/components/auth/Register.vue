@@ -42,7 +42,7 @@
       <form @submit.prevent="handleRegistration">
         <div class="mb-5">
           <label for="username" class="block mb-2 text-sm font-medium text-gray-900"
-            >Tên người dùng *</label
+            >Tên đăng nhập *</label
           >
           <input
             type="text"
@@ -169,14 +169,6 @@ export default {
     },
     async handleRegistration() {
       try {
-        if (this.username.includes(' ')) {
-          ElNotification({
-            type: 'error',
-            title: 'Thông báo',
-            message: 'Tên đăng nhập không được có khoảng trắng!'
-          })
-          return
-        }
         this.loading = true
         await this.register({
           username: this.username,
@@ -194,16 +186,10 @@ export default {
             message: this.response.message
           })
           this.$router.push('/login')
-        } else {
-          ElNotification({
-            type: 'error',
-            title: 'Thông báo',
-            message: this.response.message
-          })
-          this.loading = false
         }
       } catch (error) {
         console.error('Error registering:', error)
+        
         // Handle error display here if needed
       }
     }
