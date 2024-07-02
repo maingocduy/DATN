@@ -69,7 +69,7 @@
                     <el-progress
                       :percentage="calculatePercentage(project.contributions, project.budget)"
                       :stroke-width="10"
-                      style="width: 170px; display: block"
+                      style="width: 100%; display: block"
                     >
                     </el-progress>
 
