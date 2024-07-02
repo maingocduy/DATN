@@ -9,8 +9,7 @@ export default {
   name: 'TinyMCEEditor',
   props: {
     modelValue: {
-      type: String,
-      default: ''
+      type: String
     }
   },
   watch: {
@@ -52,9 +51,6 @@ export default {
             this.editor = editor
             editor.on('init', () => {
               editor.setContent(this.modelValue)
-            })
-            editor.on('Change KeyUp', () => {
-              this.$emit('update:modelValue', editor.getContent())
             })
           }
         })

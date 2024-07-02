@@ -1,7 +1,7 @@
 <template>
   <div class="container mx-auto mt-8">
     <div class="max-w-7xl mx-auto">
-      <h1 class="text-4xl font-bold text-center mb-8">Danh sách dự án</h1>
+      <h1 class="text-4xl font-bold text-center mt-3 mb-8">Danh sách dự án</h1>
 
       <!-- Nút Thêm dự án -->
       <div v-if="roleManager" class="text-center mb-8">
@@ -116,7 +116,7 @@
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-center mt-12 mb-8">
+      <div class="flex justify-center mt-12 mb-5">
         <el-pagination
           background
           layout="prev, pager, next"

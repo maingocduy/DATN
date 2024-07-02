@@ -20,7 +20,7 @@
         <div class="mb-5">
           <label for="email" class="block mb-2 text-sm font-medium text-gray-900">Email *</label>
           <input
-            type="email"
+            type="text"
             v-model="email"
             id="email"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
@@ -73,7 +73,7 @@
 <script>
 import axios from 'axios'
 import Cookies from 'js-cookie'
-
+import { ElNotification } from 'element-plus'
 export default {
   data() {
     return {
@@ -88,6 +88,10 @@ export default {
     this.GetAccInfor()
   },
   methods: {
+    isValidEmail(email) {
+      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
+      return emailPattern.test(email)
+    },
     async submitForm() {
       console.log('Tên khách hàng:', this.fullName)
       console.log('Email:', this.email)
@@ -96,40 +100,31 @@ export default {
       console.log('Nội dung thanh toán:', this.orderInfo)
 
       try {
-        if (this.fullname == null) {
+        if (!this.fullName) {
           ElNotification({
             title: 'Lỗi',
             message: 'Tên người dùng là bắt buộc không để trống',
             type: 'error'
           })
           return
-        } else if (this.email == null) {
+        } else if (!this.email) {
           ElNotification({
             title: 'Lỗi',
             message: 'Email không được để trống !',
             type: 'error'
           })
           return
-        } else if (!isValidEmail(email)) {
+        } else if (!this.isValidEmail(this.email)) {
           ElNotification({
             title: 'Lỗi',
             message: 'Email sai định dạng !',
             type: 'error'
           })
           return
-        }
-        else if (this.amount == null) {
+        } else if (!this.amount) {
           ElNotification({
             title: 'Lỗi',
             message: 'Số tiền quyên góp không được để trống !',
-            type: 'error'
-          })
-          return
-        }
-        else if (!isValidEmail(email)) {
-          ElNotification({
-            title: 'Lỗi',
-            message: 'Email sai định dạng !',
             type: 'error'
           })
           return
@@ -146,10 +141,6 @@ export default {
       } catch (error) {
         console.error('Error submitting payment:', error)
       }
-    },
-    isValidEmail(email) {
-      const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
-      return emailPattern.test(email)
     },
     async GetAccInfor() {
       if (Cookies.get('username') && Cookies.get('token') && Cookies.get('role')) {

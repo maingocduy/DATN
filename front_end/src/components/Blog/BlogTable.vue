@@ -1,5 +1,5 @@
 <template>
-  <div class="blog-list p-4 min-h-screen flex flex-col items-center">
+  <div class="blog-list p-4 mb-10 flex flex-col items-center">
     <div class="w-full max-w-7xl">
       <h2 class="font-bold text-2xl mb-4 text-center">Danh Sách Blog</h2>
       <button
@@ -43,7 +43,7 @@
           </el-dialog>
         </div>
       </div>
-      <div v-if="blogs.length !== 0" class="mt-6 flex justify-center">
+      <div v-if="blogs.length !== 0" class="mt-8 flex justify-center">
         <el-pagination
           @current-change="handlePageChange"
           :current-page="pageNumber"

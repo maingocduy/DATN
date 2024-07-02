@@ -103,7 +103,7 @@
     <div class="introduction">
       <div class="intro-text">
         <div style="margin-bottom: 10px">
-          <h2 style="line-height: 1">Web Hội Bác Sĩ Tình Nguyện Là Gì?</h2>
+          <h2 style="line-height: 1">Website Hội Bác Sĩ Tình Nguyện Là Gì?</h2>
         </div>
         <p>
           Trang web của chúng tôi là nơi kết nối những trái tim nhân ái với sứ mệnh chăm sóc sức
