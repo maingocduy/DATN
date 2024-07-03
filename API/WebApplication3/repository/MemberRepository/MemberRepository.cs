@@ -35,7 +35,7 @@ namespace WebApplication3.repository.MemberRepository
         Task SaveOtp(string otp, string emailMember);
         Task UpdateOtp(OtpDTO otp);
         Task<bool> CheckIsInProject(int Member_id, int Project_id);
-
+        Task<List<OtpDTO>> GetOtpByEmail(string email);
         Task<int> GetMemberIDByUsername(string username);
         Task<bool> CheckIsVerified(string email);
         Task UpdateRole(string email, string group_name);
@@ -320,6 +320,17 @@ namespace WebApplication3.repository.MemberRepository
             var memberId = await connection.QueryFirstOrDefaultAsync<int>(sql, new { name });
 
             return memberId;
+        }
+        public async Task<List<OtpDTO>> GetOtpByEmail(string email)
+        {
+            using var connection = _context.CreateConnection();
+            var sql = """
+    SELECT *
+           FROM otp_Member
+           WHERE Member_id = (Select Member_id from account where Member_id = (Select Member_id from Members where email = @email)) and IsVerified = 0
+    """;
+            var otp = await connection.QueryAsync<OtpDTO>(sql, new { email });
+            return otp.ToList();
         }
         public async Task SaveOtp(string otp, string emailMember)
         {

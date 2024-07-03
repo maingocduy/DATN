@@ -9,9 +9,11 @@ export default {
   name: 'TinyMCEEditor',
   props: {
     modelValue: {
-      type: String
+      type: String,
+      default: ''
     }
   },
+
   watch: {
     modelValue(val) {
       if (this.editor) {

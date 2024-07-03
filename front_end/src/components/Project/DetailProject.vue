@@ -23,7 +23,14 @@
       </div>
       <!-- Project Info -->
       <div class="w-full lg:w-1/2 lg:pl-8">
-        <h2 class="text-3xl font-bold mb-4">{{ project.name }}</h2>
+        <div class="w-auto">
+          <h2
+            class="text-3xl font-bold mb-4"
+            style="width: 90%; word-wrap: break-word; white-space: normal"
+          >
+            {{ project.name }}
+          </h2>
+        </div>
         <div class="mb-4">
           <el-progress
             :percentage="progress"
@@ -45,7 +52,11 @@
             </div>
             <div v-if="progress < 100">
               <el-button type="success" round @click="handleDonate">Đóng góp</el-button>
-              <el-button v-if="role === 'Manager'" type="danger" round @click="handleDelete"
+              <el-button
+                v-if="sponsors.length === 0 && role === 'Manager'"
+                type="danger"
+                round
+                @click="handleDelete"
                 >Xóa dự án</el-button
               >
             </div>
@@ -185,6 +196,12 @@
         </InputOtp>
       </div>
       <button @click="submitOtp" class="btn-submit w-full">Xác thực OTP</button>
+      <p class="text-center mt-2">Gửi lại OTP sau: {{ countdownTimer }}</p>
+      <div v-if="showResendButton">
+        <a href="#" class="text-blue-600 text-center block mt-2" @click.prevent="resendOTP"
+          >Gửi lại OTP</a
+        >
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -254,7 +271,9 @@ export default {
       sponsorsPerPage: 6,
       currentPageSponsors: 1,
       totalSponsorsPages: 0,
-      role: Cookies.get('role')
+      role: Cookies.get('role'),
+      countdownTimer: 60,
+      showResendButton: false
     }
   },
   computed: {
@@ -304,9 +323,37 @@ export default {
     }
   },
   mounted() {
-    this.initialize()
+    this.initialize(), this.startCountdown()
   },
   methods: {
+    async resendOTP() {
+      // Gửi lại yêu cầu gửi OTP tới email đã nhập
+      try {
+        var response = await axios.post('api/Member/re_send_otp', {
+          email: this.joinForm.email
+        })
+        ElNotification({
+          type: 'success',
+          title: 'Thông báo',
+          message: response.data.message
+        })
+        this.startCountdown()
+      } catch (error) {
+        // Bắt đầu đếm ngược lại
+      }
+    },
+    startCountdown() {
+      this.countdownTimer = 60
+      this.showResendButton = false
+      const countdownInterval = setInterval(() => {
+        if (this.countdownTimer > 0) {
+          this.countdownTimer--
+        } else {
+          clearInterval(countdownInterval)
+          this.showResendButton = true
+        }
+      }, 1000)
+    },
     customFormat(percentage) {
       return `${percentage.toFixed(0)}%`
     },
@@ -564,6 +611,26 @@ export default {
   background: transparent;
   padding: 10px;
   margin-right: 8px;
+}
+.completion-message {
+  background-color: #e0f7fa;
+  border: 1px solid #00bcd4;
+  color: #006064;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.expired-message {
+  background-color: #fce4ec;
+  border: 1px solid #f8bbd0;
+  color: #c2185b;
+  padding: 10px;
+  border-radius: 4px;
+  margin-top: 10px;
+  font-weight: bold;
+  width: 40%;
 }
 .btn-submit {
   background-color: #3b82f6;

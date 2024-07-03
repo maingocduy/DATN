@@ -76,6 +76,23 @@ namespace WebApplication3.Controllers
                 return BadRequest(new { messenger = ex.Message });
             };
         }
+        [HttpPost("re_send_otp")]
+        public async Task<IActionResult> ResendOtp([FromBody] ForgetPassDTO request)
+        {
+            try
+            {
+                await IMemberService.ReSendOtp(request.email);
+                return Ok(new { Message = "Gửi otp mới thành công." });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { Message = "Đã xảy ra lỗi. Vui lòng thử lại sau." });
+            }
+        }
         [HttpPost("enter_otp")]
         public async Task<IActionResult> EnterOtp([FromBody] EnterOtpMemberRequest request)
         {

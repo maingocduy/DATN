@@ -745,6 +745,22 @@
   },
   {
     "ContainingType": "WebApplication3.Controllers.MemberController",
+    "Method": "ResendOtp",
+    "RelativePath": "api/Member/re_send_otp",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "request",
+        "Type": "WebApplication3.DTOs.Account.ForgetPassDTO",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "WebApplication3.Controllers.MemberController",
     "Method": "UpdateMember",
     "RelativePath": "api/Member/update_member",
     "HttpMethod": "POST",

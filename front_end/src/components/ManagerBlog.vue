@@ -184,8 +184,6 @@ export default {
             if (response.status === 200) {
               this.showSuccessNotification(response.data.message)
               this.fetchBlogs() // Refresh blogs list after deletion
-            } else {
-              this.showErrorNotification('Xóa bài viết thất bại.')
             }
           } catch (error) {
             if (error.response && error.response.status === 404) {
@@ -196,7 +194,7 @@ export default {
           }
         })
         .catch(() => {
-          this.showErrorNotification('Xóa bài viết thất bại!')
+          console.log('Hủy xóa bài viết!')
         })
     },
     async handleApprove(row) {

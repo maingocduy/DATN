@@ -23,7 +23,7 @@
         <el-carousel
           ref="projectCarousel"
           :interval="5000"
-          arrow="always"
+          :arrow="projects.length > 3 ? 'always' : 'never'"
           @change="resetInterval"
           autoplay
           class="project-carousel"
@@ -61,7 +61,17 @@
                   </a>
                   <div class="p-6">
                     <a :href="'/project/' + project.name">
-                      <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">
+                      <h5
+                        class="mb-2 text-2xl font-bold tracking-tight text-gray-900"
+                        style="
+                          display: -webkit-box;
+                          -webkit-line-clamp: 1;
+                          -webkit-box-orient: vertical;
+                          overflow: hidden;
+                          text-overflow: ellipsis;
+                          word-break: break-word;
+                        "
+                      >
                         {{ project.name }}
                       </h5>
                     </a>
@@ -156,31 +166,17 @@ export default {
     chunkedProjects() {
       const chunkSize = 3
       const chunks = []
+      let i = 0
 
-      for (let i = 0; i < this.projects.length; i++) {
-        // Tạo một chunk mới với kích thước chunkSize
-        const chunk = []
-        for (let j = 0; j < chunkSize; j++) {
-          const index = i + j
-          if (index < this.projects.length) {
-            chunk.push(this.projects[index])
-          }
-        }
-
-        // Kiểm tra nếu phần tử cuối cùng của chunk hiện tại là phần tử cuối cùng của danh sách gốc
-        if (chunk[chunk.length - 1] === this.projects[this.projects.length - 1]) {
-          chunks.push(chunk)
-          break
-        }
-
-        // Nếu không đủ phần tử để tạo một chunk hoàn chỉnh, bỏ qua
-        if (chunk.length === chunkSize) {
-          chunks.push(chunk)
-        }
-
-        // Bỏ qua bước nhảy là chunkSize - 1
+      while (i < this.projects.length) {
         if (i + chunkSize >= this.projects.length) {
+          // Trường hợp cuối danh sách
+          chunks.push(this.projects.slice(-chunkSize))
           break
+        } else {
+          // Các chunk bình thường
+          chunks.push(this.projects.slice(i, i + chunkSize))
+          i += chunkSize // Di chuyển i lên chunkSize để không có phần tử trùng lặp
         }
       }
 

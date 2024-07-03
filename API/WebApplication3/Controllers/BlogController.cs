@@ -34,7 +34,7 @@ namespace WebApplication3.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
-        [HttpDelete("delete_blog"), Authorize(Roles = "Manager")]
+        [HttpDelete("delete_blog"), Authorize]
         public async Task<IActionResult> Delete(string title)
         {
             try

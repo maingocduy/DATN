@@ -14,6 +14,7 @@ using WebApplication3.repository.MemberRepository;
 using WebApplication3.repository.ProjectReposiotry;
 using WebApplication3.repository.SponsorRepository;
 using WebApplication3.Service.AccountService;
+using static System.Net.WebRequestMethods;
 
 namespace WebApplication3.Service.MemberService
 {
@@ -21,7 +22,7 @@ namespace WebApplication3.Service.MemberService
     {
         Task<PagedResult<MemberDTO>> GetAllMember(int pageNumber, int? ProjectId = null, string? groupName = null);
         Task<MemberDTO> GetMemberAsync(int id);
-
+        Task ReSendOtp(string email);
         Task<MemberDTO> GetMember(string member);
         Task AddMember(int project_id, CreateRequestMemberDTO acc);
         Task UpdateMember(UpdateRequestMember update);
@@ -84,6 +85,23 @@ namespace WebApplication3.Service.MemberService
 
             };
             
+        }
+        public async Task ReSendOtp(string email)
+        {
+            var lstOtp = await IMemberRepository.GetOtpByEmail(email);
+            if (lstOtp == null)
+            {
+                throw new KeyNotFoundException("Không tìm thấy Otp");
+            }
+            foreach (var otp in lstOtp)
+            {
+                otp.IsVerified = true;
+                IMemberRepository.UpdateOtp(otp);
+            }
+            var otps = GenerateOTP();
+            IMemberRepository.SaveOtp(otps, email);
+
+             SendEmailAsync(email, "Xác Nhận Email", $"Để xác nhận Email vui lòng dùng OTP này: {otps}");
         }
         public async Task EnterOtp(string otp, int Project_id, string email)
         {

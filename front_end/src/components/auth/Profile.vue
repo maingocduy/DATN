@@ -375,6 +375,7 @@ export default {
           message: 'Mật khẩu chứa ít nhất 6 ký tự',
           type: 'error'
         })
+        return
       }
       this.$refs.passwordForm.validate((valid) => {
         if (valid) {

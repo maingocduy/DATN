@@ -164,6 +164,10 @@ const authModule = {
       }
     },
     async resetPassword({ commit, state }, { newPass, confirmPass }) {
+      if (newPass.length < 6) {
+        commit('SET_FORGOT_PASSWORD_MESSAGE', 'Mật khẩu phải nhiều hơn 6 ký tự')
+        return
+      }
       commit('SET_NEW_PASSWORD', newPass)
       commit('SET_CONFIRM_NEW_PASSWORD', confirmPass)
       if (state.newPassword !== state.confirmNewPassword) {

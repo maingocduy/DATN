@@ -49,6 +49,7 @@ axios.interceptors.response.use(
   },
   (error) => {
     hideLoading() // Ẩn loading nếu gặp lỗi phản hồi
+
     if (error.response) {
       if (error.response.status === 401) {
         const token = Cookies.get('token')

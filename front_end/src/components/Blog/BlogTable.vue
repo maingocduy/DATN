@@ -125,7 +125,7 @@ export default {
     },
     extractFirstImage(content) {
       const imgTag = content.match(/<img[^>]+src="([^">]+)"/)
-      return imgTag ? imgTag[1] : null
+      return imgTag ? imgTag[1] : '../../../public/Images/blog-def.jpg'
     }
   },
   created() {
