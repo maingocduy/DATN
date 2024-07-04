@@ -55,7 +55,7 @@
                     <img
                       v-else
                       class="rounded-t-lg w-40 h-20"
-                      src="../../../public/Images/doctor.jpg"
+                      src="/Images/doctor.jpg"
                       alt="Placeholder"
                     />
                   </a>

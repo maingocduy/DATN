@@ -1,20 +1,16 @@
 <template>
   <div v-if="blog.account" class="container mx-auto p-4">
     <header class="bg-gray-100 p-6 mb-6 shadow-md rounded-lg">
-      <h1 class="text-4xl font-bold text-gray-800 mb-2">{{ blog.title }}</h1>
-      <div v-if="UsernameCookie == blog.account.username">
-        <el-tooltip effect="light" content="Sửa Blog" placement="top-start">
-          <el-button @click="editBlog" type="warning" :icon="Edit" size="small" circle></el-button>
-        </el-tooltip>
-        <el-tooltip effect="light" content="Xóa Blog" placement="top-start">
-          <el-button
-            @click="deleteBlog"
-            type="danger"
-            :icon="Delete"
-            size="small"
-            circle
-          ></el-button>
-        </el-tooltip>
+      <div class="flex justify-between">
+        <h1 class="text-4xl font-bold text-gray-800 mb-2">{{ blog.title }}</h1>
+        <div v-if="UsernameCookie == blog.account.username">
+          <el-tooltip effect="light" content="Sửa Blog" placement="top-start">
+            <el-button @click="editBlog" type="warning" :icon="Edit" circle></el-button>
+          </el-tooltip>
+          <el-tooltip effect="light" content="Xóa Blog" placement="top-start">
+            <el-button @click="deleteBlog" type="danger" :icon="Delete" circle></el-button>
+          </el-tooltip>
+        </div>
       </div>
       <div class="flex justify-between text-gray-600">
         <p><strong>Người đăng:</strong> {{ blog.account.username }}</p>

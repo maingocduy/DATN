@@ -139,26 +139,27 @@ WHERE Name = @ProjectName;";
         {
             using var connection = _context.CreateConnection();
             int pageSize = 6;
-            // Tính toán offset
             var offset = (pageNumber - 1) * pageSize;
+            var currentTime = DateTime.Now;
 
-            // Câu lệnh SQL mới
             var dtoSql = @"
 SELECT p.*
 FROM Projects AS p
- WHERE EndDate < CURDATE()
-LIMIT @pageSize OFFSET @offset ;
+WHERE EndDate < @currentTime
+LIMIT @pageSize OFFSET @offset;
 ";
 
-            // Thực hiện truy vấn
             var projects = await connection.QueryAsync<ProjectDTO>(
                 dtoSql,
-                new { pageSize, offset }
+                new { pageSize, offset, currentTime }
             );
 
-            // Lấy tổng số dự án
-            var countSql = "SELECT COUNT(*) FROM Projects";
-            var totalCount = await connection.ExecuteScalarAsync<int>(countSql);
+            var countSql = @"
+SELECT COUNT(*)
+FROM Projects
+WHERE EndDate < @currentTime;
+";
+            var totalCount = await connection.ExecuteScalarAsync<int>(countSql, new { currentTime });
 
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
@@ -168,6 +169,7 @@ LIMIT @pageSize OFFSET @offset ;
                 TotalPages = totalPages
             };
         }
+
 
         public async Task<int> SumContribution(int project_id)
         {
@@ -182,27 +184,27 @@ WHERE sp.project_id = @projectId;";
         {
             using var connection = _context.CreateConnection();
             int pageSize = 6;
-            // Tính toán offset
+            var currentTime = DateTime.Now;
             var offset = (pageNumber - 1) * pageSize;
 
-            // Câu lệnh SQL mới
             var dtoSql = @"
         SELECT p.*
         FROM Projects AS p
-        
-        WHERE EndDate >= CURDATE()
+        WHERE EndDate >= @currentTime
         LIMIT @pageSize OFFSET @offset
     ";
 
-            // Thực hiện truy vấn
             var projects = await connection.QueryAsync<ProjectDTO>(
                 dtoSql,
-                new { pageSize, offset }
+                new { pageSize, offset, currentTime }
             );
 
-            // Lấy tổng số dự án
-            var countSql = "SELECT COUNT(*) FROM Projects";
-            var totalCount = await connection.ExecuteScalarAsync<int>(countSql);
+            var countSql = @"
+        SELECT COUNT(*)
+        FROM Projects
+        WHERE EndDate >= @currentTime
+    ";
+            var totalCount = await connection.ExecuteScalarAsync<int>(countSql, new { currentTime });
 
             var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
@@ -211,9 +213,8 @@ WHERE sp.project_id = @projectId;";
                 Data = projects.ToList(),
                 TotalPages = totalPages
             };
-
-
         }
+
         public async Task<List<ImageDtos>> GetImagesAsync(int project_id)
         {
             using var connection = _context.CreateConnection();

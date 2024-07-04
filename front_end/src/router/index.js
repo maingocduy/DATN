@@ -45,11 +45,7 @@ const mainRoutes = [
         name: 'projectDetail',
         component: () => import('../components/Project/DetailProject.vue')
       },
-      {
-        path: 'test',
-        name: 'test',
-        component: () => import('../views/test.vue')
-      },
+
       {
         path: 'login',
         name: 'login',
