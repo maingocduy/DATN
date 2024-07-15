@@ -480,9 +480,7 @@ export default {
             }
           }
         })
-        .catch(() => {
-          this.showErrorNotification('Xóa bài viết thất bại!')
-        })
+        .catch(() => {})
     }
   }
 }

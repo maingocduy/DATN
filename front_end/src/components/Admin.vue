@@ -158,9 +158,7 @@ export default {
             }
           }
         })
-        .catch(() => {
-          this.showErrorNotification('Xóa tài khoản thất bại!')
-        })
+        .catch(() => {})
     },
     async handleChangeRole(row) {
       ElMessageBox.confirm('Bạn có chắc muốn thay đổi quyền của người này không ?', 'Confirm', {
