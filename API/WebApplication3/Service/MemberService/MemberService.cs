@@ -55,6 +55,7 @@ namespace WebApplication3.Service.MemberService
                 throw new KeyNotFoundException("Không tìm thấy dự án !");
             }
             var check = await IMemberRepository.CheckIsVerified(mem.Email);
+            
             if (!check && member != null)
             {
                 var otp = GenerateOTP();
@@ -62,7 +63,17 @@ namespace WebApplication3.Service.MemberService
 
                 SendEmailAsync(mem.Email, "Xác Nhận Email", $"Để xác nhận Email vui lòng dùng OTP này: {otp}");
             }
-            else if (await IMemberRepository.CheckIsInProject(member.Member_id, project.Project_id) && member != null)
+            else if (member == null)
+            {
+                var memberDTO = _mapper.Map<MemberDTO>(mem);
+                var otp = GenerateOTP();
+                await IMemberRepository.AddMember(project.Project_id, memberDTO);
+                IMemberRepository.SaveOtp(otp, memberDTO.email);
+
+                SendEmailAsync(memberDTO.email, "Xác Nhận Email", $"Để xác nhận Email vui lòng dùng OTP này: {otp}");
+
+            }
+            else if (await IMemberRepository.CheckIsInProject(member.Member_id, project.Project_id))
             {
                 throw new Exception("Email này đã đăng ký tham gia dự án này");
             }
@@ -74,17 +85,6 @@ namespace WebApplication3.Service.MemberService
 
                 SendEmailAsync(mem.Email, "Xác Nhận Tham gia dự án", $"Để xác nhận tham gia dự án với vai trò là {mem.Group_name} vui lòng dùng OTP này: {otp}");
             }
-            
-            else
-            {
-                var memberDTO = _mapper.Map<MemberDTO>(mem);
-                var otp = GenerateOTP();
-                await IMemberRepository.AddMember(project.Project_id, memberDTO);
-                IMemberRepository.SaveOtp(otp, memberDTO.email);
-
-                SendEmailAsync(memberDTO.email, "Xác Nhận Email", $"Để xác nhận Email vui lòng dùng OTP này: {otp}");
-
-            };
             
         }
         public async Task ReSendOtp(string email)

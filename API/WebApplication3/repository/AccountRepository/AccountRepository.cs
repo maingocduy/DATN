@@ -69,6 +69,12 @@ WHERE Member_id IN (
 
             // Thực hiện câu lệnh SQL xóa MemberProjects
             await connection.ExecuteAsync(deleteMemberProjectsSql, new { username = acc.Username });
+
+            var deleteOtp = @"Delete 
+			FROM otp_Member
+			
+    WHERE Member_id = @member_id";
+            await connection.ExecuteAsync(deleteOtp, new { member_id = acc.Member.Member_id });
             // Xóa thành viên từ bảng Members
             var sqlMember = @"
         DELETE FROM Members 

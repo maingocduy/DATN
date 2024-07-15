@@ -33,7 +33,7 @@ namespace WebApplication3.Controllers
             }
             catch(Exception ex)
             {
-                return BadRequest(new { message = "Email này đã được đăng ký." });
+                return BadRequest(new { message = ex.Message });
             }
         }
         [HttpPost("logout")]

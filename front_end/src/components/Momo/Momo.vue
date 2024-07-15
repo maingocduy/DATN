@@ -128,9 +128,24 @@ export default {
             type: 'error'
           })
           return
+        } else if (isNaN(this.amount)) {
+          ElNotification({
+            title: 'Lỗi',
+            message: 'Số tiền chỉ có thể nhập số ! Vui lòng nhập lại',
+            type: 'error'
+          })
+          return
+        } else if (this.amount < 10000) {
+          ElNotification({
+            title: 'Lỗi',
+            message: 'Số tiền donate ít nhất phải lớn hơn hoặc bằng 10.000 ! Vui lòng nhập lại',
+            type: 'error'
+          })
+          return
         }
         localStorage.setItem('email', this.email)
         localStorage.setItem('address', this.address)
+        localStorage.setItem('nameSponsor', this.fullName)
         const response = await axios.post(`https://localhost:7188/api/Momo/momo`, {
           fullName: this.fullName,
           orderInfo: this.orderInfo,

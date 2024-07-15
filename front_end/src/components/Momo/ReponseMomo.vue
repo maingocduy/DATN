@@ -15,7 +15,8 @@
               🎉 Cảm ơn bạn đã đóng góp cho dự án!
             </h2>
             <p class="font-semibold text-xl text-gray-700">
-              Tên người thanh toán: <span class="font-normal">{{ responseData.extraData }}</span>
+              Tên người thanh toán:
+              <span class="font-normal">{{ this.name }}</span>
             </p>
             <p class="font-semibold text-xl text-gray-700">
               Nội dung thanh toán: <span class="font-normal">{{ responseData.orderInfo }}</span>
@@ -48,7 +49,8 @@ export default {
       loading: false,
       error: null,
       responseData: null,
-      Alert: ''
+      Alert: '',
+      name: localStorage.getItem('nameSponsor')
     }
   },
   mounted() {
@@ -97,34 +99,32 @@ export default {
         }
 
         console.log(this.responseData)
-
+        console.log(localStorage.getItem('nameSponsor'))
         if (this.responseData.localMessage === 'Dữ liệu sai định dạng') {
           this.$notify({
             type: 'error',
             title: 'Thông báo',
             message: 'Đã hủy thanh toán'
           })
-          setTimeout(() => {
-            this.$router.push({ path: `/project/${localStorage.getItem('nameProject')}` })
-          }, 2000)
+          this.$router.push({ path: `/project/${localStorage.getItem('nameProject')}` })
         } else {
           await axios.post(`api/Sponsor/add_sponsor`, {
             nameProject: localStorage.getItem('nameProject'),
-            name: this.responseData.extraData,
+            name: localStorage.getItem('nameSponsor'),
             contact: localStorage.getItem('email'),
             address: localStorage.getItem('address'),
+
             contributionAmount: this.responseData.amount
           })
-          localStorage.removeItem('name')
+
           localStorage.removeItem('email')
           localStorage.removeItem('address')
+          localStorage.removeItem('nameProject')
           this.$notify({
             type: 'success',
             title: 'Thông báo',
             message: this.responseData.localMessage
           })
-          console.log(localStorage.getItem('nameProject'))
-          console.log(decodeURIComponent(localStorage.getItem('nameProject')))
         }
       } catch (error) {
         this.error = 'Có lỗi xảy ra khi lấy dữ liệu từ URL.'
