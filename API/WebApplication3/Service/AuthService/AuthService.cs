@@ -59,28 +59,42 @@ namespace WebApplication3.Service.AuthService
         }
         public async Task<GeneralResponse> RegisterNewAccount(CreateAccountRequestDTO registerDTO)
         {
-                var user = _mapper.Map<MemberDTO>(registerDTO);
-                // 1. Thêm một bản ghi mới vào bảng Members
-                if(await memberRepository.GetMemberByEmail(registerDTO.Email) != null)
+            var user = _mapper.Map<MemberDTO>(registerDTO);
+            var getMemberByEmail = await memberRepository.GetMemberByEmail(registerDTO.Email);
+            // 1. Thêm một bản ghi mới vào bảng Members
+            if (await userManager.FindByEmailAsync(registerDTO.Email) != null)
             {
                 throw new Exception("Email đã đăng ký tài khoản. Vui lòng thử lại!");
             }
-            if (await accountRepository.GetAccountsByUserName(registerDTO.username) != null)
+            else if (await accountRepository.GetAccountsByUserName(registerDTO.username) != null)
             {
                 throw new Exception("Tên đăng nhập đã có!");
             }
-            var memberId = await memberRepository.AddNewMember(user);
-                
+            else if (getMemberByEmail != null)
+            {
+                await AddAcount(registerDTO, getMemberByEmail.Member_id, getMemberByEmail.email);
+                var userByUsername = await userManager.FindByNameAsync(registerDTO.username);
+                string code = await userManager.GenerateEmailConfirmationTokenAsync(userByUsername);
+                string confirmationLink = $"http://localhost:5173/ResponseRegister?userId={userByUsername.Id}&code={Uri.EscapeDataString(code)}&user={userByUsername.UserName}";
+                await accountService.SendEmailAsync(userByUsername.Email, "Xác nhận email của bạn",
+           $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href='{confirmationLink}'>link</a>");
+                return new GeneralResponse(true, "Tài khoản đã được tạo thành công. Vui lòng kiểm tra email để xác nhận tài khoản của bạn.");
+            }
+            else
+            {
+                var memberId = await memberRepository.AddNewMember(user);
+
                 var member = await memberRepository.GetMemberById(memberId);
 
                 // 2. Thêm một bản ghi mới vào bảng Account
-                  await AddAcount(registerDTO, memberId,member.email);
-            var userByUsername = await userManager.FindByNameAsync(registerDTO.username);
-            string code = await userManager.GenerateEmailConfirmationTokenAsync(userByUsername);
-            string confirmationLink = $"http://localhost:5173/ResponseRegister?userId={userByUsername.Id}&code={Uri.EscapeDataString(code)}&user={userByUsername.UserName}";
-             accountService.SendEmailAsync(userByUsername.Email, "Xác nhận email của bạn",
-        $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href='{confirmationLink}'>link</a>");
-            return new GeneralResponse(true, "Tài khoản đã được tạo thành công. Vui lòng kiểm tra email để xác nhận tài khoản của bạn.");
+                await AddAcount(registerDTO, memberId, member.email);
+                var userByUsername = await userManager.FindByNameAsync(registerDTO.username);
+                string code = await userManager.GenerateEmailConfirmationTokenAsync(userByUsername);
+                string confirmationLink = $"http://localhost:5173/ResponseRegister?userId={userByUsername.Id}&code={Uri.EscapeDataString(code)}&user={userByUsername.UserName}";
+                await accountService.SendEmailAsync(userByUsername.Email, "Xác nhận email của bạn",
+           $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href='{confirmationLink}'>link</a>");
+                return new GeneralResponse(true, "Tài khoản đã được tạo thành công. Vui lòng kiểm tra email để xác nhận tài khoản của bạn.");
+            }
         }
         private async Task<GeneralResponse> AddAcount(CreateAccountRequestDTO acc, int MemberId,string email)
         {
@@ -112,14 +126,14 @@ namespace WebApplication3.Service.AuthService
             // Check if the user with the same Username already exists
             var userByUsername = await userManager.FindByNameAsync(newUser.UserName);
             if (userByUsername != null)
-                return new GeneralResponse(false, "User already registered");
+                return new GeneralResponse(false, "Tên đăng nhập này đã có");
 
             // Create the user
             var createUser = await userManager.CreateAsync(newUser, user.Password);
             user.Password = newUser.PasswordHash;
             await AuthRepository.AddAcount(user, MemberId);
             if (!createUser.Succeeded)
-                return new GeneralResponse(false, "Error occurred.. please try again");
+                return new GeneralResponse(false, "Lỗi hệ thống thử lại sau");
             else
             {
              
