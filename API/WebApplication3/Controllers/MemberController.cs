@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.IIS;
 using MySqlX.XDevAPI.Common;
+using Org.BouncyCastle.Asn1.Ocsp;
 using WebApplication3.DTOs.Account;
 using WebApplication3.DTOs.Member;
 using WebApplication3.DTOs.Otp;
@@ -28,8 +29,19 @@ namespace WebApplication3.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateRequestMemberDTO mem)
         {
-            await IMemberService.AddMember(mem.Project_id, mem);
-            return Ok(new { message = "Thành công" });
+            try
+            {
+                await IMemberService.AddMember(mem.Project_id, mem);
+                return Ok(new { message = "Thành công mời nhập otp" });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return NotFound(new { Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest( new { Message = ex.Message });
+            }
         }
         [HttpPost("get_all_member")]
         public async Task<ActionResult<List<MemberDTO>>> GetAllMember(GetlAllMemberRequest request)

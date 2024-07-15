@@ -486,7 +486,8 @@ export default {
           })
         }
       } catch (error) {
-        console.error('Error submitting join:', error)
+        console.log(error)
+        this.showErrorNotification(error.response.data.message)
       }
     },
 
@@ -542,9 +543,7 @@ export default {
             }
           }
         })
-        .catch(() => {
-          this.showErrorNotification('Xóa dự án thất bại!')
-        })
+        .catch(() => {})
     },
     isValidEmail(email) {
       const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/
