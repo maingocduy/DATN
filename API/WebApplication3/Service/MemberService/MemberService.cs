@@ -61,7 +61,7 @@ namespace WebApplication3.Service.MemberService
                 var otp = GenerateOTP();
                 IMemberRepository.SaveOtp(otp, mem.Email);
 
-                SendEmailAsync(mem.Email, "Xác Nhận Email", $"Để xác nhận Email vui lòng dùng OTP này: {otp}");
+                 SendEmailAsync(mem.Email, "Xác Nhận Email", $"Để xác nhận Email vui lòng dùng OTP này: {otp}");
             }
             else if (member == null)
             {
@@ -70,7 +70,7 @@ namespace WebApplication3.Service.MemberService
                 await IMemberRepository.AddMember(project.Project_id, memberDTO);
                 IMemberRepository.SaveOtp(otp, memberDTO.email);
 
-                SendEmailAsync(memberDTO.email, "Xác Nhận Email", $"Để xác nhận Email vui lòng dùng OTP này: {otp}");
+                 SendEmailAsync(memberDTO.email, "Xác Nhận Email", $"Để xác nhận Email vui lòng dùng OTP này: {otp}");
 
             }
             else if (await IMemberRepository.CheckIsInProject(member.Member_id, project.Project_id))
@@ -83,7 +83,7 @@ namespace WebApplication3.Service.MemberService
                 var otp = GenerateOTP();
                 IMemberRepository.SaveOtp(otp, mem.Email);
 
-                SendEmailAsync(mem.Email, "Xác Nhận Tham gia dự án", $"Để xác nhận tham gia dự án với vai trò là {mem.Group_name} vui lòng dùng OTP này: {otp}");
+                 SendEmailAsync(mem.Email, "Xác Nhận Tham gia dự án", $"Để xác nhận tham gia dự án với vai trò là {mem.Group_name} vui lòng dùng OTP này: {otp}");
             }
             
         }
@@ -102,7 +102,7 @@ namespace WebApplication3.Service.MemberService
             var otps = GenerateOTP();
             IMemberRepository.SaveOtp(otps, email);
 
-             SendEmailAsync(email, "Xác Nhận Email", $"Để xác nhận Email vui lòng dùng OTP này: {otps}");
+              SendEmailAsync(email, "Xác Nhận Email", $"Để xác nhận Email vui lòng dùng OTP này: {otps}");
         }
         public async Task EnterOtp(string otp, int Project_id, string email)
         {
@@ -150,8 +150,8 @@ namespace WebApplication3.Service.MemberService
             var pw = "Mangcut11";
 
             var mimeMessage = new MimeMessage();
-            mimeMessage.From.Add(new MailboxAddress("Hội bác sĩ tình nguyện", mail)); // Chú ý thay thế "Your Name" bằng tên hiển thị mong muốn
-            mimeMessage.To.Add(new MailboxAddress("Recipient", email)); // Chú ý thay thế "Recipient" bằng tên hiển thị mong muốn
+            mimeMessage.From.Add(new MailboxAddress("Hội bác sĩ tình nguyện", mail));
+            mimeMessage.To.Add(new MailboxAddress("Người nhận", email));
             mimeMessage.Subject = subject;
             mimeMessage.Body = new TextPart("plain")
             {
@@ -160,8 +160,9 @@ namespace WebApplication3.Service.MemberService
 
             using (var client = new MailKit.Net.Smtp.SmtpClient())
             {
-                await client.ConnectAsync("smtp-mail.outlook.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(mail, pw);
+                await client.ConnectAsync("in-v3.mailjet.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
+
+                await client.AuthenticateAsync("b027eb478affd5030d64d6d0d9f823d4", "9641f5e3caec261f221749a9d118d845");
                 await client.SendAsync(mimeMessage);
                 await client.DisconnectAsync(true);
             }

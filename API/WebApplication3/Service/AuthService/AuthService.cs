@@ -76,8 +76,8 @@ namespace WebApplication3.Service.AuthService
                 var userByUsername = await userManager.FindByNameAsync(registerDTO.username);
                 string code = await userManager.GenerateEmailConfirmationTokenAsync(userByUsername);
                 string confirmationLink = $"http://localhost:5173/ResponseRegister?userId={userByUsername.Id}&code={Uri.EscapeDataString(code)}&user={userByUsername.UserName}";
-                await accountService.SendEmailAsync(userByUsername.Email, "Xác nhận email của bạn",
-           $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href='{confirmationLink}'>link</a>");
+                 accountService.SendEmailAsync(userByUsername.Email, "Xác nhận email của bạn",
+           $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: '{confirmationLink}'");
                 return new GeneralResponse(true, "Tài khoản đã được tạo thành công. Vui lòng kiểm tra email để xác nhận tài khoản của bạn.");
             }
             else
@@ -91,8 +91,8 @@ namespace WebApplication3.Service.AuthService
                 var userByUsername = await userManager.FindByNameAsync(registerDTO.username);
                 string code = await userManager.GenerateEmailConfirmationTokenAsync(userByUsername);
                 string confirmationLink = $"http://localhost:5173/ResponseRegister?userId={userByUsername.Id}&code={Uri.EscapeDataString(code)}&user={userByUsername.UserName}";
-                await accountService.SendEmailAsync(userByUsername.Email, "Xác nhận email của bạn",
-           $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: <a href='{confirmationLink}'>link</a>");
+                 accountService.SendEmailAsync(userByUsername.Email, "Xác nhận email của bạn",
+           $"Vui lòng xác nhận email của bạn bằng cách nhấp vào liên kết này: '{confirmationLink}'");
                 return new GeneralResponse(true, "Tài khoản đã được tạo thành công. Vui lòng kiểm tra email để xác nhận tài khoản của bạn.");
             }
         }

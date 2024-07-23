@@ -74,8 +74,8 @@ namespace WebApplication3.Service.AccountService
             var pw = "Mangcut11";
 
             var mimeMessage = new MimeMessage();
-            mimeMessage.From.Add(new MailboxAddress("Hội bác sĩ tình nguyện", mail)); // Chú ý thay thế "Your Name" bằng tên hiển thị mong muốn
-            mimeMessage.To.Add(new MailboxAddress("Recipient", email)); // Chú ý thay thế "Recipient" bằng tên hiển thị mong muốn
+            mimeMessage.From.Add(new MailboxAddress("Hội bác sĩ tình nguyện", mail)); 
+            mimeMessage.To.Add(new MailboxAddress("Người nhận", email)); 
             mimeMessage.Subject = subject;
             mimeMessage.Body = new TextPart("plain")
             {
@@ -84,8 +84,9 @@ namespace WebApplication3.Service.AccountService
 
             using (var client = new MailKit.Net.Smtp.SmtpClient())
             {
-                await client.ConnectAsync("smtp-mail.outlook.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(mail, pw);
+                await client.ConnectAsync("in-v3.mailjet.com", 587, MailKit.Security.SecureSocketOptions.StartTls);
+
+                await client.AuthenticateAsync("b027eb478affd5030d64d6d0d9f823d4", "9641f5e3caec261f221749a9d118d845");
                 await client.SendAsync(mimeMessage);
                 await client.DisconnectAsync(true);
             }
@@ -195,7 +196,7 @@ namespace WebApplication3.Service.AccountService
             var otp = GenerateOTP();
              _AccountRepository.SaveOtp(otp, email);
 
-              SendEmailAsync(email, "Lấy lại mật khẩu", $"Để lấy lại mật khẩu vui lòng dùng OTP này: {otp}");
+               SendEmailAsync(email, "Lấy lại mật khẩu", $"Để lấy lại mật khẩu vui lòng dùng OTP này: {otp}");
         }
         public async Task EnterOtp(string otp)
         {

@@ -351,3 +351,4 @@ D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.dll
 D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\WebApplication3.pdb
 D:\fronten\DATN\API\WebApplication3\obj\Debug\net8.0\WebApplication3.genruntimeconfig.cache
 D:\fronten\DATN\API\WebApplication3\obj\Debug\net8.0\ref\WebApplication3.dll
+D:\fronten\DATN\API\WebApplication3\bin\Debug\net8.0\System.Formats.Asn1.dll

@@ -128,7 +128,6 @@ export default {
         console.log(this.accounts)
       } catch (error) {
         console.error('Error fetching accounts:', error)
-        this.showErrorNotification('Failed to fetch accounts.')
       }
     },
     async handleDelete(row) {
